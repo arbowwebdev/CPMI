@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tes Kemampuan Inteligensi - Klinik Utama Medilab</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+            padding: 20px;
+            color: #1e293b;
+        }
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #0369a1, #0284c7);
+            color: #fff;
+            padding: 25px;
+            text-align: center;
+        }
+        .header h1 { font-size: 22px; margin-bottom: 6px; }
+        .header h2 { font-size: 16px; font-weight: 500; opacity: 0.95; }
+        .header h3 { font-size: 14px; font-weight: 400; margin-top: 4px; opacity: 0.9; }
+
+        .disclaimer {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 12px 18px;
+            margin: 20px;
+            font-size: 13px;
+            color: #78350f;
+            border-radius: 6px;
+        }
+        .disclaimer strong { color: #b45309; }
+
+        .instruksi {
+            background: #f1f5f9;
+            margin: 0 20px 20px;
+            padding: 18px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .instruksi h4 {
+            color: #0c4a6e;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        .instruksi ul { padding-left: 20px; font-size: 13.5px; line-height: 1.7; }
+
+        .form-section { padding: 10px 20px 25px; }
+        .form-section h3 {
+            color: #0369a1;
+            border-bottom: 2px solid #e0f2fe;
+            padding-bottom: 8px;
+            margin-bottom: 18px;
+            font-size: 17px;
+        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #334155;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #0284c7;
+            box-shadow: 0 0 0 3px rgba(2,132,199,0.12);
+        }
+        .form-group input[readonly] {
+            background: #f8fafc;
+            color: #64748b;
+        }
+        .form-row { display: flex; gap: 12px; }
+        .form-row .form-group { flex: 1; }
+
+        /* === BOX ALAMAT OTOMATIS === */
+        .alamat-box {
+            margin-top: 10px;
+            padding: 14px 16px;
+            background: #ecfeff;
+            border-left: 4px solid #06b6d4;
+            border-radius: 7px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .alamat-box h5 {
+            margin: 0 0 6px 0;
+            color: #0e7490;
+            font-size: 14px;
+        }
+        .alamat-box p {
+            margin: 0;
+            color: #164e63;
+            font-size: 13.5px;
+            line-height: 1.5;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-next {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .btn-next:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(2,132,199,0.3);
+        }
+
+        @media (max-width: 600px) {
+            .form-row { flex-direction: column; gap: 0; }
+            .header h1 { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>Tes Kemampuan Inteligensi</h1>
+            <h2>Tes POTENSI KEMAMPUAN DAN KEPRIBADIAN CPMI</h2>
+            <h3>KLINIK UTAMA MEDILAB - BATAM</h3>
+        </div>
+
+        <!-- DISCLAIMER -->
+        <div class="disclaimer">
+            <strong>DISCLAIMER — TERBATAS!</strong><br>
+            Hanya digunakan dalam lingkungan <strong>KLINIK UTAMA MEDILAB</strong>.
+        </div>
+
+        <!-- INSTRUKSI -->
+        <div class="instruksi">
+            <h4>📋 Instruksi Mengerjakan</h4>
+            <ul>
+                <li>Anda akan mengerjakan <strong>BERBAGAI MACAM TES</strong> yang masing-masing instruksinya berbeda-beda.</li>
+                <li>Bacalah dengan sebaik-baiknya masing-masing instruksi tes tersebut.</li>
+                <li>Masing-masing tes ada <strong>WAKTU / TIMER</strong> yang telah ditentukan.</li>
+            </ul>
+        </div>
+
+        <!-- FORM IDENTITAS -->
+        <div class="form-section">
+            <h3>Identitas Peserta</h3>
+            <form id="formPeserta" onsubmit="return false;">
+
+                <!-- Nomor Peserta (otomatis) -->
+                <div class="form-group">
+                    <label>Nomor Peserta</label>
+                    <input type="text" id="nomorPeserta" readonly>
+                </div>
+
+                <!-- Nama -->
+                <div class="form-group">
+                    <label>Nama</label>
+                    <input type="text" id="nama" placeholder="Masukkan nama lengkap" required>
+                </div>
+
+                <!-- Lokasi / Cabang Pemeriksaan -->
+                <div class="form-group">
+                    <label>Lokasi / Cabang Pemeriksaan</label>
+                    <select id="cabangKlinik" onchange="tampilkanAlamat()" required>
+                        <option value="">-- Pilih Lokasi Pemeriksaan --</option>
+                        <option value="1">Klinik Medilab Sukajadi</option>
+                        <option value="2">Rumah Sakit Bhayangkara Batam</option>
+                        <option value="3">Klinik Medilab Batam Centre</option>
+                        <option value="4">Klinik Medilab Lubuk Baja</option>
+                        <option value="5">Klinik Medilab Bengkong</option>
+                    </select>
+
+                    <!-- BOX ALAMAT OTOMATIS -->
+                    <div id="alamatBox" class="alamat-box">
+                        <h5 id="namaCabang"></h5>
+                        <p id="alamatCabang"></p>
+                    </div>
+                </div>
+
+                <!-- Jenis Tempat Pemeriksaan -->
+                <div class="form-group">
+                    <label>Jenis Tempat Pemeriksaan</label>
+                    <select id="jenisTempat" required>
+                        <option value="">-- Pilih Jenis --</option>
+                        <option value="praktik">Praktik Mandiri</option>
+                        <option value="rs">Rumah Sakit</option>
+                    </select>
+                </div>
+
+                <!-- Tanggal Lahir -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tanggal Lahir</label>
+                        <input type="date" id="tglLahir" onchange="hitungUsia()" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tanggal Tes</label>
+                        <input type="date" id="tglTes" readonly>
+                    </div>
+                </div>
+
+                <!-- Usia -->
+                <div class="form-group">
+                    <label>Usia</label>
+                    <input type="text" id="usia" readonly placeholder="Otomatis dihitung">
+                </div>
+
+                <!-- Pendidikan -->
+                <div class="form-group">
+                    <label>Sekolah / Pendidikan</label>
+                    <select id="pendidikan" required>
+                        <option value="">-- Pilih Jenjang --</option>
+                        <option value="SD">SD</option>
+                        <option value="SMP">SMP</option>
+                        <option value="SMA">SMA</option>
+                        <option value="SMK">SMK</option>
+                        <option value="PT">Perguruan Tinggi</option>
+                        <option value="lain">Lainnya</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn-next" onclick="lanjutkan()">Selanjutnya →</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ===== DATA 5 CABANG KLINIK + ALAMAT =====
+        const dataKlinik = {
+            "1": {
+                nama: "Klinik Medilab Sukajadi",
+                alamat: "Jl. Sukajadi No. 13, Sukajadi, Batam, Kepulauan Riau 29124"
+            },
+            "2": {
+                nama: "Rumah Sakit Bhayangkara Batam",
+                alamat: "Jl. Polda, Tlk. Tering, Batam, Kepulauan Riau 29144"
+            },
+            "3": {
+                nama: "Klinik Medilab Batam Centre",
+                alamat: "Jl. Engku Putri No. 1, Batam Centre, Batam, Kepulauan Riau 29461"
+            },
+            "4": {
+                nama: "Klinik Medilab Lubuk Baja",
+                alamat: "Jl. Raja Ali Haji No. 22, Lubuk Baja, Batam, Kepulauan Riau 29444"
+            },
+            "5": {
+                nama: "Klinik Medilab Bengkong",
+                alamat: "Jl. Bengkong Laut No. 8, Bengkong, Batam, Kepulauan Riau 29433"
+            }
+        };
+
+        // ===== TAMPILKAN ALAMAT OTOMATIS =====
+        function tampilkanAlamat() {
+            const pilihan = document.getElementById("cabangKlinik").value;
+            const box = document.getElementById("alamatBox");
+            const nama = document.getElementById("namaCabang");
+            const alamat = document.getElementById("alamatCabang");
+
+            if (pilihan === "") {
+                box.style.display = "none";
+            } else {
+                nama.textContent = "📍 " + dataKlinik[pilihan].nama;
+                alamat.textContent = dataKlinik[pilihan].alamat;
+                box.style.display = "block";
+            }
+        }
+
+        // ===== NOMOR PESERTA OTOMATIS =====
+        function generateNomorPeserta() {
+            const tgl = new Date();
+            const tglStr = tgl.getFullYear().toString().slice(-2) +
+                           String(tgl.getMonth() + 1).padStart(2, '0') +
+                           String(tgl.getDate()).padStart(2, '0');
+            const random = Math.floor(1000 + Math.random() * 9000);
+            document.getElementById("nomorPeserta").value = "PS-" + tglStr + "-" + random;
+        }
+
+        // ===== TANGGAL TES OTOMATIS =====
+        function setTanggalTes() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById("tglTes").value = today;
+        }
+
+        // ===== HITUNG USIA =====
+        function hitungUsia() {
+            const lahir = document.getElementById("tglLahir").value;
+            if (!lahir) return;
+            const tglLahir = new Date(lahir);
+            const tglTes = new Date(document.getElementById("tglTes").value);
+            let usia = tglTes.getFullYear() - tglLahir.getFullYear();
+            const m = tglTes.getMonth() - tglLahir.getMonth();
+            if (m < 0 || (m === 0 && tglTes.getDate() < tglLahir.getDate())) usia--;
+            document.getElementById("usia").value = usia + " tahun";
+        }
+
+        // ===== TOMBOL SELANJUTNYA =====
+        function lanjutkan() {
+            const cabang = document.getElementById("cabangKlinik").value;
+            if (!cabang) {
+                alert("Silakan pilih lokasi / cabang pemeriksaan terlebih dahulu.");
+                return;
+            }
+            alert("Data tersimpan. Melanjutkan ke halaman tes...\n\nCabang: " +
+                  dataKlinik[cabang].nama + "\nAlamat: " + dataKlinik[cabang].alamat);
+            // window.location.href = "tes.html";
+        }
+
+        // ===== INISIALISASI =====
+        window.onload = function() {
+            generateNomorPeserta();
+            setTanggalTes();
+        };
+    </script>
+</body>
+</html>
