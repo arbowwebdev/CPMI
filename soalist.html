@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tes IST Adaptif – Psikogram Otomatis</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f9fafb;
+      color: #1f2937;
+    }
+    .section { display: none; }
+    .active { display: block; }
+    input, button {
+      padding: 10px;
+      margin: 6px 0;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+    }
+    button {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+    .timer {
+      text-align: center;
+      font-size: 16px;
+      margin: 8px 0;
+      color: #4b5563;
+    }
+    .question-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      margin: 20px 0;
+    }
+    .options label {
+      display: block;
+      margin: 10px 0;
+      padding: 8px;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .options input { margin-right: 10px; }
+    progress {
+      width: 100%;
+      height: 10px;
+      margin: 10px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      border: 1px solid #9ca3af;
+      padding: 10px;
+      text-align: left;
+    }
+    th { background: #e5e7eb; }
+    @media print {
+      body { background: white; }
+      button, .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Bagian 1: Identitas -->
+<div id="section-identitas" class="section active">
+  <h2>Formulir Identitas Peserta</h2>
+  <form id="form-identitas">
+    <label>Nama Lengkap:</label>
+    <input type="text" id="nama" required placeholder="Contoh: Syahwal Karta" />
+    <label>Usia (tahun):</label>
+    <input type="number" id="usia" min="15" max="70" required />
+    <label>Tanggal Tes:</label>
+    <input type="date" id="tanggal-tes" required />
+    <button type="submit">Mulai Tes</button>
+  </form>
+</div>
+
+<!-- Bagian 2: Soal -->
+<div id="section-soal" class="section">
+  <div style="text-align:center;">
+    <div id="subtest-title" style="font-weight:bold; margin-bottom:5px;">Subtes SE – Verbal</div>
+    <progress id="progress-bar" value="0" max="20"></progress>
+    <div>Soal: <span id="nomor-soal">1</span> / 20</div>
+    <div class="timer">Sisa waktu: <span id="countdown">6:00</span></div>
+  </div>
+  <div id="question-box" class="question-box"></div>
+  <button id="next-btn" style="display:none;">Soal Berikutnya</button>
+</div>
+
+<!-- Bagian 3: Hasil & Psikogram -->
+<div id="section-hasil" class="section">
+  <h2>Ringkasan Hasil Pemeriksaan Psikologi</h2>
+  <p><em>(Resume of Psychological Assessment)</em></p>
+
+  <table>
+    <tr><th>1</th><th>Nama Peserta</th><td id="hasil-nama"></td></tr>
+    <tr><th>2</th><th>Usia</th><td id="hasil-usia"></td></tr>
+    <tr><th>3</th><th>Tanggal Tes</th><td id="hasil-tanggal"></td></tr>
+    <tr><th>4</th><th>Perkiraan IQ</th><td id="hasil-iq"></td></tr>
+    <tr><th>5</th><th>Kategori IQ</th><td id="hasil-kategori"></td></tr>
+  </table>
+
+  <h3>1. Kemampuan Intelektual</h3>
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="2">ASPEK</th>
+        <th rowspan="2">URAIAN</th>
+        <th colspan="5">KATEGORI</th>
+      </tr>
+      <tr>
+        <th>R</th><th>K</th><th>C</th><th>B</th><th>T</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>D</td><td>Kemampuan Verbal (SE)</td>
+        <td><input type="radio" name="kat-D" disabled></td>
+        <td><input type="radio" name="kat-D" disabled></td>
+        <td><input type="radio" name="kat-D" disabled></td>
+        <td><input type="radio" name="kat-D" disabled></td>
+        <td><input type="radio" name="kat-D" disabled></td>
+      </tr>
+      <tr><td>A</td><td>Logika Konsep (WA)</td>
+        <td><input type="radio" name="kat-A" disabled></td>
+        <td><input type="radio" name="kat-A" disabled></td>
+        <td><input type="radio" name="kat-A" disabled></td>
+        <td><input type="radio" name="kat-A" disabled></td>
+        <td><input type="radio" name="kat-A" disabled></td>
+      </tr>
+      <tr><td>B</td><td>Analogi Relasional (AN)</td>
+        <td><input type="radio" name="kat-B" disabled></td>
+        <td><input type="radio" name="kat-B" disabled></td>
+        <td><input type="radio" name="kat-B" disabled></td>
+        <td><input type="radio" name="kat-B" disabled></td>
+        <td><input type="radio" name="kat-B" disabled></td>
+      </tr>
+      <tr><td>C</td><td>Numerikal (RA)</td>
+        <td><input type="radio" name="kat-C" disabled></td>
+        <td><input type="radio" name="kat-C" disabled></td>
+        <td><input type="radio" name="kat-C" disabled></td>
+        <td><input type="radio" name="kat-C" disabled></td>
+        <td><input type="radio" name="kat-C" disabled></td>
+      </tr>
+    </tbody>
+  </table>
+  <p><strong>Keterangan:</strong> R: Rendah, K: Kurang, C: Cukup, B: Baik, T: Tinggi</p>
+
+  <div class="no-print" style="margin-top: 20px; display: flex; gap: 10px;">
+    <button onclick="simpanJSON()">Simpan sebagai JSON</button>
+    <button onclick="window.print()">Cetak Psikogram</button>
+    <button onclick="location.reload()">Ulangi Tes</button>
+  </div>
+</div>
+
+<script>
+// === SOAL DARI PDF ASLI ===
+const bankSoal = {
+  SE: [
+    { q: "Pengaruh seseorang terhadap orang lain seharusnya bergantung pada .....", o: ["kekuasaan", "bujukan", "kekayaan", "keberanian", "kewibawaan"], a: 4 },
+    { q: "Lawannya 'hemat' ialah .....", o: ["murah", "kikir", "boros", "bernilai", "kaya"], a: 2 },
+    { q: "........... tidak termasuk cuaca", o: ["angin puyuh", "halilintar", "salju", "gempa bumi", "kabut"], a: 3 },
+    { q: "Lawannya 'setia' ialah ...", o: ["cinta", "benci", "persahabatan", "khianat", "permusuhan"], a: 3 },
+    { q: "Seekor kuda selalu mempunyai .....", o: ["kandang", "ladam", "pelana", "kuku", "surai"], a: 3 },
+    { q: "Seorang paman ... lebih tua dari kemenakannya.", o: ["jarang", "biasanya", "selalu", "tidak pernah", "kadang-kadang"], a: 1 },
+    { q: "Pada jumlah yang sama, nilai kalori yang tertinggi terdapat pada...", o: ["ikan", "daging", "lemak", "tahu", "sayuran"], a: 2 },
+    { q: "Pada suatu pertandingan selalu terdapat ......", o: ["lawan", "wasit", "penonton", "sorak", "kemenangan"], a: 0 },
+    { q: "Suatu pernyataan yang belum dipastikan dikatakan sebagai pernyataan yang.....", o: ["paradoks", "tergesa-gesa", "mempunyai arti rangkap", "menyesatkan", "hipotesis"], a: 4 },
+    { q: "Pada sepatu selalu terdapat", o: ["kulit", "sol", "tali sepatu", "gesper", "lidah"], a: 1 },
+    { q: "Suatu.... tidak menyangkut persoalan pencegahan kecelakaan.", o: ["lampu lalu lintas", "kacamata pelindung", "kotak PPPK", "tanda peringatan", "palang kereta api"], a: 2 },
+    { q: "Mata uang logam Rp 50,- tahun 1991, garis tengahnya ialah . mm.", o: ["17", "29", "25", "20", "15"], a: 2 },
+    { q: "Seseorang yang bersikap menyangsikan setiap kemajuan ialah seorang yang ..... ", o: ["demokratis", "radikal", "liberal", "konservatif", "anarkis"], a: 3 },
+    { q: "Lawannya 'tidak pernah' ialah.....", o: ["sering", "kadang-kadang", "jarang", "kerap kali", "selalu"], a: 4 },
+    { q: "Jarak antara Jakarta - Surabaya kira-kira Km", o: ["650", "1000", "800", "600", "950"], a: 2 },
+    { q: "Untuk dapat membuat nada yang rendah dan mendalam, kita memerlukan banyak", o: ["kekuatan", "peranan", "ayunan", "berat", "suara"], a: 3 },
+    { q: "Ayah .... lebih berpengalaman dari pada anaknya", o: ["selalu", "biasanya", "jauh", "jarang", "pada dasarnya"], a: 1 },
+    { q: "Diantara kota-kota berikut ini, maka kota ..... letaknya paling selatan.", o: ["Jakarta", "Bandung", "Cirebon", "Semarang", "Surabaya"], a: 4 },
+    { q: "Jika kita mengetahui jumlah presentase nomor-nomor lotere yang tidak menang, maka kita dapat menghitung.....", o: ["jumlah nomor yang menang", "pajak lotere", "kemungkinan menang", "jumlah pengikut", "tinggi keuntungan"], a: 0 },
+    { q: "Seorang anak yang berumur 10 tahun tingginya rata-rata .... cm", o: ["150", "130", "110", "105", "115"], a: 1 }
+  ],
+  WA: [
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: lingkungan, panah, elips, busur, lengkungan", o: ["lingkungan", "panah", "elips", "busur", "lengkungan"], a: 0 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: mengetuk, memaki, menggergaji, menjahit, memukul", o: ["mengetuk", "memaki", "menggergaji", "menjahit", "memukul"], a: 1 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: lebar, keliling, luas, isi, panjang", o: ["lebar", "keliling", "luas", "isi", "panjang"], a: 3 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: mengikat, menyatukan, melepaskan, mengaitkan, melekatkan", o: ["mengikat", "menyatukan", "melepaskan", "mengaitkan", "melekatkan"], a: 2 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: arah, timur, tujuan, perjalanan, selatan", o: ["arah", "timur", "tujuan", "perjalanan", "selatan"], a: 3 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: jarak, perpisahan, tugas, batas, perceraian", o: ["jarak", "perpisahan", "tugas", "batas", "perceraian"], a: 2 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: saringan, kelambu, payung, tapisan, jala", o: ["saringan", "kelambu", "payung", "tapisan", "jala"], a: 2 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: putih, pucat, buram, kasar, berkilauan", o: ["putih", "pucat", "buram", "kasar", "berkilauan"], a: 3 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: otobis, pesawat terbang, sepeda motor, sepeda, kapal api", o: ["otobis", "pesawat terbang", "sepeda motor", "sepeda", "kapal api"], a: 3 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: biola, seruling, klarinet, terompet, saxophon", o: ["biola", "seruling", "klarinet", "terompet", "saxophon"], a: 0 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: bergelombang, kasar, berduri, licin, lurus", o: ["bergelombang", "kasar", "berduri", "licin", "lurus"], a: 4 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: jam, kompas, penunjuk jalan, bintang pari, arah", o: ["jam", "kompas", "penunjuk jalan", "bintang pari", "arah"], a: 0 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: kebijaksanaan, pendidikan, perencanaan, penempatan, pengerahan", o: ["kebijaksanaan", "pendidikan", "perencanaan", "penempatan", "pengerahan"], a: 1 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: bermotor, berjalan, berlayar, bersepeda", o: ["bermotor", "berjalan", "berlayar", "bersepeda"], a: 1 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: gambar, lukisan, potret, patung, ukiran", o: ["gambar", "lukisan", "potret", "patung", "ukiran"], a: 3 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: panjang, lonjong, runcing, bulat, bersudut", o: ["panjang", "lonjong", "runcing", "bulat", "bersudut"], a: 0 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: kunci, palang pintu, gerendel, gunting, obeng", o: ["kunci", "palang pintu", "gerendel", "gunting", "obeng"], a: 3 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: jembatan, batas, perkawinan, pagar, masyarakat", o: ["jembatan", "batas", "perkawinan", "pagar", "masyarakat"], a: 4 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: mengetam, menasehati, mengasah, melicinkan, menggosok", o: ["mengetam", "menasehati", "mengasah", "melicinkan", "menggosok"], a: 1 },
+    { q: "Dari kelima kata berikut, carilah satu kata yang tidak memiliki kesamaan dengan keempat kata lainnya: batu, baja, bulu, karet, kayu", o: ["batu", "baja", "bulu", "karet", "kayu"], a: 2 }
+  ],
+  AN: [
+    { q: "Menemukan : menghilangkan = Mengingat : ?", o: ["menghapal", "mengenai", "melupakan", "berpikir", "memimpikan"], a: 2 },
+    { q: "Bunga : jambangan = Burung : ?", o: ["sarang", "langit", "pagar", "pohon", "sangkar"], a: 4 },
+    { q: "Kereta api : rel = Otobis : ?", o: ["roda", "poros", "ban", "jalan raya", "kecepatan"], a: 3 },
+    { q: "Perak : emas = Cincin : ?", o: ["arloji", "berlian", "permata", "gelang", "platina"], a: 3 },
+    { q: "Lingkaran : bola = Bujur sangkar : ?", o: ["bentuk", "gambar", "segi empat", "kubus", "piramida"], a: 3 },
+    { q: "Saran : kepustakaan = Merundingkan : ?", o: ["menawarkan", "menentukan", "menilai", "menimbang", "merenungkan"], a: 3 },
+    { q: "Lidah : asam = Hidung : ?", o: ["mencium", "bernapas", "mengecap", "tengik", "asin"], a: 3 },
+    { q: "Darah : pembuluh = Air : ?", o: ["pintu air", "sungai", "talang", "hujan", "ember"], a: 1 },
+    { q: "Saraf : penyalur = Pupil : ?", o: ["penyinaran", "mata", "melihat", "cahaya", "pelindung"], a: 3 },
+    { q: "Pengantar surat : pengantar telegram = Pandai besi : ?", o: ["palu godam", "pedagang besi", "api", "tukang emas", "besi tempa"], a: 0 },
+    { q: "Buta : warna = Tuli : ?", o: ["pendengaran", "mendengar", "nada", "kata", "telinga"], a: 3 },
+    { q: "Makanan : bumbu = Ceramah : ?", o: ["penghinaan", "pidato", "kelakar", "kesan", "ayat"], a: 2 },
+    { q: "Marah : emosi = Duka cita : ?", o: ["suka cita", "sakit hati", "suasana hati", "sedih", "rindu"], a: 3 },
+    { q: "Mantel : jubah = wool : ?", o: ["bahan sandang", "domba", "sutra", "jas", "tekstil"], a: 1 },
+    { q: "Ketinggian puncak : tekanan udara = ketinggian nada : ?", o: ["garpu tala", "sopran", "nyanyian", "panjang senar", "suara"], a: 3 },
+    { q: "Negara : revolusi = Hidup : ?", o: ["biologi", "keturunan", "mutasi", "seleksi", "ilmu hewan"], a: 2 },
+    { q: "Kekurangan : penemuan = Panas : ?", o: ["haus", "khatulistiwa", "es", "matahari", "dingin"], a: 4 },
+    { q: "Kayu : diketam = Besi : ?", o: ["dipalu", "digergaji", "dituang", "dikikir", "ditempa"], a: 4 },
+    { q: "Olahragawan : lembing = Cendekiawan : ?", o: ["perpustakaan", "penelitian", "karya", "studi", "mikroskop"], a: 2 },
+    { q: "Keledai : kuda pacuan = Pembakaran : ?", o: ["pemadam api", "obor", "letupan", "korek api", "lautan api"], a: 0 }
+  ],
+  RA: [
+    { q: "Jika seorang anak memiliki Rp 50.000 dan memberikan Rp 15.000 kepada orang lain, berapa rupiahkah yang masih tinggal padanya?", o: ["Rp 30.000", "Rp 35.000", "Rp 40.000", "Rp 45.000", "Rp 50.000"], a: 1 },
+    { q: "Berapa km-kah yang dapat ditempuh oleh kereta api dalam waktu 7 jam, jika kecepatannya 40 km/jam?", o: ["240 km", "280 km", "320 km", "360 km", "400 km"], a: 1 },
+    { q: "15 peti buah-buahan beratnya 250 kg dan setiap peti kosong beratnya 3 kg, berapakah berat buah-buahan itu?", o: ["205 kg", "210 kg", "215 kg", "220 kg", "225 kg"], a: 2 },
+    { q: "Seseorang mempunyai persediaan rumput yang cukup untuk 7 ekor kuda selama 78 hari. Berapa harikah persediaan itu cukup untuk 21 ekor kuda?", o: ["26 hari", "30 hari", "35 hari", "40 hari", "45 hari"], a: 0 },
+    { q: "3 batang coklat harganya Rp 15.000. Berapa batangkah yang dapat kita beli dengan Rp 50.000?", o: ["8 batang", "9 batang", "10 batang", "11 batang", "12 batang"], a: 2 },
+    { q: "Seseorang dapat berjalan 1,75 m dalam waktu 1/4 detik. Berapa meterkah yang dapat ia tempuh dalam waktu 10 detik?", o: ["60 m", "70 m", "80 m", "90 m", "100 m"], a: 1 },
+    { q: "Jika sebuah batu terletak 15 m di sebelah selatan dari sebatang pohon dan pohon itu berada 30 m di sebelah selatan dari sebuah rumah, berapa meterkah jarak antara batu dan rumah itu?", o: ["15 m", "30 m", "45 m", "60 m", "75 m"], a: 2 },
+    { q: "Jika 4/5 m bahan sandang harganya Rp 90.000, berapakah rupiahkah harganya 2 1/2 m?", o: ["Rp 225.000", "Rp 250.000", "Rp 275.000", "Rp 300.000", "Rp 325.000"], a: 0 },
+    { q: "7 orang dapat menyelesaikan sesuatu pekerjaan dalam 6 hari. Berapa orangkah yang diperlukan untuk menyelesaikan pekerjaan itu dalam setengah hari?", o: ["72 orang", "84 orang", "90 orang", "96 orang", "100 orang"], a: 1 },
+    { q: "Karena dipanaskan, kawat yang panjangnya 48 cm akan mengembang menjadi 52 cm. Setelah pemanasan, berapakah panjangnya kawat yang berukuran 72 cm?", o: ["75 cm", "78 cm", "80 cm", "82 cm", "85 cm"], a: 1 },
+    { q: "Suatu pabrik dapat menghasilkan 304 batang pensil dalam waktu 8 jam. Berapa batangkah dihasilkan dalam waktu setengah jam?", o: ["18 batang", "19 batang", "20 batang", "21 batang", "22 batang"], a: 1 },
+    { q: "Untuk suatu campuran diperlukan 2 bagian perak dan 3 bagian timah. Berapa gramkah perak yang diperlukan untuk mendapatkan campuran itu yang beratnya 15 gram?", o: ["5 gram", "6 gram", "7 gram", "8 gram", "9 gram"], a: 1 },
+    { q: "Untuk setiap Rp 3.000 yang dimiliki Sidin, Hamid memiliki Rp 5.000. Jika mereka bersama mempunyai Rp 120.000, berapa rupiahkah yang dimiliki Hamid?", o: ["Rp 60.000", "Rp 70.000", "Rp 75.000", "Rp 80.000", "Rp 85.000"], a: 2 },
+    { q: "Mesin A menenun 60 m kain, sedangkan mesin B menenun 40 m. Berapa meterkah yang ditenun mesin A, jika mesin B menenun 60 m?", o: ["80 m", "90 m", "100 m", "110 m", "120 m"], a: 1 },
+    { q: "Seseorang membelikan 1/10 dari uangnya untuk perangko dan 4 kali jumlah itu untuk alat tulis. Sisa uangnya masih Rp 60.000. Berapa rupiahkah uang semula?", o: ["Rp 100.000", "Rp 110.000", "Rp 120.000", "Rp 130.000", "Rp 140.000"], a: 2 },
+    { q: "Di dalam dua peti terdapat 43 piring. Di dalam peti yang satu terdapat 9 piring lebih banyak dari pada di dalam peti yang lain. Berapa buah piring terdapat di dalam peti yang lebih kecil?", o: ["17 piring", "18 piring", "19 piring", "20 piring", "21 piring"], a: 0 },
+    { q: "Suatu lembaran kain yang panjangnya 60 cm harus dibagikan sedemikian rupa sehingga panjangnya satu bagian ialah 2/3 dari bagian yang lain. Berapa panjangnya bagian yang terpendek?", o: ["20 cm", "24 cm", "28 cm", "30 cm", "32 cm"], a: 1 },
+    { q: "Suatu perusahaan mengekspor 1/4 dari hasil produksinya dan menjual 4/5 dari sisa itu dalam negeri. Berapa % kah hasil produksi yang masih tinggal?", o: ["10%", "15%", "20%", "25%", "30%"], a: 0 },
+    { q: "Jika suatu botol berisi anggur hanya 7/8 bagian dan harganya ialah Rp 84.000, berapakah harga anggur itu jika botol itu hanya terisi 1/2 penuh?", o: ["Rp 48.000", "Rp 50.000", "Rp 52.000", "Rp 54.000", "Rp 56.000"], a: 4 },
+    { q: "Di dalam suatu keluarga setiap anak perempuan mempunyai jumlah saudara laki-laki yang sama dengan jumlah saudara perempuan dan setiap anak laki-laki mempunyai dua kali lebih banyak saudara perempuan dari pada saudara laki-laki. Berapa anak laki-lakikah yang terdapat di dalam keluarga tersebut?", o: ["2 anak", "3 anak", "4 anak", "5 anak", "6 anak"], a: 0 }
+  ]
+};
+
+// === STATE ===
+let currentSubtest = 'SE';
+let currentIdx = 0;
+let skor = { SE: 0, WA: 0, AN: 0, RA: 0 };
+let timer;
+let sisaWaktu = 0;
+
+const waktuPerSubtes = {
+  SE: 6 * 60,
+  WA: 7 * 60,
+  AN: 8 * 60,
+  RA: 10 * 60
+};
+
+function formatWaktu(detik) {
+  const m = Math.floor(detik / 60);
+  const s = detik % 60;
+  return `${m}:${s < 10 ? '0' + s : s}`;
+}
+
+document.getElementById('form-identitas').addEventListener('submit', e => {
+  e.preventDefault();
+  const nama = document.getElementById('nama').value.trim();
+  const usia = document.getElementById('usia').value;
+  const tgl = document.getElementById('tanggal-tes').value;
+  if (nama && usia && tgl) {
+    document.getElementById('section-identitas').classList.remove('active');
+    document.getElementById('section-soal').classList.add('active');
+    mulaiSubtest('SE');
+  }
+});
+
+function mulaiSubtest(subtest) {
+  currentSubtest = subtest;
+  currentIdx = 0;
+  sisaWaktu = waktuPerSubtes[subtest];
+  document.getElementById('subtest-title').textContent = 
+    subtest === 'SE' ? 'Subtes SE – Verbal' :
+    subtest === 'WA' ? 'Subtes WA – Klasifikasi Konsep' :
+    subtest === 'AN' ? 'Subtes AN – Analogi' :
+    'Subtes RA – Numerikal';
+  document.getElementById('countdown').textContent = formatWaktu(sisaWaktu);
+  tampilkanSoal();
+
+  // Jalankan timer subtes — tidak reset saat ganti soal
+  clearInterval(timer);
+  timer = setInterval(() => {
+    sisaWaktu--;
+    document.getElementById('countdown').textContent = formatWaktu(sisaWaktu);
+    if (sisaWaktu <= 0) {
+      clearInterval(timer);
+      lanjutSubtes();
+    }
+  }, 1000);
+}
+
+function tampilkanSoal() {
+  if (currentIdx >= bankSoal[currentSubtest].length) {
+    lanjutSubtes();
+    return;
+  }
+
+  const soal = bankSoal[currentSubtest][currentIdx];
+  document.getElementById('nomor-soal').textContent = currentIdx + 1;
+  document.getElementById('progress-bar').value = currentIdx;
+
+  let html = `<h3>${soal.q}</h3><div class="options">`;
+  soal.o.forEach((opsi, i) => {
+    html += `<label><input type="radio" name="jawaban" value="${i}"> ${opsi}</label>`;
+  });
+  html += `</div>`;
+  document.getElementById('question-box').innerHTML = html;
+
+  document.getElementById('next-btn').style.display = 'none';
+  const inputs = document.querySelectorAll('input[name="jawaban"]');
+  inputs.forEach(input => {
+    input.addEventListener('change', () => {
+      const jawabanUser = parseInt(input.value);
+      if (jawabanUser === soal.a) skor[currentSubtest]++;
+      document.getElementById('next-btn').style.display = 'block';
+    });
+  });
+
+  document.getElementById('next-btn').onclick = () => {
+    currentIdx++;
+    tampilkanSoal();
+  };
+}
+
+function lanjutSubtes() {
+  if (currentSubtest === 'SE') mulaiSubtest('WA');
+  else if (currentSubtest === 'WA') mulaiSubtest('AN');
+  else if (currentSubtest === 'AN') mulaiSubtest('RA');
+  else tampilkanHasil();
+}
+
+function tampilkanHasil() {
+  clearInterval(timer);
+  document.getElementById('section-soal').classList.remove('active');
+  document.getElementById('section-hasil').classList.add('active');
+
+  const nama = document.getElementById('nama').value;
+  const usia = document.getElementById('usia').value;
+  const tgl = document.getElementById('tanggal-tes').value;
+  document.getElementById('hasil-nama').textContent = nama;
+  document.getElementById('hasil-usia').textContent = usia + ' tahun';
+  document.getElementById('hasil-tanggal').textContent = tgl;
+
+  const total = skor.SE + skor.WA + skor.AN + skor.RA;
+
+  let iq, kategori;
+  if (total <= 15) { iq = 70 + Math.floor((total / 15) * 14); kategori = "Di bawah rata-rata"; }
+  else if (total <= 25) { iq = 85 + Math.floor(((total - 15) / 10) * 9); kategori = "Rendah"; }
+  else if (total <= 35) { iq = 95 + Math.floor(((total - 25) / 10) * 9); kategori = "Rata-rata"; }
+  else if (total <= 45) { iq = 105 + Math.floor(((total - 35) / 10) * 9); kategori = "Rata-rata atas"; }
+  else if (total <= 55) { iq = 115 + Math.floor(((total - 45) / 10) * 9); kategori = "Tinggi"; }
+  else { iq = 125 + Math.floor(((total - 55) / 5) * 5); kategori = "Sangat tinggi"; }
+
+  document.getElementById('hasil-iq').textContent = iq;
+  document.getElementById('hasil-kategori').textContent = kategori;
+
+  const map = { SE: 'D', WA: 'A', AN: 'B', RA: 'C' };
+  for (let sub of ['SE', 'WA', 'AN', 'RA']) {
+    let score = skor[sub];
+    let level = 'R';
+    if (score >= 15) level = 'T';
+    else if (score >= 12) level = 'B';
+    else if (score >= 9) level = 'C';
+    else if (score >= 6) level = 'K';
+    const idx = ['R','K','C','B','T'].indexOf(level);
+    document.querySelectorAll(`input[name="kat-${map[sub]}"]`)[idx].checked = true;
+  }
+}
+
+function simpanJSON() {
+  const data = {
+    nama: document.getElementById('nama').value,
+    usia: document.getElementById('usia').value,
+    tanggal_tes: document.getElementById('tanggal-tes').value,
+    skor: skor,
+    total_skor: skor.SE + skor.WA + skor.AN + skor.RA,
+    iq: parseInt(document.getElementById('hasil-iq').textContent),
+    kategori_iq: document.getElementById('hasil-kategori').textContent
+  };
+
+  fetch('simpan.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+  .then(response => response.json())
+  .then(result => {
+    if (result.status === 'sukses') {
+      alert('Data berhasil disimpan ke folder "data"!');
+    } else {
+      alert('Gagal menyimpan: ' + (result.error || 'Error tidak diketahui'));
+    }
+  })
+  .catch(err => {
+    alert('Error koneksi. Pastikan Anda menjalankan via server (misal: Live Server).');
+    console.error(err);
+  });
+}
+</script>
+
+</body>
+</html>

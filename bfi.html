@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tes Kepribadian CPMI - BFI & Reflektif</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 22px; margin-bottom: 8px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .content { padding: 30px; }
+        .intro-box {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        .section-title {
+            background: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 25px 0 20px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .question-card {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 12px;
+            transition: all 0.3s;
+        }
+        .question-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-color: #3498db;
+        }
+        .question-number {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 26px;
+            font-weight: bold;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+        .question-text {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+        .scenario-box {
+            background: #fff3cd;
+            border-left: 3px solid #f39c12;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #856404;
+            border-radius: 0 6px 6px 0;
+            font-style: italic;
+        }
+        .scale-container {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .scale-option { flex: 1; min-width: 90px; }
+        .scale-option input[type="radio"] { display: none; }
+        .scale-option label {
+            display: block;
+            padding: 8px 6px;
+            text-align: center;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+            color: #555;
+        }
+        .scale-option label:hover {
+            border-color: #3498db;
+            background: #e8f4f8;
+        }
+        .scale-option input[type="radio"]:checked + label {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+            font-weight: bold;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46,204,113,0.4);
+        }
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            transition: width 0.3s;
+        }
+        .progress-text {
+            text-align: right;
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        .hidden { display: none !important; }
+
+        /* Halaman Selesai */
+        .finish-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .finish-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+        }
+        .finish-title {
+            font-size: 26px;
+            color: #27ae60;
+            margin-bottom: 15px;
+        }
+        .finish-message {
+            font-size: 15px;
+            color: #555;
+            line-height: 1.7;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+        .finish-note {
+            background: #fff3cd;
+            border: 1px solid #f39c12;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 600px;
+            font-size: 13px;
+            color: #856404;
+        }
+        .storage-info {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 600px;
+            font-size: 13px;
+            color: #155724;
+            font-family: monospace;
+            text-align: left;
+        }
+        @media (max-width: 600px) {
+            .scale-container { flex-direction: column; }
+            .scale-option { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 Tes Kepribadian CPMI</h1>
+            <p>Tes BFI & Studi Kasus Reflektif</p>
+        </div>
+
+        <div class="content">
+            <!-- HALAMAN AWAL -->
+            <div id="introSection">
+                <div class="intro-box">
+                    <strong>Tes ini terdiri dari dua bagian:</strong><br>
+                    • <strong>Bagian 1:</strong> 20 Pernyataan BFI (Big Five Inventory)<br>
+                    • <strong>Bagian 2:</strong> 20 Pertanyaan Reflektif Situasional<br><br>
+                    Pilihlah jawaban yang paling sesuai dengan diri Anda. Tidak ada jawaban benar atau salah.
+                </div>
+                <button class="btn" onclick="startTest()">Mulai Bagian 1 (BFI)</button>
+            </div>
+
+            <!-- BAGIAN 1: BFI -->
+            <div id="bfiSection" class="hidden">
+                <div class="section-title">Bagian 1: Kuesioner Kepribadian (BFI)</div>
+                <div class="intro-box">
+                    Pilih tingkat kesesuaian pernyataan berikut dengan diri Anda.<br>
+                    <strong>1</strong> = Sangat Tidak Sesuai | <strong>5</strong> = Sangat Sesuai
+                </div>
+                <div class="progress-text" id="bfiProgressText">0 dari 20 pertanyaan dijawab</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="bfiProgressFill" style="width: 0%"></div>
+                </div>
+                <div id="bfiQuestions"></div>
+                <button class="btn btn-secondary" id="bfiNextBtn" onclick="goToReflective()" disabled>
+                    Lanjut ke Bagian 2 →
+                </button>
+            </div>
+
+            <!-- BAGIAN 2: REFLEKTIF -->
+            <div id="reflectiveSection" class="hidden">
+                <div class="section-title">Bagian 2: Studi Kasus Reflektif</div>
+                <div class="intro-box">
+                    Pilih <strong>satu tindakan</strong> yang paling mungkin Anda lakukan dalam situasi berikut.
+                </div>
+                <div class="progress-text" id="refProgressText">0 dari 20 pertanyaan dijawab</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="refProgressFill" style="width: 0%"></div>
+                </div>
+                <div id="reflectiveQuestions"></div>
+                <button class="btn" id="submitBtn" onclick="finishTest()" disabled>
+                    Selesai & Kumpulkan
+                </button>
+            </div>
+
+            <!-- HALAMAN SELESAI -->
+            <div id="finishSection" class="hidden">
+                <div class="finish-screen">
+                    <div class="finish-icon">✅</div>
+                    <div class="finish-title">Tes Selesai!</div>
+                    <div class="finish-message">
+                        Terima Kasih<br><br>
+                        Jawaban Anda telah berhasil direkam dan disimpan di sistem berdasarkan masing-masing kategori secara otomatis.
+                    </div>
+                    <div class="finish-note">
+                        ⚠️ <strong>Skor tidak ditampilkan untuk menjaga objektivitas hasil psikogram.</strong>
+                        Hasil akan diproses dan dapat dilihat pada halaman <strong>hasil.html</strong>.
+                    </div>
+                    <div class="storage-info" id="storageInfo"></div>
+                    <button class="btn btn-secondary" onclick="location.href='hasil.html'" style="max-width: 400px; margin: 20px auto;">
+                        Lihat Hasil Psikogram →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ============================================================
+    // KONFIGURASI DIMENSI & PEMETAAN
+    // ============================================================
+    const STORAGE_KEY = 'cpmi_psikogram_data';
+
+    const dimensionInfo = {
+        O: { name: 'Openness to Experience', desc: 'Keterbukaan terhadap pengalaman baru, kreativitas, rasa ingin tahu.' },
+        C: { name: 'Conscientiousness', desc: 'Kedisiplinan, tanggung jawab, orientasi pada hasil.' },
+        E: { name: 'Extraversion', desc: 'Kecenderungan bersosialisasi, energi positif, ketegasan.' },
+        A: { name: 'Agreeableness', desc: 'Keramahan, kerja sama, empati, kepedulian.' },
+        N: { name: 'Neuroticism', desc: 'Kecenderungan emosi negatif (anxiety, stres).' }
+    };
+
+    const categoryRanges = [
+        { code: 'R', label: 'Rendah', min: 1.00, max: 2.00, class: 'category-R' },
+        { code: 'K', label: 'Kurang', min: 2.01, max: 2.75, class: 'category-K' },
+        { code: 'C', label: 'Cukup', min: 2.76, max: 3.50, class: 'category-C' },
+        { code: 'B', label: 'Baik',   min: 3.51, max: 4.25, class: 'category-B' },
+        { code: 'T', label: 'Tinggi', min: 4.26, max: 5.00, class: 'category-T' }
+    ];
+
+    function getCategory(score) {
+        return categoryRanges.find(c => score >= c.min && score <= c.max) || categoryRanges[0];
+    }
+
+    // ============================================================
+    // SOAL BFI (20 soal, 4 per dimensi OCEAN)
+    // ============================================================
+    const bfiQuestions = [
+        // Openness (O)
+        { id: 'b1', dim: 'O', text: 'Saya suka mencoba pengalaman dan hal-hal baru.' },
+        { id: 'b2', dim: 'O', text: 'Saya memiliki imajinasi yang hidup dan kreatif.' },
+        { id: 'b3', dim: 'O', text: 'Saya tertarik mempelajari berbagai hal yang berbeda.' },
+        { id: 'b4', dim: 'O', text: 'Saya suka berpikir tentang ide-ide yang abstrak dan kompleks.' },
+        // Conscientiousness (C)
+        { id: 'b5', dim: 'C', text: 'Saya selalu menyelesaikan tugas tepat waktu dan sesuai target.' },
+        { id: 'b6', dim: 'C', text: 'Saya suka membuat rencana dan mengikuti langkah-langkah sistematis.' },
+        { id: 'b7', dim: 'C', text: 'Saya bekerja keras dan berdedikasi untuk mencapai hasil terbaik.' },
+        { id: 'b8', dim: 'C', text: 'Saya sangat memperhatikan detail dan ketelitian dalam pekerjaan.' },
+        // Extraversion (E)
+        { id: 'b9',  dim: 'E', text: 'Saya merasa energik dan antusias saat bekerja dengan orang lain.' },
+        { id: 'b10', dim: 'E', text: 'Saya mudah bergaul dan membangun hubungan dengan orang baru.' },
+        { id: 'b11', dim: 'E', text: 'Saya suka mengambil inisiatif dan memimpin dalam kelompok.' },
+        { id: 'b12', dim: 'E', text: 'Saya nyaman berbicara di depan banyak orang.' },
+        // Agreeableness (A)
+        { id: 'b13', dim: 'A', text: 'Saya peduli dan memperhatikan perasaan orang lain.' },
+        { id: 'b14', dim: 'A', text: 'Saya suka membantu dan mendukung rekan kerja.' },
+        { id: 'b15', dim: 'A', text: 'Saya mudah memaafkan dan tidak menyimpan dendam.' },
+        { id: 'b16', dim: 'A', text: 'Saya berusaha menghindari konflik dan mencari solusi bersama.' },
+        // Neuroticism (N) - INVERS
+        { id: 'b17', dim: 'N', text: 'Saya mudah merasa cemas dan khawatir berlebihan.' },
+        { id: 'b18', dim: 'N', text: 'Saya sering merasa tertekan ketika menghadapi masalah.' },
+        { id: 'b19', dim: 'N', text: 'Saya mudah marah atau frustrasi saat ada hambatan.' },
+        { id: 'b20', dim: 'N', text: 'Saya sulit mengendalikan emosi dalam situasi sulit.' }
+    ];
+
+    // ============================================================
+    // SOAL REFLEKTIF (20 soal, dipetakan ke aspek psikogram)
+    // Setiap soal: scenario + 4 pilihan dengan bobot 1-5
+    // ============================================================
+    const reflectiveQuestions = [
+        // Orientasi Hasil (C)
+        {
+            id: 'r1', aspect: 'orientasiHasil',
+            scenario: 'Anda mendapat tugas dengan deadline ketat 2 hari, padahal biasanya butuh 5 hari.',
+            options: [
+                { text: 'Menolak tugas karena tidak realistis', weight: 1 },
+                { text: 'Mengerjakan sebisanya dalam waktu tersedia', weight: 2 },
+                { text: 'Meminta bantuan rekan agar selesai tepat waktu', weight: 3 },
+                { text: 'Membuat rencana kerja intensif dan menyelesaikannya tepat waktu', weight: 5 }
+            ]
+        },
+        {
+            id: 'r2', aspect: 'orientasiHasil',
+            scenario: 'Target bulanan tim belum tercapai, tinggal 1 minggu lagi.',
+            options: [
+                { text: 'Menerima bahwa target tidak akan tercapai', weight: 1 },
+                { text: 'Mengerjakan tugas rutin seperti biasa', weight: 2 },
+                { text: 'Meningkatkan effort pribadi saja', weight: 3 },
+                { text: 'Mengkoordinasi tim dan membuat strategi percepatan', weight: 5 }
+            ]
+        },
+        // Fleksibilitas (O)
+        {
+            id: 'r3', aspect: 'fleksibilitas',
+            scenario: 'Proyek yang sudah direncanakan 1 bulan tiba-tiba berubah total arahannya.',
+            options: [
+                { text: 'Frustrasi dan sulit menerima perubahan', weight: 1 },
+                { text: 'Menerima dengan berat hati tapi lambat beradaptasi', weight: 2 },
+                { text: 'Menerima dan mulai menyesuaikan diri', weight: 3 },
+                { text: 'Cepat beradaptasi dan melihat peluang dalam perubahan', weight: 5 }
+            ]
+        },
+        {
+            id: 'r4', aspect: 'fleksibilitas',
+            scenario: 'Anda dipindahkan ke divisi baru yang belum pernah Anda masuki.',
+            options: [
+                { text: 'Menolak karena tidak nyaman dengan ketidakpastian', weight: 1 },
+                { text: 'Menerima tapi terus merasa cemas', weight: 2 },
+                { text: 'Menerima dan belajar perlahan', weight: 3 },
+                { text: 'Antusias mempelajari hal baru di divisi tersebut', weight: 5 }
+            ]
+        },
+        // Sistematika Kerja (C)
+        {
+            id: 'r5', aspect: 'sistematikaKerja',
+            scenario: 'Anda mendapat proyek kompleks dengan banyak tahapan.',
+            options: [
+                { text: 'Langsung mengerjakan tanpa rencana', weight: 1 },
+                { text: 'Mengerjakan bagian yang disukai dulu', weight: 2 },
+                { text: 'Membuat daftar tugas tapi tidak terlalu detail', weight: 3 },
+                { text: 'Membuat timeline, breakdown tugas, dan checklist', weight: 5 }
+            ]
+        },
+        {
+            id: 'r6', aspect: 'sistematikaKerja',
+            scenario: 'Atasan meminta laporan mingguan yang terstruktur.',
+            options: [
+                { text: 'Membuat laporan asal jadi', weight: 1 },
+                { text: 'Membuat laporan tapi tidak konsisten formatnya', weight: 2 },
+                { text: 'Mengikuti template yang ada', weight: 3 },
+                { text: 'Membuat template sendiri yang lebih sistematis dan konsisten', weight: 5 }
+            ]
+        },
+        // Motivasi Berprestasi (C + E)
+        {
+            id: 'r7', aspect: 'motivasiBerprestasi',
+            scenario: 'Ada peluang mengikuti kompetisi internal dengan hadiah menarik.',
+            options: [
+                { text: 'Tidak tertarik, takut gagal', weight: 1 },
+                { text: 'Pertimbangkan tapi ragu-ragu', weight: 2 },
+                { text: 'Ikut jika diajak rekan', weight: 3 },
+                { text: 'Langsung mendaftar dan mempersiapkan diri maksimal', weight: 5 }
+            ]
+        },
+        {
+            id: 'r8', aspect: 'motivasiBerprestasi',
+            scenario: 'Anda baru saja mencapai target, atasan menawarkan target lebih tinggi.',
+            options: [
+                { text: 'Menolak karena sudah puas dengan pencapaian sekarang', weight: 1 },
+                { text: 'Menerima tapi tanpa antusiasme', weight: 2 },
+                { text: 'Menerima dengan semangat biasa', weight: 3 },
+                { text: 'Sangat antusias dan langsung merencanakan strategi', weight: 5 }
+            ]
+        },
+        // Kerja Sama (A + E)
+        {
+            id: 'r9', aspect: 'kerjaSama',
+            scenario: 'Rekan tim tidak berkontribusi dalam proyek kelompok.',
+            options: [
+                { text: 'Mengerjakan semuanya sendiri dan mengeluh', weight: 1 },
+                { text: 'Melaporkan ke atasan tanpa bicara langsung', weight: 2 },
+                { text: 'Membagi tugas ulang secara adil', weight: 3 },
+                { text: 'Bicara empat mata, cari tahu kendalanya, dan kolaborasi ulang', weight: 5 }
+            ]
+        },
+        {
+            id: 'r10', aspect: 'kerjaSama',
+            scenario: 'Tim Anda harus membuat keputusan penting tapi ada perbedaan pendapat.',
+            options: [
+                { text: 'Memaksakan pendapat sendiri', weight: 1 },
+                { text: 'Mengalah saja agar tidak ribut', weight: 2 },
+                { text: 'Mencari kompromi di tengah', weight: 3 },
+                { text: 'Fasilitasi diskusi untuk menemukan solusi terbaik bersama', weight: 5 }
+            ]
+        },
+        // Keterampilan Interpersonal (E + A)
+        {
+            id: 'r11', aspect: 'keterampilanInterpersonal',
+            scenario: 'Rekan kerja terlihat sedih dan pendiam hari ini.',
+            options: [
+                { text: 'Tidak peduli, itu urusan pribadi', weight: 1 },
+                { text: 'Perhatikan tapi tidak bertanya', weight: 2 },
+                { text: 'Menyapa dan bertanya singkat', weight: 3 },
+                { text: 'Mendekat, bertanya dengan empati, dan menawarkan bantuan', weight: 5 }
+            ]
+        },
+        {
+            id: 'r12', aspect: 'keterampilanInterpersonal',
+            scenario: 'Klien marah karena kesalahan yang bukan sepenuhnya tanggung jawab Anda.',
+            options: [
+                { text: 'Membela diri dan menyalahkan pihak lain', weight: 1 },
+                { text: 'Diam saja dan menunggu atasan menangani', weight: 2 },
+                { text: 'Meminta maaf dan menjelaskan situasi', weight: 3 },
+                { text: 'Mendengarkan aktif, validasi perasaannya, dan cari solusi', weight: 5 }
+            ]
+        },
+        // Stabilitas Emosi (invers N)
+        {
+            id: 'r13', aspect: 'stabilitasEmosi',
+            scenario: 'Anda menerima kritik tajam dari atasan di depan rekan-rekan.',
+            options: [
+                { text: 'Marah dan merasa dipermalukan', weight: 1 },
+                { text: 'Tersinggung tapi diam', weight: 2 },
+                { text: 'Sedih tapi mencoba menerima', weight: 3 },
+                { text: 'Tetap tenang, dengarkan, dan jadikan bahan evaluasi', weight: 5 }
+            ]
+        },
+        {
+            id: 'r14', aspect: 'stabilitasEmosi',
+            scenario: 'Komputer Anda crash dan file penting belum tersimpan.',
+            options: [
+                { text: 'Panik dan marah-marah', weight: 1 },
+                { text: 'Stres dan sulit berpikir jernih', weight: 2 },
+                { text: 'Kesal tapi mulai mencari solusi', weight: 3 },
+                { text: 'Tetap tenang, coba recovery, dan buat backup ke depan', weight: 5 }
+            ]
+        },
+        {
+            id: 'r15', aspect: 'stabilitasEmosi',
+            scenario: 'Anda harus presentasi mendadak tanpa persiapan cukup.',
+            options: [
+                { text: 'Cemas berlebihan dan ingin menghindar', weight: 1 },
+                { text: 'Gugup tapi tetap maju dengan terbata-bata', weight: 2 },
+                { text: 'Deg-degan tapi menyusun poin cepat', weight: 3 },
+                { text: 'Fokus, susun kerangka, dan presentasi dengan percaya diri', weight: 5 }
+            ]
+        },
+        // Pengembangan Diri (O)
+        {
+            id: 'r16', aspect: 'pengembanganDiri',
+            scenario: 'Perusahaan menawarkan pelatihan gratis di luar jam kerja.',
+            options: [
+                { text: 'Tidak tertarik, waktu istirahat lebih penting', weight: 1 },
+                { text: 'Mungkin ikut jika topik sangat relevan', weight: 2 },
+                { text: 'Ikut jika tidak bentrok dengan kegiatan lain', weight: 3 },
+                { text: 'Antusias mendaftar dan menyiapkan diri', weight: 5 }
+            ]
+        },
+        {
+            id: 'r17', aspect: 'pengembanganDiri',
+            scenario: 'Anda merasa skill tertentu mulai tertinggal dari standar industri.',
+            options: [
+                { text: 'Tidak peduli, toh pekerjaan masih berjalan', weight: 1 },
+                { text: 'Sadar tapi menunda-nunda belajar', weight: 2 },
+                { text: 'Berencana belajar tapi belum konsisten', weight: 3 },
+                { text: 'Segera cari kursus, buku, atau mentor untuk upgrade skill', weight: 5 }
+            ]
+        },
+        // Mengelola Perubahan (O + C)
+        {
+            id: 'r18', aspect: 'mengelolaPerubahan',
+            scenario: 'Perusahaan menerapkan sistem kerja baru yang berbeda total.',
+            options: [
+                { text: 'Menolak dan terus pakai cara lama', weight: 1 },
+                { text: 'Mengeluh tapi akhirnya mengikuti', weight: 2 },
+                { text: 'Belajar sistem baru dengan usaha biasa', weight: 3 },
+                { text: 'Mempelajari dengan cepat dan membantu rekan beradaptasi', weight: 5 }
+            ]
+        },
+        {
+            id: 'r19', aspect: 'mengelolaPerubahan',
+            scenario: 'Tim Anda direstrukturisasi dan peran Anda berubah.',
+            options: [
+                { text: 'Resah dan mempertimbangkan resign', weight: 1 },
+                { text: 'Cemas tapi tetap bekerja', weight: 2 },
+                { text: 'Menerima dan menyesuaikan perlahan', weight: 3 },
+                { text: 'Melihat peluang baru dan proaktif mempelajari peran baru', weight: 5 }
+            ]
+        },
+        // Soal bonus stabilitas emosi tambahan
+        {
+            id: 'r20', aspect: 'stabilitasEmosi',
+            scenario: 'Anda menghadapi beberapa deadline bersamaan di minggu yang sama.',
+            options: [
+                { text: 'Overwhelm dan sulit tidur', weight: 1 },
+                { text: 'Stres tapi tetap mencoba mengerjakan', weight: 2 },
+                { text: 'Tegang tapi membuat prioritas', weight: 3 },
+                { text: 'Tetap tenang, buat plan, eksekusi satu per satu', weight: 5 }
+            ]
+        }
+    ];
+
+    // ============================================================
+    // PEMETAAN ASPEK PSIKOGRAM
+    // ============================================================
+    const psychogramMapping = {
+        sikapKerja: [
+            { code: 'A', name: 'Orientasi Hasil',
+              desc: 'Kemampuan untuk mempertahankan komitmen untuk menyelesaikan tugas secara bertanggung jawab dan memperlihatkan keterhubungan antara perencanaan dan hasil kerja.',
+              formula: (s) => s.C },
+            { code: 'B', name: 'Fleksibilitas',
+              desc: 'Kemampuan untuk menyesuaikan diri dalam menghadapi permasalahan.',
+              formula: (s) => s.O },
+            { code: 'C', name: 'Sistematika Kerja',
+              desc: 'Kemampuan untuk merencanakan hingga mengorganisasikan cara kerja dalam proses penyelesaian pekerjaannya.',
+              formula: (s) => s.C }
+        ],
+        kepribadian: [
+            { code: 'A', name: 'Motivasi Berprestasi',
+              desc: 'Kemampuan untuk menunjukkan prestasi dan mencapai target.',
+              formula: (s) => (s.C + s.E) / 2 },
+            { code: 'B', name: 'Kerja Sama',
+              desc: 'Kemampuan untuk menjalin, membina dan mengoptimalkan hubungan kerja yang efektif demi tercapainya tujuan bersama.',
+              formula: (s) => (s.A + s.E) / 2 },
+            { code: 'C', name: 'Keterampilan Interpersonal',
+              desc: 'Kemampuan untuk menjalin hubungan sosial dan mampu memahami kebutuhan orang lain.',
+              formula: (s) => (s.E + s.A) / 2 },
+            { code: 'D', name: 'Stabilitas Emosi',
+              desc: 'Kemampuan untuk memahami dan mengontrol emosi.',
+              formula: (s) => 6 - s.N }
+        ],
+        kemampuanBelajar: [
+            { code: 'A', name: 'Pengembangan Diri',
+              desc: 'Kemampuan untuk meningkatkan pengetahuan dan menyempurnakan keterampilan diri.',
+              formula: (s) => s.O },
+            { code: 'B', name: 'Mengelola Perubahan',
+              desc: 'Kemampuan dalam menyesuaikan diri dengan situasi yang baru.',
+              formula: (s) => (s.O + s.C) / 2 }
+        ]
+    };
+
+    // ============================================================
+    // RENDER SOAL
+    // ============================================================
+    function renderBFI() {
+        const container = document.getElementById('bfiQuestions');
+        container.innerHTML = bfiQuestions.map((q, i) => `
+            <div class="question-card">
+                <div class="question-text">
+                    <span class="question-number">${i + 1}</span>${q.text}
+                </div>
+                <div class="scale-container">
+                    ${[1,2,3,4,5].map(v => `
+                        <div class="scale-option">
+                            <input type="radio" name="${q.id}" id="${q.id}_${v}" value="${v}" onchange="updateBFIProgress()">
+                            <label for="${q.id}_${v}">${v}<br><small>${['Sangat Tidak Sesuai','Tidak Sesuai','Netral','Sesuai','Sangat Sesuai'][v-1]}</small></label>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderReflective() {
+        const container = document.getElementById('reflectiveQuestions');
+        container.innerHTML = reflectiveQuestions.map((q, i) => `
+            <div class="question-card">
+                <div class="question-text">
+                    <span class="question-number">${i + 1}</span>Situasi:
+                </div>
+                <div class="scenario-box">${q.scenario}</div>
+                <div class="scale-container">
+                    ${q.options.map((opt, j) => `
+                        <div class="scale-option">
+                            <input type="radio" name="${q.id}" id="${q.id}_${j}" value="${opt.weight}" onchange="updateRefProgress()">
+                            <label for="${q.id}_${j}">${String.fromCharCode(65+j)}<br><small>${opt.text}</small></label>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ============================================================
+    // NAVIGASI & PROGRESS
+    // ============================================================
+    function startTest() {
+        document.getElementById('introSection').classList.add('hidden');
+        document.getElementById('bfiSection').classList.remove('hidden');
+        renderBFI();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goToReflective() {
+        document.getElementById('bfiSection').classList.add('hidden');
+        document.getElementById('reflectiveSection').classList.remove('hidden');
+        renderReflective();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateBFIProgress() {
+        const answered = bfiQuestions.filter(q => document.querySelector(`input[name="${q.id}"]:checked`)).length;
+        const pct = (answered / bfiQuestions.length) * 100;
+        document.getElementById('bfiProgressFill').style.width = pct + '%';
+        document.getElementById('bfiProgressText').textContent = `${answered} dari ${bfiQuestions.length} pertanyaan dijawab`;
+        document.getElementById('bfiNextBtn').disabled = answered < bfiQuestions.length;
+    }
+
+    function updateRefProgress() {
+        const answered = reflectiveQuestions.filter(q => document.querySelector(`input[name="${q.id}"]:checked`)).length;
+        const pct = (answered / reflectiveQuestions.length) * 100;
+        document.getElementById('refProgressFill').style.width = pct + '%';
+        document.getElementById('refProgressText').textContent = `${answered} dari ${reflectiveQuestions.length} pertanyaan dijawab`;
+        document.getElementById('submitBtn').disabled = answered < reflectiveQuestions.length;
+    }
+
+    // ============================================================
+    // HITUNG & SIMPAN HASIL
+    // ============================================================
+    function finishTest() {
+        // 1. Hitung skor BFI per dimensi
+        const bfiScores = { O: [], C: [], E: [], A: [], N: [] };
+        bfiQuestions.forEach(q => {
+            const el = document.querySelector(`input[name="${q.id}"]:checked`);
+            if (el) bfiScores[q.dim].push(parseInt(el.value));
+        });
+        const bfiAvg = {};
+        for (let dim in bfiScores) {
+            bfiAvg[dim] = bfiScores[dim].reduce((a,b) => a+b, 0) / bfiScores[dim].length;
+        }
+
+        // 2. Hitung skor Reflektif per aspek
+        const refScores = {};
+        reflectiveQuestions.forEach(q => {
+            const el = document.querySelector(`input[name="${q.id}"]:checked`);
+            if (el) {
+                if (!refScores[q.aspect]) refScores[q.aspect] = [];
+                refScores[q.aspect].push(parseInt(el.value));
+            }
+        });
+        const refAvg = {};
+        for (let asp in refScores) {
+            refAvg[asp] = refScores[asp].reduce((a,b) => a+b, 0) / refScores[asp].length;
+        }
+
+        // 3. Gabungkan skor untuk setiap aspek psikogram
+        // Strategi: skor aspek = rata-rata dari (skor BFI dimensi terkait) dan (skor Reflektif aspek terkait)
+        // Untuk aspek yang tidak punya soal reflektif langsung, pakai skor BFI saja
+        
+        const aspectBfiMap = {
+            orientasiHasil: 'C',
+            fleksibilitas: 'O',
+            sistematikaKerja: 'C',
+            motivasiBerprestasi: null, // gabungan C+E
+            kerjaSama: null,           // gabungan A+E
+            keterampilanInterpersonal: null, // gabungan E+A
+            stabilitasEmosi: 'N',      // invers
+            pengembanganDiri: 'O',
+            mengelolaPerubahan: null   // gabungan O+C
+        };
+
+        function getAspectScore(aspect) {
+            const bfiPart = aspectBfiMap[aspect];
+            let bfiScore = null;
+            if (bfiPart === 'N') bfiScore = 6 - bfiAvg.N;
+            else if (bfiPart) bfiScore = bfiAvg[bfiPart];
+
+            const refPart = refAvg[aspect];
+
+            // Jika ada kedua sumber, rata-ratakan
+            if (bfiScore !== null && refPart !== undefined) {
+                return (bfiScore + refPart) / 2;
+            } else if (bfiScore !== null) {
+                return bfiScore;
+            } else if (refPart !== undefined) {
+                return refPart;
+            }
+            return 3; // default netral
+        }
+
+        // Untuk aspek gabungan (motivasi, kerja sama, interpersonal, mengelola perubahan)
+        // kita hitung dari dimensi BFI gabungan + skor reflektif
+        function getCompositeScore(aspect) {
+            const refPart = refAvg[aspect];
+            let bfiComposite;
+            switch(aspect) {
+                case 'motivasiBerprestasi': bfiComposite = (bfiAvg.C + bfiAvg.E) / 2; break;
+                case 'kerjaSama': bfiComposite = (bfiAvg.A + bfiAvg.E) / 2; break;
+                case 'keterampilanInterpersonal': bfiComposite = (bfiAvg.E + bfiAvg.A) / 2; break;
+                case 'mengelolaPerubahan': bfiComposite = (bfiAvg.O + bfiAvg.C) / 2; break;
+                default: return getAspectScore(aspect);
+            }
+            if (refPart !== undefined) return (bfiComposite + refPart) / 2;
+            return bfiComposite;
+        }
+
+        // 4. Bangun objek psikogram
+        const psikogram = {
+            sikapKerja: {},
+            kepribadian: {},
+            kemampuanBelajar: {}
+        };
+
+        function buildAspect(aspect, useComposite = false) {
+            const rawScore = useComposite ? getCompositeScore(aspect) : getAspectScore(aspect);
+            const cat = getCategory(rawScore);
+            return {
+                skor: Math.round(rawScore * 100) / 100,
+                kategori: cat.code,
+                label: cat.label
+            };
+        }
+
+        psikogram.sikapKerja = {
+            orientasiHasil: buildAspect('orientasiHasil'),
+            fleksibilitas: buildAspect('fleksibilitas'),
+            sistematikaKerja: buildAspect('sistematikaKerja')
+        };
+        psikogram.kepribadian = {
+            motivasiBerprestasi: buildAspect('motivasiBerprestasi', true),
+            kerjaSama: buildAspect('kerjaSama', true),
+            keterampilanInterpersonal: buildAspect('keterampilanInterpersonal', true),
+            stabilitasEmosi: buildAspect('stabilitasEmosi')
+        };
+        psikogram.kemampuanBelajar = {
+            pengembanganDiri: buildAspect('pengembanganDiri'),
+            mengelolaPerubahan: buildAspect('mengelolaPerubahan', true)
+        };
+
+        // 5. Buat kesimpulan
+        const allAspects = [
+            ...Object.entries(psikogram.sikapKerja).map(([k,v]) => ({...v, group: 'Sikap & Cara Kerja', key: k})),
+            ...Object.entries(psikogram.kepribadian).map(([k,v]) => ({...v, group: 'Kepribadian', key: k})),
+            ...Object.entries(psikogram.kemampuanBelajar).map(([k,v]) => ({...v, group: 'Kemampuan Belajar', key: k}))
+        ];
+        const strengths = allAspects.filter(a => a.kategori === 'B' || a.kategori === 'T').map(a => a.key);
+        const weaknesses = allAspects.filter(a => a.kategori === 'R' || a.kategori === 'K').map(a => a.key);
+
+        let conclusion = `Profil kepribadian berdasarkan hasil tes menunjukkan `;
+        if (strengths.length > 0) conclusion += `kekuatan pada aspek: ${strengths.join(', ')}. `;
+        if (weaknesses.length > 0) conclusion += `Area yang perlu dikembangkan: ${weaknesses.join(', ')}.`;
+        if (strengths.length === 0 && weaknesses.length === 0) conclusion += `profil yang seimbang di semua aspek.`;
+
+        // 6. Simpan ke localStorage
+        const resultData = {
+            timestamp: new Date().toISOString(),
+            completedAt: new Date().toLocaleString('id-ID'),
+            bigFive: {
+                O: { skor: Math.round(bfiAvg.O * 100)/100, kategori: getCategory(bfiAvg.O).code, label: getCategory(bfiAvg.O).label },
+                C: { skor: Math.round(bfiAvg.C * 100)/100, kategori: getCategory(bfiAvg.C).code, label: getCategory(bfiAvg.C).label },
+                E: { skor: Math.round(bfiAvg.E * 100)/100, kategori: getCategory(bfiAvg.E).code, label: getCategory(bfiAvg.E).label },
+                A: { skor: Math.round(bfiAvg.A * 100)/100, kategori: getCategory(bfiAvg.A).code, label: getCategory(bfiAvg.A).label },
+                N: { skor: Math.round(bfiAvg.N * 100)/100, kategori: getCategory(bfiAvg.N).code, label: getCategory(bfiAvg.N).label }
+            },
+            psikogram: psikogram,
+            kesimpulan: conclusion,
+            metadata: {
+                totalBFI: bfiQuestions.length,
+                totalReflektif: reflectiveQuestions.length,
+                version: '1.0'
+            }
+        };
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(resultData));
+
+        // 7. Tampilkan halaman selesai
+        document.getElementById('reflectiveSection').classList.add('hidden');
+        document.getElementById('finishSection').classList.remove('hidden');
+        
+        document.getElementById('storageInfo').innerHTML = `
+            📦 <strong>Data tersimpan di localStorage:</strong><br>
+            Key: <code>${STORAGE_KEY}</code><br>
+            Waktu: ${resultData.completedAt}<br>
+            Skor Big Five: O=${resultData.bigFive.O.skor} | C=${resultData.bigFive.C.skor} | E=${resultData.bigFive.E.skor} | A=${resultData.bigFive.A.skor} | N=${resultData.bigFive.N.skor}
+        `;
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    </script>
+</body>
+</html>

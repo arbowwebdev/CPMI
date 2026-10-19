@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tes Verbal & Logika</title>
+    <style>
+        :root {
+            --primary: #1a56db;
+            --primary-hover: #1e40af;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --border-color: #e5e7eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 800px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        h1, h2 {
+            color: var(--primary);
+            text-align: center;
+        }
+
+        /* === TIMER GARIS SAJA (TANPA TEKS MENIT) === */
+        .timer-container {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 15px 0;
+            border-bottom: 2px solid var(--border-color);
+            z-index: 100;
+            margin-bottom: 25px;
+        }
+        .timer-info {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+        .timer-track {
+            width: 100%;
+            height: 14px;
+            background-color: #e5e7eb;
+            border-radius: 99px;
+            overflow: hidden;
+            border: 1px solid #d1d5db;
+        }
+        .timer-bar {
+            height: 100%;
+            width: 100%;
+            background-color: var(--success);
+            border-radius: 99px;
+            transition: width 1s linear, background-color 0.5s ease;
+        }
+        .timer-bar.warning { background-color: var(--warning); }
+        .timer-bar.danger { background-color: var(--danger); }
+
+        .question-card {
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background: #fafafa;
+            scroll-margin-top: 100px;
+        }
+
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .option-label input {
+            margin-right: 10px;
+            cursor: pointer;
+            transform: scale(1.2);
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover {
+            background-color: #f9fafb;
+        }
+
+        #test-screen, #next-screen {
+            display: none;
+        }
+
+        .next-box {
+            background: #f0fdf4;
+            border: 2px solid #bbf7d0;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .next-box h2 {
+            color: var(--success);
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- LAYAR MULAI -->
+<div class="container" id="start-screen">
+    <h1>Tes Verbal & Logika</h1>
+    <p style="text-align: center; font-size: 1.1rem;">Tes ini terdiri dari <strong>40 Soal Pilihan Ganda</strong>.</p>
+    <div style="background: #fffbeb; border: 1px solid #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
+        <h3 style="color: #b45309; margin-top: 0;">⚠️ Instruksi Penting</h3>
+        <ul style="color: #92400e; margin-bottom: 0; padding-left: 20px; line-height: 1.6;">
+            <li>Anda memiliki waktu <strong>tepat 9 menit</strong> untuk mengerjakan seluruh soal.</li>
+            <li>Perhatikan <strong>garis progress di bagian atas</strong> sebagai indikator sisa waktu.</li>
+            <li>Anda <strong>bebas memeriksa dan mengubah jawaban</strong> (scroll ke atas/bawah) selama garis belum habis.</li>
+            <li>Tes <strong>tidak dapat dihentikan manual</strong>. Sistem akan otomatis menyimpan dan mengakhiri tes saat waktu habis.</li>
+        </ul>
+    </div>
+    <button class="btn" onclick="startTest()">Mulai Tes Sekarang</button>
+</div>
+
+<!-- LAYAR TES -->
+<div class="container" id="test-screen">
+    <div class="timer-container">
+        <div class="timer-info">
+            <span>Progress Jawaban: <span id="answered-count">0</span> / 40</span>
+        </div>
+        <div class="timer-track">
+            <div id="timer-bar" class="timer-bar"></div>
+        </div>
+    </div>
+
+    <form id="quiz-form">
+        <div id="questions-container"></div>
+        
+        <!-- Tombol hanya untuk memudahkan scroll ke atas, TIDAK ADA tombol selesai -->
+        <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px dashed var(--border-color);">
+            <p style="margin: 0 0 10px 0; color: #6b7280; font-size: 0.9rem;">Belum selesai? Periksa kembali jawaban Anda di atas.</p>
+            <button type="button" class="btn btn-secondary" style="max-width: 300px;" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">⬆️ Kembali ke Atas untuk Memeriksa</button>
+        </div>
+    </form>
+</div>
+
+<!-- LAYAR SELESAI (Muncul otomatis saat waktu habis) -->
+<div class="container" id="next-screen">
+    <div class="next-box">
+        <h2>✅ Waktu Habis - Jawaban Disimpan</h2>
+        <p style="font-size: 1.2rem; color: #1e40af;">Sistem telah otomatis merekam dan mengkategorikan hasil tes Anda.</p>
+        <p style="font-size: 0.9rem; color: #6b7280;">Silakan lanjutkan ke tahap berikutnya.</p>
+        <button class="btn" onclick="goToNextPage()" style="margin-top: 20px;">Lanjutkan ke Halaman Berikutnya →</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "Evokasi = ...", opts: ["Penggugah rasa", "Provokasi", "Evaluasi", "Penolakan"], ans: 0 },
+        { q: "Paradoks = ...", opts: ["Sejalan", "Pertentangan", "Perbandingan", "Persamaan"], ans: 1 },
+        { q: "Afirmasi = ...", opts: ["Penolakan", "Penegasan", "Pertanyaan", "Pernyataan"], ans: 1 },
+        { q: "Defleksi = ...", opts: ["Penyimpangan", "Penyatuan", "Pengurangan", "Penambahan"], ans: 0 },
+        { q: "Implisit = ...", opts: ["Tersurat", "Tersirat", "Jelas", "Terbuka"], ans: 1 },
+        { q: "Konvensi = ...", opts: ["Perdebatan", "Kesepakatan", "Permusuhan", "Persaingan"], ans: 1 },
+        { q: "Mitigasi = ...", opts: ["Pengurangan risiko", "Peningkatan", "Penyebaran", "Penyatuan"], ans: 0 },
+        { q: "Otoritas = ...", opts: ["Kelemahan", "Wewenang", "Kewajiban", "Hukuman"], ans: 1 },
+        { q: "Presisi = ...", opts: ["Ketepatan", "Kesalahan", "Kecepatan", "Kelambatan"], ans: 0 },
+        { q: "Residu = ...", opts: ["Awal", "Sisa", "Puncak", "Dasar"], ans: 1 },
+        { q: "Signifikan = ...", opts: ["Berarti", "Biasa", "Kecil", "Tersembunyi"], ans: 0 },
+        { q: "Tentatif = ...", opts: ["Pasti", "Sementara", "Tetap", "Berubah-ubah"], ans: 1 },
+        { q: "Urgensi = ...", opts: ["Keharusan mendesak", "Keterlambatan", "Kebebasan", "Pilihan"], ans: 0 },
+        { q: "Validitas = ...", opts: ["Kesahihan", "Kesalahan", "Kepalsuan", "Keraguan"], ans: 0 },
+        { q: "Akurat = ...", opts: ["Tepat", "Salah", "Cepat", "Lambat"], ans: 0 },
+        { q: "Kering : Gurun = ... : ...", opts: ["Basah : Rawa", "Dingin : Gunung", "Panas : Matahari", "Luas : Samudra"], ans: 0 },
+        { q: "Guru : Sekolah = ... : ...", opts: ["Dokter : Rumah Sakit", "Petani : Traktor", "Polisi : Jalan", "Hakim : Penjara"], ans: 0 },
+        { q: "Pena : Tinta = ... : ...", opts: ["Kuas : Cat", "Pensil : Kertas", "Buku : Tulisan", "Penghapus : Karet"], ans: 0 },
+        { q: "Mata : Melihat = ... : ...", opts: ["Telinga : Mendengar", "Hidung : Mencium", "Mulut : Mengunyah", "Kaki : Berjalan"], ans: 0 },
+        { q: "Api : Panas = ... : ...", opts: ["Es : Dingin", "Angin : Sejuk", "Air : Basah", "Batu : Keras"], ans: 0 },
+        { q: "Ban : Karet = ... : ...", opts: ["Jendela : Kaca", "Pintu : Kayu", "Dinding : Bata", "Atap : Genteng"], ans: 0 },
+        { q: "Lapar : Makan = ... : ...", opts: ["Haus : Minum", "Lelah : Tidur", "Sakit : Obat", "Sedih : Menangis"], ans: 0 },
+        { q: "Pesawat : Avtur = ... : ...", opts: ["Mobil : Bensin", "Kapal : Air", "Kereta : Rel", "Sepeda : Kayuh"], ans: 0 },
+        { q: "Sutradara : Film = ... : ...", opts: ["Penulis : Buku", "Pelukis : Kanvas", "Penyanyi : Lagu", "Penari : Panggung"], ans: 0 },
+        { q: "Marah : Cemberut = ... : ...", opts: ["Senang : Tertawa", "Sedih : Menangis", "Takut : Gemetar", "Kaget : Teriak"], ans: 0 },
+        { q: "Gitar : Dipetik = ... : ...", opts: ["Seruling : Ditiup", "Drum : Dipukul", "Piano : Ditekan", "Biola : Digesek"], ans: 0 },
+        { q: "Burung : Terbang = ... : ...", opts: ["Ikan : Berenang", "Katak : Melompat", "Ular : Merayap", "Kuda : Berlari"], ans: 0 },
+        { q: "Gunting : Memotong = ... : ...", opts: ["Sapu : Membersihkan", "Pisau : Mengiris", "Cangkul : Menggali", "Palu : Memukul"], ans: 0 },
+        { q: "Utara : Selatan = ... : ...", opts: ["Barat Daya : Timur Laut", "Timur : Barat", "Atas : Bawah", "Kanan : Kiri"], ans: 0 },
+        { q: "Beras : Nasi = ... : ...", opts: ["Gandum : Roti", "Jagung : Tepung", "Singkong : Tapioka", "Kedelai : Kecap"], ans: 0 },
+        { q: "Semua karyawan memakai seragam. Budi adalah karyawan. Kesimpulan:", opts: ["Budi memakai seragam", "Budi tidak memakai seragam", "Budi mungkin memakai seragam", "Budi bukan karyawan"], ans: 0 },
+        { q: "Jika hujan, maka jalanan basah. Jalanan tidak basah. Kesimpulan:", opts: ["Tidak hujan", "Hujan turun rintik-rintik", "Hujan deras", "Mungkin hujan"], ans: 0 },
+        { q: "Semua burung memiliki sayap. Tidak ada mamalia yang memiliki sayap. Kesimpulan:", opts: ["Tidak ada mamalia yang merupakan burung", "Semua mamalia adalah burung", "Beberapa mamalia adalah burung", "Burung adalah mamalia"], ans: 0 },
+        { q: "Semua siswa yang rajin akan lulus ujian. Sebagian siswa kelas A rajin. Kesimpulan:", opts: ["Sebagian siswa kelas A akan lulus ujian", "Semua siswa kelas A akan lulus ujian", "Tidak ada siswa kelas A yang lulus ujian", "Semua siswa yang lulus ujian adalah siswa kelas A"], ans: 0 },
+        { q: "Jika Andi belajar, ia akan mendapat nilai A. Jika Andi mendapat nilai A, ia akan mendapat hadiah. Kesimpulan:", opts: ["Jika Andi belajar, ia akan mendapat hadiah", "Jika Andi tidak belajar, ia mendapat hadiah", "Andi belajar untuk mendapat hadiah", "Andi tidak mendapat hadiah"], ans: 0 },
+        { q: "Semua pahlawan adalah orang pemberani. Tidak ada pengecut yang pemberani. Kesimpulan:", opts: ["Tidak ada pahlawan yang pengecut", "Semua pahlawan adalah pengecut", "Beberapa pahlawan adalah pengecut", "Pengecut adalah pahlawan"], ans: 0 },
+        { q: "Buku merah lebih tebal dari buku biru. Buku hijau lebih tipis dari buku biru. Kesimpulan:", opts: ["Buku merah lebih tebal dari buku hijau", "Buku hijau lebih tebal dari buku merah", "Buku merah dan hijau sama tebal", "Buku biru paling tebal"], ans: 0 },
+        { q: "Semua sayuran mengandung vitamin. Sebagian makanan di meja adalah sayuran. Kesimpulan:", opts: ["Sebagian makanan di meja mengandung vitamin", "Semua makanan di meja mengandung vitamin", "Tidak ada makanan di meja yang mengandung vitamin", "Semua sayuran ada di meja"], ans: 0 },
+        { q: "Tidak ada orang malas yang sukses. Beberapa pengusaha adalah orang sukses. Kesimpulan:", opts: ["Beberapa pengusaha bukan orang malas", "Semua pengusaha adalah orang malas", "Tidak ada pengusaha yang sukses", "Semua pengusaha sukses"], ans: 0 },
+        { q: "Semua pekerja tambang memakai helm pengaman. Amir tidak memakai helm pengaman. Kesimpulan:", opts: ["Amir bukan pekerja tambang", "Amir adalah pekerja tambang", "Amir mungkin pekerja tambang", "Amir lupa memakai helm"], ans: 0 }
+    ];
+
+    // Acak opsi jawaban agar kunci tidak selalu di posisi yang sama
+    questions.forEach(q => {
+        const correctAnsText = q.opts[q.ans];
+        const shuffledOpts = q.opts.map((opt, i) => ({ text: opt, originalIndex: i }))
+                                   .sort(() => Math.random() - 0.5);
+        q.opts = shuffledOpts.map(o => o.text);
+        q.ans = shuffledOpts.findIndex(o => o.text === correctAnsText);
+    });
+
+    let timeLeft = 9 * 60; // 9 menit = 540 detik
+    const totalTime = 9 * 60;
+    let timerInterval;
+
+    function renderQuestions() {
+        const container = document.getElementById('questions-container');
+        let html = '';
+        questions.forEach((q, index) => {
+            html += `<div class="question-card" id="question-card-${index}">
+                        <div class="question-title">${index + 1}. ${q.q}</div>
+                        <div class="options-grid">`;
+            q.opts.forEach((opt, optIdx) => {
+                html += `<label class="option-label">
+                            <input type="radio" name="q${index}" value="${optIdx}" onchange="updateProgress()">
+                            ${opt}
+                         </label>`;
+            });
+            html += `   </div>
+                      </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function updateProgress() {
+        const form = document.getElementById('quiz-form');
+        const formData = new FormData(form);
+        let answered = 0;
+        for(let key of formData.keys()) {
+            answered++;
+        }
+        document.getElementById('answered-count').innerText = answered;
+    }
+
+    function startTest() {
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('test-screen').style.display = 'block';
+        renderQuestions();
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            
+            // SAAT WAKTU HABIS, OTOMATIS SELESAI
+            if(timeLeft <= 0) {
+                clearInterval(timerInterval);
+                finishTest();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const percentage = (timeLeft / totalTime) * 100;
+        const bar = document.getElementById('timer-bar');
+        bar.style.width = percentage + '%';
+        
+        bar.classList.remove('warning', 'danger');
+        if (timeLeft <= 60) { // 1 menit terakhir
+            bar.classList.add('danger');
+        } else if (timeLeft <= 180) { // 3 menit terakhir
+            bar.classList.add('warning');
+        }
+    }
+
+    // Fungsi ini HANYA dipanggil otomatis saat waktu habis
+    function finishTest() {
+        const form = document.getElementById('quiz-form');
+        const formData = new FormData(form);
+        
+        let totalScore = 0;
+        let totalAnswered = 0;
+
+        questions.forEach((q, index) => {
+            const userAnswer = formData.get(`q${index}`);
+            if(userAnswer !== null) {
+                totalAnswered++;
+                if(parseInt(userAnswer) === q.ans) {
+                    totalScore++;
+                }
+            }
+        });
+
+        // === LOGIKA 5 KATEGORI (Dari 40 Soal) ===
+        let kategori = 'R';
+        let teksKat = 'Rendah';
+        let warna = '#ef4444';
+
+        if (totalScore >= 32) { kategori = 'T'; teksKat = 'Tinggi'; warna = '#10b981'; }
+        else if (totalScore >= 24) { kategori = 'B'; teksKat = 'Baik'; warna = '#3b82f6'; }
+        else if (totalScore >= 16) { kategori = 'C'; teksKat = 'Cukup'; warna = '#f59e0b'; }
+        else if (totalScore >= 8) { kategori = 'K'; teksKat = 'Kurang'; warna = '#f97316'; }
+
+        // Simpan ke LocalStorage
+        const hasilVerbal = {
+            skor: totalScore,
+            dijawab: totalAnswered,
+            kategori: kategori,
+            teks_kategori: teksKat,
+            warna: warna,
+            waktu_selesai: new Date().toISOString()
+        };
+
+        localStorage.setItem('verbal_test_hasil', JSON.stringify(hasilVerbal));
+        localStorage.setItem('verbal_test_skor', totalScore);
+        localStorage.setItem('verbal_test_kategori', kategori);
+
+        // Pindah ke layar selesai
+        document.getElementById('test-screen').style.display = 'none';
+        document.getElementById('next-screen').style.display = 'block';
+        window.scrollTo(0, 0);
+    }
+
+    function goToNextPage() {
+        // Ganti 'index.html' dengan URL halaman tujuan Anda
+        window.location.href = 'bfi.html'; 
+    }
+</script>
+</body>
+</html>

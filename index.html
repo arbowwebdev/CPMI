@@ -205,17 +205,7 @@
                     </div>
                 </div>
 
-                <!-- Jenis Tempat Pemeriksaan -->
-                <div class="form-group">
-                    <label>Jenis Tempat Pemeriksaan</label>
-                    <select id="jenisTempat" required>
-                        <option value="">-- Pilih Jenis --</option>
-                        <option value="praktik">Praktik Mandiri</option>
-                        <option value="rs">Rumah Sakit</option>
-                    </select>
-                </div>
-
-                <!-- Tanggal Lahir -->
+                <!-- Tanggal Lahir & Tanggal Tes -->
                 <div class="form-row">
                     <div class="form-group">
                         <label>Tanggal Lahir</label>
@@ -321,16 +311,47 @@
             document.getElementById("usia").value = usia + " tahun";
         }
 
-        // ===== TOMBOL SELANJUTNYA =====
+        // ===== TOMBOL SELANJUTNYA (DIPERBARUI) =====
         function lanjutkan() {
             const cabang = document.getElementById("cabangKlinik").value;
+            const nama = document.getElementById("nama").value.trim();
+            const tglLahir = document.getElementById("tglLahir").value;
+            const pendidikan = document.getElementById("pendidikan").value;
+
+            // Validasi input
             if (!cabang) {
                 alert("Silakan pilih lokasi / cabang pemeriksaan terlebih dahulu.");
                 return;
             }
-            alert("Data tersimpan. Melanjutkan ke halaman tes...\n\nCabang: " +
-                  dataKlinik[cabang].nama + "\nAlamat: " + dataKlinik[cabang].alamat);
-            // window.location.href = "tes.html";
+            if (!nama) {
+                alert("Silakan masukkan nama lengkap peserta.");
+                return;
+            }
+            if (!tglLahir) {
+                alert("Silakan isi tanggal lahir peserta.");
+                return;
+            }
+            if (!pendidikan) {
+                alert("Silakan pilih jenjang pendidikan peserta.");
+                return;
+            }
+
+            // 1. Buat objek data peserta sesuai format yang dibutuhkan hasil.html
+            const dataPeserta = {
+                nomor: document.getElementById("nomorPeserta").value,
+                nama: nama,
+                fasyankes: dataKlinik[cabang].nama,
+                alamat: dataKlinik[cabang].alamat,
+                tglLahir: tglLahir,
+                tglTes: document.getElementById("tglTes").value,
+                pendidikan: pendidikan
+            };
+
+            // 2. Simpan ke localStorage
+            localStorage.setItem("cfit_peserta", JSON.stringify(dataPeserta));
+
+            // 3. Lanjut ke halaman tes berikutnya
+            window.location.href = "cfit-1.html";
         }
 
         // ===== INISIALISASI =====

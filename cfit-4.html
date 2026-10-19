@@ -301,7 +301,7 @@
             <p>
                 <strong>Instruksi:</strong> lihat pada soal, bentuk-bentuk apa yang ada, lihat persinggungannya atau ada yang menyentuh. 
                 Gunakan kata didalam dan diluar. Jangan berpatokan pada titik. lalu carilah pola yang sama/mirip/mendekati pada pilihan jawaban di 
-                sebelah kanan. 
+                sebelah kanan. Kerjakan Contoh sampai seluruh jawaban benar (Berwarna Hijau)
             </p>
         </div>
 
@@ -540,7 +540,7 @@
         };
 
         const TOTAL_SOAL = 10;
-        const DURASI_MS = 2.5 * 60 * 1000; // 2 menit 30 detik
+        const DURASI_MS = 2.5 * 60 * 100; // 2 menit 30 detik
 
         const bagianSoal       = document.getElementById("bagianSoal");
         const timerBar         = document.getElementById("timerBar");
@@ -690,7 +690,7 @@
             localStorage.setItem("cfit_seriD_skor", String(benar));
 
             // Langsung menuju halaman hasil akhir
-            window.location.href = "hasil.html";
+            window.location.href = "numerikal.html";
         }
     </script>
 

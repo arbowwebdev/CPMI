@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Subtes RA - Numerikal (Berhitung)</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --text: #1f2937;
+      --border: #e5e7eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      padding: 20px;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      box-sizing: border-box;
+    }
+
+    .section { display: none; }
+    .active { display: block; animation: fadeIn 0.4s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--card);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    h2 { margin-top: 0; color: var(--primary); border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
+    
+    /* === TIMER GARIS === */
+    .timer-wrapper { margin-bottom: 20px; }
+    .timer-info {
+      display: flex; justify-content: space-between;
+      font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #4b5563;
+    }
+    .timer-track {
+      width: 100%; height: 16px; background-color: #e5e7eb;
+      border-radius: 99px; overflow: hidden; border: 1px solid #d1d5db;
+    }
+    .timer-bar {
+      height: 100%; width: 100%; background-color: var(--success);
+      border-radius: 99px; transition: width 1s linear, background-color 0.5s ease;
+    }
+    .timer-bar.warning { background-color: var(--warning); }
+    .timer-bar.danger { background-color: var(--danger); }
+
+    /* === SOAL & OPSI === */
+    .question-text { font-size: 20px; font-weight: 600; margin-bottom: 25px; }
+    .options label {
+      display: block; margin: 12px 0; padding: 16px 20px;
+      background: #f9fafb; border: 2px solid var(--border);
+      border-radius: 8px; cursor: pointer; transition: all 0.2s;
+      font-size: 16px;
+    }
+    .options label:hover { background: #e0e7ff; border-color: var(--primary); }
+    .options input[type="radio"] { margin-right: 12px; transform: scale(1.3); }
+    .options input[type="radio"]:checked + span { font-weight: 600; color: var(--primary); }
+
+    /* === TOMBOL === */
+    .btn {
+      padding: 14px 28px; font-size: 16px; font-weight: 600;
+      border-radius: 8px; border: none; cursor: pointer;
+      transition: all 0.2s; margin-top: 10px;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: #4338ca; }
+    .btn-secondary { background: white; color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: #f3f4f6; }
+    
+    .btn-group { display: flex; gap: 15px; margin-top: 30px; }
+    .btn-group .btn { flex: 1; margin-top: 0; }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BAGIAN 1: INSTRUKSI -->
+  <div id="section-instruksi" class="section active">
+    <div class="card">
+      <h2>TES BERHITUNG </h2>
+      
+      <p><strong>Instruksi Pengerjaan:</strong></p>
+      <ul style="margin-bottom: 30px; padding-left: 20px; font-size: 16px; line-height: 1.8;">
+        <li>Kerjakan soal-soal berhitung berikut ini dengan teliti.</li>
+        <li>Anda memiliki waktu <strong>TERBATAS</strong> untuk menyelesaikan 20 soal.</li>
+        <li>Waktu akan berjalan otomatis setelah Anda menekan tombol "Mulai Mengerjakan".</li>
+        <li>Anda <strong>dapat memeriksa dan mengubah jawaban</strong> kapan saja selama waktu masih tersedia.</li>
+        <li>Tes akan <strong>berakhir secara otomatis</strong> saat waktu habis, dan hasil akan langsung disimpan.</li>
+      </ul>
+      <button class="btn btn-primary" style="max-width: 300px;" onclick="mulaiTes()">Mulai Mengerjakan</button>
+    </div>
+  </div>
+
+  <!-- BAGIAN 2: AREA TES -->
+  <div id="section-tes" class="section">
+    <div class="card">
+      <!-- Timer Garis -->
+      <div class="timer-wrapper">
+        <div class="timer-info">
+          <span>Sisa Waktu</span>
+          <span id="timer-text">10:00</span>
+        </div>
+        <div class="timer-track">
+          <div id="timer-bar" class="timer-bar"></div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; margin-bottom: 20px; color: #6b7280; font-size: 16px; font-weight: 600;">
+        <span>Soal Nomor</span>
+        <span id="nomor-soal">1 / 20</span>
+      </div>
+
+      <div id="question-container">
+        <div class="question-text" id="question-text"></div>
+        <div class="options" id="options-container"></div>
+      </div>
+
+      <div class="btn-group no-print">
+        <button id="btn-prev" class="btn btn-secondary" onclick="soalSebelumnya()" style="display: none;">⬅ Sebelumnya</button>
+        <button id="btn-next" class="btn btn-primary" onclick="soalBerikutnya()">Soal Berikutnya ➡</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === DATA SOAL RA (Numerikal) ===
+    const bankSoalRA = [
+      { q: "Jika seorang anak memiliki Rp 50.000 dan memberikan Rp 15.000 kepada orang lain, berapa rupiahkah yang masih tinggal padanya?", o: ["Rp 30.000", "Rp 35.000", "Rp 40.000", "Rp 45.000", "Rp 50.000"], a: 1 },
+      { q: "Berapa km-kah yang dapat ditempuh oleh kereta api dalam waktu 7 jam, jika kecepatannya 40 km/jam?", o: ["240 km", "280 km", "320 km", "360 km", "400 km"], a: 1 },
+      { q: "15 peti buah-buahan beratnya 250 kg dan setiap peti kosong beratnya 3 kg, berapakah berat buah-buahan itu?", o: ["205 kg", "210 kg", "215 kg", "220 kg", "225 kg"], a: 2 },
+      { q: "Seseorang mempunyai persediaan rumput yang cukup untuk 7 ekor kuda selama 78 hari. Berapa harikah persediaan itu cukup untuk 21 ekor kuda?", o: ["26 hari", "30 hari", "35 hari", "40 hari", "45 hari"], a: 0 },
+      { q: "3 batang coklat harganya Rp 15.000. Berapa batangkah yang dapat kita beli dengan Rp 50.000?", o: ["8 batang", "9 batang", "10 batang", "11 batang", "12 batang"], a: 2 },
+      { q: "Seseorang dapat berjalan 1,75 m dalam waktu 1/4 detik. Berapa meterkah yang dapat ia tempuh dalam waktu 10 detik?", o: ["60 m", "70 m", "80 m", "90 m", "100 m"], a: 1 },
+      { q: "Jika sebuah batu terletak 15 m di sebelah selatan dari sebatang pohon dan pohon itu berada 30 m di sebelah selatan dari sebuah rumah, berapa meterkah jarak antara batu dan rumah itu?", o: ["15 m", "30 m", "45 m", "60 m", "75 m"], a: 2 },
+      { q: "Jika 4/5 m bahan sandang harganya Rp 90.000, berapakah rupiahkah harganya 2 1/2 m?", o: ["Rp 225.000", "Rp 250.000", "Rp 275.000", "Rp 300.000", "Rp 325.000"], a: 0 },
+      { q: "7 orang dapat menyelesaikan sesuatu pekerjaan dalam 6 hari. Berapa orangkah yang diperlukan untuk menyelesaikan pekerjaan itu dalam setengah hari?", o: ["72 orang", "84 orang", "90 orang", "96 orang", "100 orang"], a: 1 },
+      { q: "Karena dipanaskan, kawat yang panjangnya 48 cm akan mengembang menjadi 52 cm. Setelah pemanasan, berapakah panjangnya kawat yang berukuran 72 cm?", o: ["75 cm", "78 cm", "80 cm", "82 cm", "85 cm"], a: 1 },
+      { q: "Suatu pabrik dapat menghasilkan 304 batang pensil dalam waktu 8 jam. Berapa batangkah dihasilkan dalam waktu setengah jam?", o: ["18 batang", "19 batang", "20 batang", "21 batang", "22 batang"], a: 1 },
+      { q: "Untuk suatu campuran diperlukan 2 bagian perak dan 3 bagian timah. Berapa gramkah perak yang diperlukan untuk mendapatkan campuran itu yang beratnya 15 gram?", o: ["5 gram", "6 gram", "7 gram", "8 gram", "9 gram"], a: 1 },
+      { q: "Untuk setiap Rp 3.000 yang dimiliki Sidin, Hamid memiliki Rp 5.000. Jika mereka bersama mempunyai Rp 120.000, berapa rupiahkah yang dimiliki Hamid?", o: ["Rp 60.000", "Rp 70.000", "Rp 75.000", "Rp 80.000", "Rp 85.000"], a: 2 },
+      { q: "Mesin A menenun 60 m kain, sedangkan mesin B menenun 40 m. Berapa meterkah yang ditenun mesin A, jika mesin B menenun 60 m?", o: ["80 m", "90 m", "100 m", "110 m", "120 m"], a: 1 },
+      { q: "Seseorang membelikan 1/10 dari uangnya untuk perangko dan 4 kali jumlah itu untuk alat tulis. Sisa uangnya masih Rp 60.000. Berapa rupiahkah uang semula?", o: ["Rp 100.000", "Rp 110.000", "Rp 120.000", "Rp 130.000", "Rp 140.000"], a: 2 },
+      { q: "Di dalam dua peti terdapat 43 piring. Di dalam peti yang satu terdapat 9 piring lebih banyak dari pada di dalam peti yang lain. Berapa buah piring terdapat di dalam peti yang lebih kecil?", o: ["17 piring", "18 piring", "19 piring", "20 piring", "21 piring"], a: 0 },
+      { q: "Suatu lembaran kain yang panjangnya 60 cm harus dibagikan sedemikian rupa sehingga panjangnya satu bagian ialah 2/3 dari bagian yang lain. Berapa panjangnya bagian yang terpendek?", o: ["20 cm", "24 cm", "28 cm", "30 cm", "32 cm"], a: 1 },
+      { q: "Suatu perusahaan mengekspor 1/4 dari hasil produksinya dan menjual 4/5 dari sisa itu dalam negeri. Berapa % kah hasil produksi yang masih tinggal?", o: ["10%", "15%", "20%", "25%", "30%"], a: 0 },
+      { q: "Jika suatu botol berisi anggur hanya 7/8 bagian dan harganya ialah Rp 84.000, berapakah harga anggur itu jika botol itu hanya terisi 1/2 penuh?", o: ["Rp 48.000", "Rp 50.000", "Rp 52.000", "Rp 54.000", "Rp 56.000"], a: 4 },
+      { q: "Di dalam suatu keluarga setiap anak perempuan mempunyai jumlah saudara laki-laki yang sama dengan jumlah saudara perempuan dan setiap anak laki-laki mempunyai dua kali lebih banyak saudara perempuan dari pada saudara laki-laki. Berapa anak laki-lakikah yang terdapat di dalam keluarga tersebut?", o: ["2 anak", "3 anak", "4 anak", "5 anak", "6 anak"], a: 0 }
+    ];
+
+    // === STATE ===
+    let currentIdx = 0;
+    let jawabanUser = new Array(bankSoalRA.length).fill(null); // Menyimpan jawaban per nomor soal
+    let timerInterval;
+    const WAKTU_TOTAL_DETIK = 1 * 60; // 10 menit
+    let sisaWaktu = WAKTU_TOTAL_DETIK;
+
+    function mulaiTes() {
+      document.getElementById('section-instruksi').classList.remove('active');
+      document.getElementById('section-tes').classList.add('active');
+      tampilkanSoal();
+      jalankanTimer();
+    }
+
+    function jalankanTimer() {
+      updateTampilanTimer();
+      timerInterval = setInterval(() => {
+        sisaWaktu--;
+        updateTampilanTimer();
+        
+        if (sisaWaktu <= 0) {
+          clearInterval(timerInterval);
+          selesaikanTesOtomatis();
+        }
+      }, 1000);
+    }
+
+    function updateTampilanTimer() {
+      const menit = Math.floor(sisaWaktu / 60);
+      const detik = sisaWaktu % 60;
+      document.getElementById('timer-text').textContent = 
+        `${menit}:${detik < 10 ? '0' + detik : detik}`;
+
+      const persentase = (sisaWaktu / WAKTU_TOTAL_DETIK) * 100;
+      const bar = document.getElementById('timer-bar');
+      bar.style.width = persentase + '%';
+
+      bar.classList.remove('warning', 'danger');
+      if (sisaWaktu <= 60) {
+        bar.classList.add('danger');
+      } else if (sisaWaktu <= 180) {
+        bar.classList.add('warning');
+      }
+    }
+
+    function tampilkanSoal() {
+      const soal = bankSoalRA[currentIdx];
+      document.getElementById('nomor-soal').textContent = `${currentIdx + 1} / ${bankSoalRA.length}`;
+      document.getElementById('question-text').textContent = soal.q;
+
+      let htmlOpsi = '';
+      soal.o.forEach((opsi, index) => {
+        // Cek apakah soal ini sudah pernah dijawab sebelumnya
+        const isChecked = jawabanUser[currentIdx] === index ? 'checked' : '';
+        htmlOpsi += `
+          <label>
+            <input type="radio" name="jawaban" value="${index}" ${isChecked} onchange="simpanJawaban(${index})">
+            <span>${opsi}</span>
+          </label>
+        `;
+      });
+      document.getElementById('options-container').innerHTML = htmlOpsi;
+
+      // Atur tampilan tombol navigasi
+      const btnPrev = document.getElementById('btn-prev');
+      const btnNext = document.getElementById('btn-next');
+      
+      // Sembunyikan tombol "Sebelumnya" jika di soal pertama
+      btnPrev.style.display = currentIdx === 0 ? 'none' : 'block';
+      
+      // Jika di soal terakhir, ubah fungsi tombol menjadi "Tinjau Kembali"
+      if (currentIdx === bankSoalRA.length - 1) {
+        btnNext.textContent = "Tinjau Kembali (Ke Soal 1) 🔄";
+        btnNext.onclick = () => { 
+          currentIdx = 0; 
+          tampilkanSoal(); 
+        };
+      } else {
+        btnNext.textContent = "Soal Berikutnya ➡";
+        btnNext.onclick = () => { 
+          currentIdx++; 
+          tampilkanSoal(); 
+        };
+      }
+    }
+
+    function simpanJawaban(index) {
+      // Simpan jawaban user ke array tanpa langsung menilai
+      jawabanUser[currentIdx] = index;
+    }
+
+    function soalSebelumnya() {
+      if (currentIdx > 0) {
+        currentIdx--;
+        tampilkanSoal();
+      }
+    }
+
+    function selesaikanTesOtomatis() {
+      // 1. Hitung Skor berdasarkan array jawaban
+      let skor = 0;
+      jawabanUser.forEach((jawaban, idx) => {
+        if (jawaban === bankSoalRA[idx].a) {
+          skor++;
+        }
+      });
+
+      // 2. Tentukan 5 Kategori
+      let kategori = 'R';
+      let teksKat = 'Rendah';
+      let warna = '#ef4444';
+
+      if (skor >= 15) { kategori = 'T'; teksKat = 'Tinggi'; warna = '#10b981'; }
+      else if (skor >= 12) { kategori = 'B'; teksKat = 'Baik'; warna = '#3b82f6'; }
+      else if (skor >= 9) { kategori = 'C'; teksKat = 'Cukup'; warna = '#f59e0b'; }
+      else if (skor >= 6) { kategori = 'K'; teksKat = 'Kurang'; warna = '#f97316'; }
+
+      // 3. SIMPAN KE LOCALSTORAGE (Tanpa menampilkan UI hasil)
+      const dataHasilRA = {
+        skor: skor,
+        kategori: kategori,
+        teks_kategori: teksKat,
+        warna_kategori: warna,
+        waktu_selesai: new Date().toISOString()
+      };
+      
+      localStorage.setItem('ra_numerikal_hasil', JSON.stringify(dataHasilRA));
+      localStorage.setItem('ra_numerikal_skor', skor); 
+      localStorage.setItem('ra_numerikal_kategori', kategori);
+
+      // 4. Tampilkan notifikasi dan arahkan kembali ke halaman utama/psikogram
+      alert(`⏰ WAKTU HABIS!\n\nTes telah selesai secara otomatis. Hasil telah disimpan ke sistem. Anda akan diarahkan kembali.`);
+      
+      // Ganti 'index.html' dengan 'hasil.html' jika Anda ingin langsung ke halaman psikogram utama
+      window.location.href = 'verbal.html'; 
+    }
+  </script>
+</body>
+</html>
