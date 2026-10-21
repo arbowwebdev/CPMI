@@ -93,18 +93,11 @@
             min-height: 80px;
             position: relative;
         }
-        .signature-placeholder {
-            font-family: 'Brush Script MT', cursive;
-            font-size: 36px;
-            color: #666;
-            border-bottom: 1px solid #999;
-            display: inline-block;
-            min-width: 250px;
-            padding-bottom: 5px;
-        }
-        .underline-link {
-            text-decoration: underline;
-            color: #0066cc;
+        .signature-image {
+            max-width: 220px;
+            height: auto;
+            display: block;
+            margin-top: 5px;
         }
 
         table { width: 100%; border-collapse: collapse; margin-top: 5px; }
@@ -132,23 +125,24 @@
         .tombol {
             display: inline-block; padding: 12px 48px; font-size: 16px; font-weight: bold;
             border: none; border-radius: 6px; cursor: pointer; color: #fff; text-decoration: none;
-            margin: 0 5px;
+            margin: 0 5px; transition: background-color 0.2s;
         }
+        .tombol:disabled { opacity: 0.6; cursor: not-allowed; }
         .tombol-utama { background-color: #3498db; }
-        .tombol-utama:hover { background-color: #2980b9; }
+        .tombol-utama:hover:not(:disabled) { background-color: #2980b9; }
         .tombol-pdf { background-color: #27ae60; }
-        .tombol-pdf:hover { background-color: #219150; }
+        .tombol-pdf:hover:not(:disabled) { background-color: #219150; }
 
         @media (max-width: 768px) {
             h1 { font-size: 20px; }
             th.angka { width: 90px; }
             .tabel-identitas td, .tabel-psikogram th, .tabel-psikogram td { padding: 6px 4px; font-size: 11px; }
             .tanda-tangan-table td { font-size: 12px; line-height: 2; }
-            .signature-placeholder { font-size: 28px; }
+            .signature-image { max-width: 180px; }
         }
         @media print {
             body { padding: 0; }
-            .tombol-wrap { display: none; }
+            .tombol-wrap { display: none !important; }
             .wrap { max-width: 100%; }
             .kepala-surat { max-width: 100%; margin-bottom: 15px; }
             .tabel-identitas, .tabel-psikogram, .tanda-tangan-section { page-break-inside: avoid; }
@@ -157,26 +151,11 @@
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
-            .halaman-2 {
-                page-break-before: always;
-                break-before: page;
-                margin-top: 0;
-                padding-top: 20px;
-            }
-            .halaman-3 {
-                page-break-before: always;
-                break-before: page;
-                margin-top: 0;
-                padding-top: 20px;
-            }
-            .halaman-4 {
-                page-break-before: always;
-                break-before: page;
-                margin-top: 0;
-                padding-top: 20px;
-            }
-            .signature-placeholder {
-                color: #000 !important;
+            .halaman-2 { page-break-before: always; break-before: page; margin-top: 0; padding-top: 20px; }
+            .halaman-3 { page-break-before: always; break-before: page; margin-top: 0; padding-top: 20px; }
+            .halaman-4 { page-break-before: always; break-before: page; margin-top: 0; padding-top: 20px; }
+            .signature-image {
+                max-width: 220px;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
@@ -184,7 +163,7 @@
     </style>
 </head>
 <body>
-    <div class="wrap">
+    <div class="wrap" id="laporanWrap">
         <img src="kepalasurat.png" alt="Kepala Surat" class="kepala-surat">
 
         <h2>Identitas</h2>
@@ -196,7 +175,7 @@
             <tr><td class="label">Tgl. Pemeriksaan:</td><td class="isi" id="idTglTes">-</td></tr>
         </table>
 
-        <!-- ================= 1. KEMAMPUAN INTELEKTUAL (HALAMAN 1) ================= -->
+        <!-- ================= 1. KEMAMPUAN INTELEKTUAL ================= -->
         <h2>1. Kemampuan Intelektual</h2>
         <table class="tabel-psikogram">
             <thead>
@@ -254,7 +233,7 @@
             </tbody>
         </table>
 
-        <!-- ================= 2. SIKAP DAN CARA KERJA (HALAMAN 2) ================= -->
+        <!-- ================= 2. SIKAP DAN CARA KERJA ================= -->
         <div class="halaman-2">
             <h2>2. Sikap dan Cara Kerja</h2>
             <table class="tabel-psikogram">
@@ -306,7 +285,7 @@
             </table>
         </div>
 
-        <!-- ================= 3. KEPRIBADIAN (HALAMAN 3) ================= -->
+        <!-- ================= 3. KEPRIBADIAN ================= -->
         <div class="halaman-3">
             <h2>3. Kepribadian</h2>
             <table class="tabel-psikogram">
@@ -366,7 +345,7 @@
             </table>
         </div>
 
-        <!-- ================= 4. KEMAMPUAN BELAJAR (HALAMAN 4) ================= -->
+        <!-- ================= 4. KEMAMPUAN BELAJAR ================= -->
         <div class="halaman-4">
             <h2>4. Kemampuan Belajar</h2>
             <table class="tabel-psikogram">
@@ -421,7 +400,7 @@
                     <td class="label">Tanda tangan<br><em>Signature</em></td>
                     <td class="isi">: 
                         <div class="signature-area">
-                            <span class="signature-placeholder">Aribowo</span>
+                            <img src="ttd.png" alt="Tanda Tangan Psikolog" class="signature-image">
                         </div>
                     </td>
                 </tr>
@@ -440,7 +419,7 @@
             </table>
         </div>
 
-        <!-- BAGIAN HASIL, SKOR TOTAL, DAN KESIMPULAN SINGKAT (DISEMBUNYIKAN SEMENTARA) -->
+        <!-- BAGIAN HASIL, SKOR TOTAL, DAN KESIMPULAN SINGKAT -->
         <div id="bagian-hasil" style="display: none;">
             <h2>Hasil Sub Test</h2>
             <table>
@@ -463,12 +442,20 @@
         </div>
 
         <div class="tombol-wrap">
-            <button type="button" class="tombol tombol-pdf" id="btnPdf">Simpan PDF</button>
+            <button type="button" class="tombol tombol-pdf" id="btnPdf">Buat PDF & Kirim</button>
             <button type="button" class="tombol tombol-utama" id="btnSelesai">Selesai</button>
         </div>
     </div>
 
     <script>
+        // ============================================================
+        // KONFIGURASI - GANTI DENGAN URL GOOGLE APPS SCRIPT ANDA
+        // ============================================================
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbyHuLMW9T67MJX7oP7T2K3xZ2IMiAnpgBkIV6CFUuKnyVJBq0foY7RjRx6zPdw_hfQZ/exec";
+
+        // ============================================================
+        // KONSTANTA & DATA
+        // ============================================================
         const DAFTAR_SERI = [
             { kunci: "cfit_seriA_skor", elemen: "rawA", nama: "Series" },
             { kunci: "cfit_seriB_skor", elemen: "rawB", nama: "Classification" },
@@ -485,6 +472,9 @@
 
         const NAMA_BULAN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 
+        // ============================================================
+        // FUNGSI HELPER
+        // ============================================================
         function formatTanggal(nilaiIso) {
             if (!nilaiIso) return "-";
             const bagian = nilaiIso.split("-");
@@ -524,7 +514,9 @@
             }
         }
 
-        // ===== MUAT IDENTITAS PESERTA =====
+        // ============================================================
+        // MUAT DATA PESERTA
+        // ============================================================
         let peserta = null;
         try {
             const isi = localStorage.getItem("cfit_peserta");
@@ -538,12 +530,13 @@
             document.getElementById("idAlamat").textContent = peserta.alamat || "-";
             if (peserta.tglTes) {
                 document.getElementById("idTglTes").textContent = formatTanggal(peserta.tglTes);
-                // Set tanggal hasil yang sama dengan tanggal tes
                 document.getElementById("tanggalHasil").textContent = formatTanggal(peserta.tglTes);
             }
         }
 
-        // ===== 1. KEMAMPUAN INTELEKTUAL =====
+        // ============================================================
+        // PROSES SKOR & KESIMPULAN
+        // ============================================================
         let total = 0, lengkap = true, nilaiSeri = [];
         let skorA = 0, skorB = 0, skorC = 0, skorD = 0;
 
@@ -599,7 +592,6 @@
         }
         document.getElementById("kesimpulanIntelektual").innerHTML = teksIntelektual;
 
-        // Deviasi IQ
         const IQ_MIN = 56, IQ_MAX = 146, SOAL_TOTAL = 47;
         const deviasiIQ = Math.round(IQ_MIN + (total / SOAL_TOTAL) * (IQ_MAX - IQ_MIN));
         let taraf;
@@ -610,12 +602,12 @@
         else if (deviasiIQ >= 80) taraf = "Rata-rata bawah";
         else if (deviasiIQ >= 70) taraf = "Di bawah rata-rata";
         else taraf = "Jauh di bawah rata-rata";
-        let rentang;
+        
+        let rentang = "di bawah normal";
         if (taraf === "Rata-rata") rentang = "normal";
         else if (taraf === "Di atas rata-rata") rentang = "di atas normal";
         else if (taraf === "Superior") rentang = "superior";
         else if (taraf === "Sangat Superior") rentang = "sangat superior";
-        else rentang = "di bawah normal";
 
         document.getElementById("totalIQ").textContent = String(deviasiIQ);
         document.getElementById("totalTaraf").textContent = taraf;
@@ -632,7 +624,7 @@
             ", yang menunjukkan " + (DESKRIPSI_ASPEK[tertinggi.nama] || "kemampuan yang relatif baik pada aspek tersebut") + ".";
         document.getElementById("simpulParagraf").innerHTML = paragraf;
 
-        // ===== 2. SIKAP DAN CARA KERJA (DARI BFI - cpmi_psikogram_data) =====
+        // ===== 2. SIKAP DAN CARA KERJA =====
         let dataBFI = null;
         try {
             const isi = localStorage.getItem("cpmi_psikogram_data");
@@ -641,192 +633,142 @@
 
         if (dataBFI && dataBFI.psikogram && dataBFI.psikogram.sikapKerja) {
             const sikapKerja = dataBFI.psikogram.sikapKerja;
-            
-            // Orientasi Hasil
-            if (sikapKerja.orientasiHasil && sikapKerja.orientasiHasil.kategori) {
-                tampilkanKategori("Orientasi", sikapKerja.orientasiHasil.kategori);
-            }
-            
-            // Fleksibilitas
-            if (sikapKerja.fleksibilitas && sikapKerja.fleksibilitas.kategori) {
-                tampilkanKategori("Fleksibilitas", sikapKerja.fleksibilitas.kategori);
-            }
-            
-            // Sistematika Kerja
-            if (sikapKerja.sistematikaKerja && sikapKerja.sistematikaKerja.kategori) {
-                tampilkanKategori("Sistematika", sikapKerja.sistematikaKerja.kategori);
-            }
+            if (sikapKerja.orientasiHasil && sikapKerja.orientasiHasil.kategori) tampilkanKategori("Orientasi", sikapKerja.orientasiHasil.kategori);
+            if (sikapKerja.fleksibilitas && sikapKerja.fleksibilitas.kategori) tampilkanKategori("Fleksibilitas", sikapKerja.fleksibilitas.kategori);
+            if (sikapKerja.sistematikaKerja && sikapKerja.sistematikaKerja.kategori) tampilkanKategori("Sistematika", sikapKerja.sistematikaKerja.kategori);
 
-            // Generate kesimpulan Sikap dan Cara Kerja
-            const orientasi = sikapKerja.orientasiHasil || { kategori: 'C', skor: 3.0 };
-            const fleksibilitas = sikapKerja.fleksibilitas || { kategori: 'C', skor: 3.0 };
-            const sistematika = sikapKerja.sistematikaKerja || { kategori: 'C', skor: 3.0 };
-
+            const orientasi = sikapKerja.orientasiHasil || { kategori: 'C' };
+            const fleksibilitas = sikapKerja.fleksibilitas || { kategori: 'C' };
+            const sistematika = sikapKerja.sistematikaKerja || { kategori: 'C' };
             const dOrientasi = getDeskripsiKategori(orientasi.kategori);
             const dFleksibilitas = getDeskripsiKategori(fleksibilitas.kategori);
             const dSistematika = getDeskripsiKategori(sistematika.kategori);
 
-            let teksSikap = "Klien menunjukkan profil sikap kerja yang " + dFleksibilitas + ", terutama pada aspek Fleksibilitas. Hal ini mengindikasikan bahwa klien memiliki kemampuan yang " + dFleksibilitas + " dalam menyesuaikan diri saat menghadapi perubahan situasi atau permasalahan di lapangan, sehingga tidak mudah merasa terhambat oleh kondisi yang tidak ideal. ";
-
+            let teksSikap = "Klien menunjukkan profil sikap kerja yang " + dFleksibilitas + ", terutama pada aspek Fleksibilitas. ";
             if (orientasi.kategori === 'R' || orientasi.kategori === 'K') {
-                teksSikap += "Namun, pada aspek Orientasi Hasil, klien berada pada level " + dOrientasi + ". Ini menunjukkan bahwa dorongan untuk mencapai hasil yang melampaui standar atau memperhatikan keterhubungan antara perencanaan dan hasil akhir masih perlu ditingkatkan secara signifikan. ";
+                teksSikap += "Namun, pada aspek Orientasi Hasil, klien berada pada level " + dOrientasi + ". ";
             } else if (orientasi.kategori === 'C') {
-                teksSikap += "Namun, pada aspek Orientasi Hasil, klien berada pada level " + dOrientasi + ". Ini menunjukkan bahwa meskipun klien memiliki komitmen untuk menyelesaikan tugas secara bertanggung jawab, dorongan untuk mencapai hasil yang melampaui standar atau memperhatikan keterhubungan antara perencanaan dan hasil akhir masih perlu ditingkatkan. ";
+                teksSikap += "Pada aspek Orientasi Hasil, klien berada pada level " + dOrientasi + ". ";
             } else {
-                teksSikap += "Pada aspek Orientasi Hasil, klien menunjukkan performa yang " + dOrientasi + ", dengan komitmen yang kuat untuk menyelesaikan tugas secara bertanggung jawab serta memperhatikan keterhubungan antara perencanaan dan hasil kerja. ";
+                teksSikap += "Pada aspek Orientasi Hasil, klien menunjukkan performa yang " + dOrientasi + ". ";
             }
-
-            if (sistematika.kategori === 'R' || sistematika.kategori === 'K') {
-                teksSikap += "Sementara itu, aspek Sistematika Kerja berada pada level " + dSistematika + ", yang mengindikasikan bahwa klien masih memerlukan banyak arahan dan pengawasan agar cara kerjanya tetap terstruktur dan konsisten hingga pekerjaan selesai sepenuhnya. ";
-            } else if (sistematika.kategori === 'C') {
-                teksSikap += "Sementara itu, aspek Sistematika Kerja berada pada level " + dSistematika + ". Dalam proses kerjanya, klien sudah mampu mengorganisasikan langkah-langkah penyelesaian tugas, namun terkadang masih memerlukan arahan atau pengawasan agar cara kerjanya tetap terstruktur dan konsisten hingga pekerjaan selesai sepenuhnya. ";
-            } else {
-                teksSikap += "Aspek Sistematika Kerja juga berada pada level " + dSistematika + ", di mana klien mampu merencanakan dan mengorganisasikan cara kerja secara mandiri dan terstruktur hingga pekerjaan selesai. ";
-            }
-
-            teksSikap += "Secara keseluruhan, klien adalah tipe pekerja yang " + dFleksibilitas + " dan kooperatif, namun " + 
-                (orientasi.kategori === 'B' || orientasi.kategori === 'T' ? "" : "membutuhkan pengembangan dalam hal ketelitian sistem kerja serta motivasi berprestasi ") +
-                "agar hasil kerja yang dicapai bisa lebih optimal dan terencana dengan matang.";
-
+            teksSikap += "Aspek Sistematika Kerja berada pada level " + dSistematika + ". ";
+            teksSikap += "Secara keseluruhan, klien adalah tipe pekerja yang " + dFleksibilitas + " dan kooperatif.";
             document.getElementById("kesimpulanSikap").innerHTML = teksSikap;
         } else {
             document.getElementById("kesimpulanSikap").innerHTML = "Data tes Sikap dan Cara Kerja belum tersedia.";
         }
 
-        // ===== 3. KEPRIBADIAN (DARI BFI - cpmi_psikogram_data) =====
+        // ===== 3. KEPRIBADIAN =====
         if (dataBFI && dataBFI.psikogram && dataBFI.psikogram.kepribadian) {
             const kepribadian = dataBFI.psikogram.kepribadian;
-            
-            // Motivasi Berprestasi
-            if (kepribadian.motivasiBerprestasi && kepribadian.motivasiBerprestasi.kategori) {
-                tampilkanKategori("Motivasi", kepribadian.motivasiBerprestasi.kategori);
-            }
-            
-            // Kerja Sama
-            if (kepribadian.kerjaSama && kepribadian.kerjaSama.kategori) {
-                tampilkanKategori("Kerjasama", kepribadian.kerjaSama.kategori);
-            }
-            
-            // Keterampilan Interpersonal
-            if (kepribadian.keterampilanInterpersonal && kepribadian.keterampilanInterpersonal.kategori) {
-                tampilkanKategori("Interpersonal", kepribadian.keterampilanInterpersonal.kategori);
-            }
-            
-            // Stabilitas Emosi
-            if (kepribadian.stabilitasEmosi && kepribadian.stabilitasEmosi.kategori) {
-                tampilkanKategori("Stabilitas", kepribadian.stabilitasEmosi.kategori);
-            }
+            if (kepribadian.motivasiBerprestasi && kepribadian.motivasiBerprestasi.kategori) tampilkanKategori("Motivasi", kepribadian.motivasiBerprestasi.kategori);
+            if (kepribadian.kerjaSama && kepribadian.kerjaSama.kategori) tampilkanKategori("Kerjasama", kepribadian.kerjaSama.kategori);
+            if (kepribadian.keterampilanInterpersonal && kepribadian.keterampilanInterpersonal.kategori) tampilkanKategori("Interpersonal", kepribadian.keterampilanInterpersonal.kategori);
+            if (kepribadian.stabilitasEmosi && kepribadian.stabilitasEmosi.kategori) tampilkanKategori("Stabilitas", kepribadian.stabilitasEmosi.kategori);
 
-            // Generate kesimpulan Kepribadian
-            const motivasi = kepribadian.motivasiBerprestasi || { kategori: 'C', skor: 3.0 };
-            const kerjasama = kepribadian.kerjaSama || { kategori: 'C', skor: 3.0 };
-            const interpersonal = kepribadian.keterampilanInterpersonal || { kategori: 'C', skor: 3.0 };
-            const stabilitas = kepribadian.stabilitasEmosi || { kategori: 'C', skor: 3.0 };
-
+            const motivasi = kepribadian.motivasiBerprestasi || { kategori: 'C' };
+            const kerjasama = kepribadian.kerjaSama || { kategori: 'C' };
+            const stabilitas = kepribadian.stabilitasEmosi || { kategori: 'C' };
             const dMotivasi = getDeskripsiKategori(motivasi.kategori);
             const dKerjasama = getDeskripsiKategori(kerjasama.kategori);
-            const dInterpersonal = getDeskripsiKategori(interpersonal.kategori);
             const dStabilitas = getDeskripsiKategori(stabilitas.kategori);
 
             let teksKepribadian = "Klien menunjukkan profil kepribadian yang " + dMotivasi + " di seluruh aspek yang dinilai. ";
-
-            teksKepribadian += "Klien memiliki Motivasi Berprestasi yang " + dMotivasi + ", yang mengindikasikan ";
-            if (motivasi.kategori === 'R' || motivasi.kategori === 'K') {
-                teksKepribadian += "dorongan internal untuk mencapai target dan memberikan performa terbaik masih perlu dikembangkan secara signifikan. ";
-            } else if (motivasi.kategori === 'C') {
-                teksKepribadian += "dorongan untuk mencapai target dan memberikan performa terbaik berada pada level standar, masih perlu dorongan lebih untuk melampaui ekspektasi. ";
-            } else if (motivasi.kategori === 'B') {
-                teksKepribadian += "adanya dorongan internal yang kuat untuk selalu memberikan performa terbaik dan melampaui target. ";
-            } else {
-                teksKepribadian += "adanya dorongan internal yang luar biasa kuat untuk selalu memberikan performa terbaik, melampaui target, dan menjaga komitmen terhadap kualitas hasil kerja. ";
-            }
-
-            teksKepribadian += "Kekuatan personal ini didukung oleh kapasitas sosial yang " + dKerjasama + ". ";
-            teksKepribadian += "Pada aspek Kerja Sama dan Keterampilan Interpersonal, klien menunjukkan ";
-            if (kerjasama.kategori === 'R' || kerjasama.kategori === 'K') {
-                teksKepribadian += "kemampuan dalam menjalin hubungan sosial dan memahami kebutuhan orang lain yang masih perlu banyak pengembangan. ";
-            } else if (kerjasama.kategori === 'C') {
-                teksKepribadian += "kemampuan yang memadai dalam menjalin hubungan sosial serta memahami kebutuhan orang lain dengan empati yang wajar. ";
-            } else if (kerjasama.kategori === 'B') {
-                teksKepribadian += "kemampuan yang sangat baik dalam menjalin hubungan sosial, memahami kebutuhan orang lain dengan empati, serta mampu membangun sinergi kelompok yang efektif. ";
-            } else {
-                teksKepribadian += "kemampuan luar biasa dalam menjalin hubungan sosial, memahami kebutuhan orang lain dengan empati, serta mampu membangun sinergi kelompok yang sangat efektif untuk mencapai tujuan bersama. ";
-            }
-            teksKepribadian += "Hal ini menjadikan klien sebagai sosok yang " + 
-                (kerjasama.kategori === 'B' || kerjasama.kategori === 'T' ? "sangat kolaboratif dan mampu menyesuaikan diri dengan berbagai tipe kepribadian di lingkungan kerja" : "cukup kooperatif dalam lingkungan kerja") + ". ";
-
-            teksKepribadian += "Lebih lanjut, aspek Stabilitas Emosi yang berada pada level " + dStabilitas + " menunjukkan ";
-            if (stabilitas.kategori === 'R' || stabilitas.kategori === 'K') {
-                teksKepribadian += "kontrol diri dan kemampuan mengelola emosi di bawah tekanan yang masih perlu dilatih secara intensif. ";
-            } else if (stabilitas.kategori === 'C') {
-                teksKepribadian += "kemampuan yang memadai dalam memahami dan mengontrol emosi, meskipun masih dapat meningkat dalam menghadapi tekanan tinggi. ";
-            } else if (stabilitas.kategori === 'B') {
-                teksKepribadian += "kontrol diri yang baik, tetap tenang di bawah tekanan, dan mampu menghadapi situasi sulit dengan kepala dingin. ";
-            } else {
-                teksKepribadian += "kematangan psikologis yang sangat baik. Klien memiliki kontrol diri yang kuat, tetap tenang di bawah tekanan, dan mampu menghadapi situasi sulit dengan kepala dingin. ";
-            }
-
-            teksKepribadian += "Secara keseluruhan, klien adalah individu yang " + 
-                (motivasi.kategori === 'B' || motivasi.kategori === 'T' ? "memiliki integritas pribadi yang kuat, andal dalam kerja tim, serta memiliki ketahanan mental yang tinggi untuk menghadapi tantangan profesional yang kompleks" : "memiliki potensi untuk berkembang lebih lanjut dalam hal motivasi berprestasi dan kematangan emosional agar dapat menghadapi tantangan profesional yang lebih kompleks") + ".";
-
+            teksKepribadian += "Motivasi Berprestasi " + dMotivasi + ". ";
+            teksKepribadian += "Kapasitas sosial " + dKerjasama + ". ";
+            teksKepribadian += "Stabilitas Emosi " + dStabilitas + ".";
             document.getElementById("kesimpulanKepribadian").innerHTML = teksKepribadian;
         } else {
             document.getElementById("kesimpulanKepribadian").innerHTML = "Data tes Kepribadian belum tersedia.";
         }
 
-        // ===== 4. KEMAMPUAN BELAJAR (DARI BFI - cpmi_psikogram_data) =====
+        // ===== 4. KEMAMPUAN BELAJAR =====
         if (dataBFI && dataBFI.psikogram && dataBFI.psikogram.kemampuanBelajar) {
             const kemampuanBelajar = dataBFI.psikogram.kemampuanBelajar;
-            
-            // Pengembangan Diri
-            if (kemampuanBelajar.pengembanganDiri && kemampuanBelajar.pengembanganDiri.kategori) {
-                tampilkanKategori("Pengembangan", kemampuanBelajar.pengembanganDiri.kategori);
-            }
-            
-            // Mengelola Perubahan
-            if (kemampuanBelajar.mengelolaPerubahan && kemampuanBelajar.mengelolaPerubahan.kategori) {
-                tampilkanKategori("Perubahan", kemampuanBelajar.mengelolaPerubahan.kategori);
-            }
+            if (kemampuanBelajar.pengembanganDiri && kemampuanBelajar.pengembanganDiri.kategori) tampilkanKategori("Pengembangan", kemampuanBelajar.pengembanganDiri.kategori);
+            if (kemampuanBelajar.mengelolaPerubahan && kemampuanBelajar.mengelolaPerubahan.kategori) tampilkanKategori("Perubahan", kemampuanBelajar.mengelolaPerubahan.kategori);
 
-            // Generate kesimpulan Kemampuan Belajar
-            const pengembangan = kemampuanBelajar.pengembanganDiri || { kategori: 'C', skor: 3.0 };
-            const perubahan = kemampuanBelajar.mengelolaPerubahan || { kategori: 'C', skor: 3.0 };
-
+            const pengembangan = kemampuanBelajar.pengembanganDiri || { kategori: 'C' };
+            const perubahan = kemampuanBelajar.mengelolaPerubahan || { kategori: 'C' };
             const dPengembangan = getDeskripsiKategori(pengembangan.kategori);
             const dPerubahan = getDeskripsiKategori(perubahan.kategori);
 
-            let teksBelajar = "Klien memiliki kapasitas yang " + dPengembangan + " untuk terus berkembang dan menyesuaikan diri dengan dinamika lingkungan kerja. ";
-
-            teksBelajar += "Dalam hal Pengembangan Diri, klien menunjukkan kemauan serta kemampuan yang " + dPengembangan + " untuk meningkatkan pengetahuan dan menyempurnakan keterampilan yang dimilikinya. ";
-            if (pengembangan.kategori === 'R' || pengembangan.kategori === 'K') {
-                teksBelajar += "Klien masih memerlukan dorongan dan arahan yang jelas agar dapat menyerap informasi baru dan mengikuti proses pembelajaran dengan lebih optimal. ";
-            } else if (pengembangan.kategori === 'C') {
-                teksBelajar += "Ia mampu menyerap informasi baru dan mengikuti proses pembelajaran dengan hasil yang " + dPengembangan + ", sepanjang mendapatkan arahan yang jelas. ";
-            } else {
-                teksBelajar += "Ia mampu menyerap informasi baru dengan cepat dan mengikuti proses pembelajaran secara mandiri dengan hasil yang memuaskan. ";
-            }
-
-            teksBelajar += "Demikian pula dalam aspek Mengelola Perubahan, klien berada pada tingkat yang " + dPerubahan + " dalam menyesuaikan diri dengan situasi-situasi baru atau transisi di lingkungan kerja. ";
-            if (perubahan.kategori === 'R' || perubahan.kategori === 'K') {
-                teksBelajar += "Klien masih menunjukkan resistensi yang cukup besar terhadap perubahan dan perlu dilatih secara bertahap agar lebih terbuka serta mampu menyelaraskan diri dengan prosedur atau kondisi baru yang ditemuinya dalam menjalankan tugas sehari-hari.";
-            } else if (perubahan.kategori === 'C') {
-                teksBelajar += "Klien tidak menunjukkan resistensi yang besar terhadap perubahan dan memiliki fleksibilitas yang wajar untuk menyelaraskan diri dengan prosedur atau kondisi baru yang ditemuinya dalam menjalankan tugas sehari-hari.";
-            } else {
-                teksBelajar += "Klien menunjukkan sikap yang sangat terbuka terhadap perubahan, dengan fleksibilitas yang tinggi untuk menyelaraskan diri dengan prosedur atau kondisi baru. Klien mampu beradaptasi dengan cepat dan bahkan dapat menjadi agen perubahan positif di lingkungannya.";
-            }
-
+            let teksBelajar = "Klien memiliki kapasitas yang " + dPengembangan + " untuk terus berkembang. ";
+            teksBelajar += "Pengembangan Diri " + dPengembangan + ". ";
+            teksBelajar += "Mengelola Perubahan " + dPerubahan + ".";
             document.getElementById("kesimpulanBelajar").innerHTML = teksBelajar;
         } else {
             document.getElementById("kesimpulanBelajar").innerHTML = "Data tes Kemampuan Belajar belum tersedia.";
         }
 
-        // ===== TOMBOL =====
-        document.getElementById("btnPdf").addEventListener("click", function () { window.print(); });
+        // ============================================================
+        // FUNGSI: KIRIM DATA + CETAK PDF DENGAN NAMA FILE KHUSUS
+        // ============================================================
+        async function simpanDataDanCetak() {
+            const btn = document.getElementById("btnPdf");
+            const originalText = btn.textContent;
+            btn.textContent = "Menyiapkan...";
+            btn.disabled = true;
+
+            try {
+                // 1. Ambil data
+                const nomor = document.getElementById("idNomor").textContent || "-";
+                const nama = document.getElementById("idNama").textContent || "-";
+                const fasyankes = document.getElementById("idFasyankes").textContent || "-";
+                const tanggal = document.getElementById("idTglTes").textContent || "-";
+
+                // 2. Kirim ke Google Sheets (Fire-and-forget agar tidak memblokir)
+                fetch(GAS_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ nomor, nama, fasyankes, tanggal })
+                }).catch(err => console.warn("Gagal kirim ke sheets:", err));
+
+                // 3. FORMAT NAMA FILE: cpmi-nama peserta-tanggal tes
+                // Ganti spasi dengan strip (-) agar valid sebagai nama file
+                const namaClean = nama.trim().replace(/\s+/g, '-');
+                const tanggalClean = tanggal.trim().replace(/\s+/g, '-');
+                const filename = `cpmi-${namaClean}-${tanggalClean}`;
+
+                // 4. TRIK AJAIB: Ubah judul halaman sementara
+                // Browser akan menggunakan judul ini sebagai nama file PDF default
+                const originalTitle = document.title;
+                document.title = filename;
+
+                // 5. Buka dialog cetak
+                alert("✅ Data sedang dikirim ke Google Sheets.\n\nSilakan pilih 'Save as PDF' (Simpan sebagai PDF) pada dialog cetak.\nNama file default sudah diatur menjadi:\n" + filename + ".pdf");
+                
+                setTimeout(function() { 
+                    window.print(); 
+                    // Kembalikan judul asli setelah dialog cetak ditutup
+                    setTimeout(() => { document.title = originalTitle; }, 1000);
+                }, 500);
+
+            } catch (error) {
+                console.error("Error:", error);
+                alert("⚠️ Terjadi kesalahan: " + error.message);
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // ============================================================
+        // EVENT LISTENER TOMBOL
+        // ============================================================
+        document.getElementById("btnPdf").addEventListener("click", simpanDataDanCetak);
+
         document.getElementById("btnSelesai").addEventListener("click", function () {
-            localStorage.removeItem("cfit_peserta");
-            DAFTAR_SERI.forEach(function (seri) { localStorage.removeItem(seri.kunci); });
-            localStorage.removeItem("cpmi_psikogram_data");
-            window.location.href = "index.html";
+            if (confirm("Apakah Anda yakin ingin selesai? Data sementara akan dihapus.")) {
+                localStorage.removeItem("cfit_peserta");
+                DAFTAR_SERI.forEach(function (seri) { localStorage.removeItem(seri.kunci); });
+                localStorage.removeItem("cpmi_psikogram_data");
+                localStorage.removeItem("ra_numerikal_kategori");
+                localStorage.removeItem("verbal_test_kategori");
+                window.location.href = "index.html";
+            }
         });
     </script>
 </body>

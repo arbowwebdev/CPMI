@@ -1,943 +1,364 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <!-- Library untuk generate PDF di browser -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Tes Kemampuan Inteligensi</title>
+    <title>Tes Kemampuan Inteligensi - Klinik Utama Medilab</title>
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: Arial, sans-serif;
-            background-color: #fff;
-            color: #111;
-            display: flex;
-            justify-content: center;
-            padding: 30px 20px;
-            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+            padding: 20px;
+            color: #1e293b;
         }
-        .wrap { max-width: 900px; width: 100%; }
-        .kepala-surat {
-            width: 100%; height: auto; display: block;
-            margin-bottom: 20px; page-break-inside: avoid;
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
         }
-        h1 { font-size: 24px; margin: 0 0 20px 0; letter-spacing: 0.3px; }
-        h2 { font-size: 15px; margin: 18px 0 10px 0; }
-        .tabel-identitas {
-            width: 100%; border-collapse: collapse;
-            margin: 15px 0 25px 0; font-size: 14px;
+        .header {
+            background: linear-gradient(135deg, #0369a1, #0284c7);
+            color: #fff;
+            padding: 25px;
+            text-align: center;
         }
-        .tabel-identitas td {
-            padding: 8px 12px; border-bottom: 1px solid #e5e5e5; line-height: 1.6;
-        }
-        .tabel-identitas td.label {
-            font-weight: bold; width: 45%; background-color: #f9f9f9; vertical-align: top;
-        }
-        .tabel-identitas td.isi { width: 55%; background-color: #fff; }
-        .tabel-identitas tr:last-child td { border-bottom: 2px solid #ccc; }
+        .header h1 { font-size: 22px; margin-bottom: 6px; }
+        .header h2 { font-size: 16px; font-weight: 500; opacity: 0.95; }
+        .header h3 { font-size: 14px; font-weight: 400; margin-top: 4px; opacity: 0.9; }
 
-        .tabel-psikogram {
-            width: 100%; border-collapse: collapse;
-            margin: 20px 0 25px 0; font-size: 13px; border: 1px solid #999;
+        .disclaimer {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 12px 18px;
+            margin: 20px;
+            font-size: 13px;
+            color: #78350f;
+            border-radius: 6px;
         }
-        .tabel-psikogram th, .tabel-psikogram td {
-            border: 1px solid #999; padding: 10px 8px; text-align: left;
-        }
-        .tabel-psikogram th {
-            background-color: #f5f5f5; font-weight: bold; text-align: center;
-        }
-        .tabel-psikogram .kolom-aspek { width: 5%; text-align: center; font-weight: bold; }
-        .tabel-psikogram .kolom-nama { width: 25%; font-weight: 600; }
-        .tabel-psikogram .kolom-uraian { width: 40%; }
-        .tabel-psikogram .kolom-kategori {
-            width: 6%; text-align: center; vertical-align: middle; padding: 12px 4px; 
-        }
-        .tabel-psikogram .keterangan { font-size: 12px; padding: 8px; background-color: #fafafa; }
-        .tabel-psikogram .kesimpulan-psikogram { padding: 12px; line-height: 1.8; text-align: justify; }
+        .disclaimer strong { color: #b45309; }
 
-        .kotak-terisi {
-            background-color: #000000 !important;
-            border-color: #000000 !important;
-            color: #fff !important;
-            font-weight: bold;
+        .instruksi {
+            background: #f1f5f9;
+            margin: 0 20px 20px;
+            padding: 18px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
         }
+        .instruksi h4 {
+            color: #0c4a6e;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        .instruksi ul { padding-left: 20px; font-size: 13.5px; line-height: 1.7; }
 
-        /* Styling untuk bagian tanda tangan */
-        .tanda-tangan-section {
-            margin-top: 50px;
-            page-break-inside: avoid;
+        .form-section { padding: 10px 20px 25px; }
+        .form-section h3 {
+            color: #0369a1;
+            border-bottom: 2px solid #e0f2fe;
+            padding-bottom: 8px;
+            margin-bottom: 18px;
+            font-size: 17px;
         }
-        .tanda-tangan-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-            line-height: 2.2;
-        }
-        .tanda-tangan-table td {
-            padding: 8px 0;
-            vertical-align: top;
-        }
-        .tanda-tangan-table td.label {
-            width: 35%;
-            font-weight: bold;
-        }
-        .tanda-tangan-table td.label em {
-            font-weight: normal;
-            font-style: italic;
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
             display: block;
-            margin-top: 2px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #334155;
         }
-        .tanda-tangan-table td.isi {
-            width: 65%;
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 14px;
+            transition: border-color 0.2s;
         }
-        .signature-area {
-            min-height: 80px;
-            position: relative;
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #0284c7;
+            box-shadow: 0 0 0 3px rgba(2,132,199,0.12);
         }
-        .signature-placeholder {
-            font-family: 'Brush Script MT', cursive;
-            font-size: 36px;
-            color: #666;
-            border-bottom: 1px solid #999;
-            display: inline-block;
-            min-width: 250px;
-            padding-bottom: 5px;
+        .form-group input[readonly] {
+            background: #f8fafc;
+            color: #64748b;
         }
-		
-		/* Styling untuk gambar tanda tangan */
-			.signature-image {
-			max-width: 250px; /* Sesuaikan lebar maksimal tanda tangan */
-			height: auto;
-			display: block;
-			/* Opsional: Hapus komentar di bawah jika ingin tetap ada garis bawah seperti sebelumnya */
-			/* border-bottom: 1px solid #999; */
-			/* padding-bottom: 5px; */
-			}
+        .form-row { display: flex; gap: 12px; }
+        .form-row .form-group { flex: 1; }
 
-			/* Pastikan gambar tercetak dengan jelas dan tidak terpotong */
-			@media print {
-				.signature-image {
-					max-width: 250px;
-					-webkit-print-color-adjust: exact;
-					print-color-adjust: exact;
-				}
-			}
-		
-		
-		
-		
-        .underline-link {
-            text-decoration: underline;
-            color: #0066cc;
+        /* === BOX ALAMAT OTOMATIS === */
+        .alamat-box {
+            margin-top: 10px;
+            padding: 14px 16px;
+            background: #ecfeff;
+            border-left: 4px solid #06b6d4;
+            border-radius: 7px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .alamat-box h5 {
+            margin: 0 0 6px 0;
+            color: #0e7490;
+            font-size: 14px;
+        }
+        .alamat-box p {
+            margin: 0;
+            color: #164e63;
+            font-size: 13.5px;
+            line-height: 1.5;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
-        th {
-            background-color: #efefef; font-size: 13px; letter-spacing: 0.5px;
-            text-align: left; padding: 12px 14px; border-bottom: 1px solid #ddd;
+        .btn-next {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.15s, box-shadow 0.15s;
         }
-        th.angka { text-align: center; width: 140px; }
-        td {
-            font-size: 14px; padding: 16px 14px;
-            border-bottom: 1px solid #e5e5e5; letter-spacing: 0.4px;
+        .btn-next:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(2,132,199,0.3);
         }
-        td.angka { text-align: center; }
 
-        .daftar-total { margin: 10px 0 0 0; padding-left: 22px; font-size: 15px; line-height: 1.9; }
-        .garis-pisah { border: none; border-top: 1px solid #ccc; margin: 30px 0 20px 0; }
-        .kesimpulan p { font-size: 15px; line-height: 1.7; margin: 0 0 12px 0; text-align: justify; }
-
-        .peringatan {
-            background-color: #fff8e1; border: 1px solid #ffe082; color: #7a5c00;
-            font-size: 14px; line-height: 1.5; padding: 12px 16px;
-            border-radius: 6px; margin: 15px 0; display: none;
-        }
-        .tombol-wrap { text-align: center; margin-top: 30px; }
-        .tombol {
-            display: inline-block; padding: 12px 48px; font-size: 16px; font-weight: bold;
-            border: none; border-radius: 6px; cursor: pointer; color: #fff; text-decoration: none;
-            margin: 0 5px;
-        }
-        .tombol-utama { background-color: #3498db; }
-        .tombol-utama:hover { background-color: #2980b9; }
-        .tombol-pdf { background-color: #27ae60; }
-        .tombol-pdf:hover { background-color: #219150; }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 20px; }
-            th.angka { width: 90px; }
-            .tabel-identitas td, .tabel-psikogram th, .tabel-psikogram td { padding: 6px 4px; font-size: 11px; }
-            .tanda-tangan-table td { font-size: 12px; line-height: 2; }
-            .signature-placeholder { font-size: 28px; }
-        }
-        @media print {
-            body { padding: 0; }
-            .tombol-wrap { display: none; }
-            .wrap { max-width: 100%; }
-            .kepala-surat { max-width: 100%; margin-bottom: 15px; }
-            .tabel-identitas, .tabel-psikogram, .tanda-tangan-section { page-break-inside: avoid; }
-            .kotak-terisi {
-                background-color: #000000 !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            .halaman-2 {
-                page-break-before: always;
-                break-before: page;
-                margin-top: 0;
-                padding-top: 20px;
-            }
-            .halaman-3 {
-                page-break-before: always;
-                break-before: page;
-                margin-top: 0;
-                padding-top: 20px;
-            }
-            .halaman-4 {
-                page-break-before: always;
-                break-before: page;
-                margin-top: 0;
-                padding-top: 20px;
-            }
-            .signature-placeholder {
-                color: #000 !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
+        @media (max-width: 600px) {
+            .form-row { flex-direction: column; gap: 0; }
+            .header h1 { font-size: 18px; }
         }
     </style>
 </head>
 <body>
-    <div class="wrap">
-        <img src="kepalasurat.png" alt="Kepala Surat" class="kepala-surat">
-
-        <h2>Identitas</h2>
-        <table class="tabel-identitas">
-            <tr><td class="label">Nomor:</td><td class="isi" id="idNomor">-</td></tr>
-            <tr><td class="label">Nama Peserta:</td><td class="isi" id="idNama">-</td></tr>
-            <tr><td class="label">Nama Fasyankes/Lembaga layanan psikologi:</td><td class="isi" id="idFasyankes">-</td></tr>
-            <tr><td class="label">Alamat Fasyankes/Lembaga layanan psikologi:</td><td class="isi" id="idAlamat">-</td></tr>
-            <tr><td class="label">Tgl. Pemeriksaan:</td><td class="isi" id="idTglTes">-</td></tr>
-        </table>
-
-        <!-- ================= 1. KEMAMPUAN INTELEKTUAL (HALAMAN 1) ================= -->
-        <h2>1. Kemampuan Intelektual</h2>
-        <table class="tabel-psikogram">
-            <thead>
-                <tr>
-                    <th rowspan="2" class="kolom-aspek"></th>
-                    <th rowspan="2" class="kolom-nama">ASPEK YANG DINILAI</th>
-                    <th rowspan="2" class="kolom-uraian">URAIAN</th>
-                    <th colspan="5">KATEGORI</th>
-                </tr>
-                <tr>
-                    <th class="kolom-kategori">R</th><th class="kolom-kategori">K</th>
-                    <th class="kolom-kategori">C</th><th class="kolom-kategori">B</th>
-                    <th class="kolom-kategori">T</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="kolom-aspek">A</td>
-                    <td class="kolom-nama">Logika Berpikir</td>
-                    <td class="kolom-uraian">Kemampuan untuk berpikir secara logis dan sistematis</td>
-                    <td class="kolom-kategori" id="katLogikaR"></td><td class="kolom-kategori" id="katLogikaK"></td>
-                    <td class="kolom-kategori" id="katLogikaC"></td><td class="kolom-kategori" id="katLogikaB"></td>
-                    <td class="kolom-kategori" id="katLogikaT"></td>
-                </tr>
-                <tr>
-                    <td class="kolom-aspek">B</td>
-                    <td class="kolom-nama">Daya Analisa</td>
-                    <td class="kolom-uraian">Kemampuan untuk melihat permasalahan dan memahami hubungan sebab akibat</td>
-                    <td class="kolom-kategori" id="katAnalisaR"></td><td class="kolom-kategori" id="katAnalisaK"></td>
-                    <td class="kolom-kategori" id="katAnalisaC"></td><td class="kolom-kategori" id="katAnalisaB"></td>
-                    <td class="kolom-kategori" id="katAnalisaT"></td>
-                </tr>
-                <tr>
-                    <td class="kolom-aspek">C</td>
-                    <td class="kolom-nama">Kemampuan Numerikal</td>
-                    <td class="kolom-uraian">Kemampuan untuk berpikir praktis dalam memahami konsep angka dan hitungan</td>
-                    <td class="kolom-kategori" id="katNumerikalR"></td><td class="kolom-kategori" id="katNumerikalK"></td>
-                    <td class="kolom-kategori" id="katNumerikalC"></td><td class="kolom-kategori" id="katNumerikalB"></td>
-                    <td class="kolom-kategori" id="katNumerikalT"></td>
-                </tr>
-                <tr>
-                    <td class="kolom-aspek">D</td>
-                    <td class="kolom-nama">Kemampuan Verbal</td>
-                    <td class="kolom-uraian">Kemampuan untuk memahami konsep dan pola dalam bentuk kata-kata serta mengekspresikan gagasan secara verbal</td>
-                    <td class="kolom-kategori" id="katVerbalR"></td><td class="kolom-kategori" id="katVerbalK"></td>
-                    <td class="kolom-kategori" id="katVerbalC"></td><td class="kolom-kategori" id="katVerbalB"></td>
-                    <td class="kolom-kategori" id="katVerbalT"></td>
-                </tr>
-                <tr>
-                    <td colspan="8" class="keterangan">KETERANGAN: R: Rendah &nbsp; K: Kurang &nbsp; C: Cukup &nbsp; B: Baik &nbsp; T: Tinggi</td>
-                </tr>
-                <tr>
-                    <td colspan="8" class="kesimpulan-psikogram">KESIMPULAN:<br><span id="kesimpulanIntelektual">-</span></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- ================= 2. SIKAP DAN CARA KERJA (HALAMAN 2) ================= -->
-        <div class="halaman-2">
-            <h2>2. Sikap dan Cara Kerja</h2>
-            <table class="tabel-psikogram">
-                <thead>
-                    <tr>
-                        <th rowspan="2" class="kolom-aspek"></th>
-                        <th rowspan="2" class="kolom-nama">ASPEK YANG DINILAI</th>
-                        <th rowspan="2" class="kolom-uraian">URAIAN</th>
-                        <th colspan="5">KATEGORI</th>
-                    </tr>
-                    <tr>
-                        <th class="kolom-kategori">R</th><th class="kolom-kategori">K</th>
-                        <th class="kolom-kategori">C</th><th class="kolom-kategori">B</th>
-                        <th class="kolom-kategori">T</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="kolom-aspek">A</td>
-                        <td class="kolom-nama">Orientasi Hasil</td>
-                        <td class="kolom-uraian">Kemampuan untuk mempertahankan komitmen untuk menyelesaikan tugas secara bertanggung jawab dan memperhatikan keterhubungan antara perencanaan dan hasil kerja</td>
-                        <td class="kolom-kategori" id="katOrientasiR"></td><td class="kolom-kategori" id="katOrientasiK"></td>
-                        <td class="kolom-kategori" id="katOrientasiC"></td><td class="kolom-kategori" id="katOrientasiB"></td>
-                        <td class="kolom-kategori" id="katOrientasiT"></td>
-                    </tr>
-                    <tr>
-                        <td class="kolom-aspek">B</td>
-                        <td class="kolom-nama">Fleksibilitas</td>
-                        <td class="kolom-uraian">Kemampuan untuk menyesuaikan diri dalam menghadapi permasalahan</td>
-                        <td class="kolom-kategori" id="katFleksibilitasR"></td><td class="kolom-kategori" id="katFleksibilitasK"></td>
-                        <td class="kolom-kategori" id="katFleksibilitasC"></td><td class="kolom-kategori" id="katFleksibilitasB"></td>
-                        <td class="kolom-kategori" id="katFleksibilitasT"></td>
-                    </tr>
-                    <tr>
-                        <td class="kolom-aspek">C</td>
-                        <td class="kolom-nama">Sistematika Kerja</td>
-                        <td class="kolom-uraian">Kemampuan untuk merencanakan hingga mengorganisasikan cara kerja dalam proses penyelesaian pekerjaannya</td>
-                        <td class="kolom-kategori" id="katSistematikaR"></td><td class="kolom-kategori" id="katSistematikaK"></td>
-                        <td class="kolom-kategori" id="katSistematikaC"></td><td class="kolom-kategori" id="katSistematikaB"></td>
-                        <td class="kolom-kategori" id="katSistematikaT"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="8" class="keterangan">KETERANGAN: R: Rendah &nbsp; K: Kurang &nbsp; C: Cukup &nbsp; B: Baik &nbsp; T: Tinggi</td>
-                    </tr>
-                    <tr>
-                        <td colspan="8" class="kesimpulan-psikogram">KESIMPULAN:<br><span id="kesimpulanSikap">-</span></td>
-                    </tr>
-                </tbody>
-            </table>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>Tes Kemampuan Inteligensi</h1>
+            <h2>Tes POTENSI KEMAMPUAN DAN KEPRIBADIAN CPMI</h2>
+            <h3>KLINIK UTAMA MEDILAB - BATAM</h3>
         </div>
 
-        <!-- ================= 3. KEPRIBADIAN (HALAMAN 3) ================= -->
-        <div class="halaman-3">
-            <h2>3. Kepribadian</h2>
-            <table class="tabel-psikogram">
-                <thead>
-                    <tr>
-                        <th rowspan="2" class="kolom-aspek"></th>
-                        <th rowspan="2" class="kolom-nama">ASPEK YANG DINILAI</th>
-                        <th rowspan="2" class="kolom-uraian">URAIAN</th>
-                        <th colspan="5">KATEGORI</th>
-                    </tr>
-                    <tr>
-                        <th class="kolom-kategori">R</th><th class="kolom-kategori">K</th>
-                        <th class="kolom-kategori">C</th><th class="kolom-kategori">B</th>
-                        <th class="kolom-kategori">T</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="kolom-aspek">A</td>
-                        <td class="kolom-nama">Motivasi Berprestasi</td>
-                        <td class="kolom-uraian">Kemampuan untuk menunjukkan prestasi dan mencapai target</td>
-                        <td class="kolom-kategori" id="katMotivasiR"></td><td class="kolom-kategori" id="katMotivasiK"></td>
-                        <td class="kolom-kategori" id="katMotivasiC"></td><td class="kolom-kategori" id="katMotivasiB"></td>
-                        <td class="kolom-kategori" id="katMotivasiT"></td>
-                    </tr>
-                    <tr>
-                        <td class="kolom-aspek">B</td>
-                        <td class="kolom-nama">Kerja Sama</td>
-                        <td class="kolom-uraian">Kemampuan untuk menjalin, membina dan mengoptimalkan hubungan kerja yang efektif demi tercapainya tujuan bersama</td>
-                        <td class="kolom-kategori" id="katKerjasamaR"></td><td class="kolom-kategori" id="katKerjasamaK"></td>
-                        <td class="kolom-kategori" id="katKerjasamaC"></td><td class="kolom-kategori" id="katKerjasamaB"></td>
-                        <td class="kolom-kategori" id="katKerjasamaT"></td>
-                    </tr>
-                    <tr>
-                        <td class="kolom-aspek">C</td>
-                        <td class="kolom-nama">Keterampilan Interpersonal</td>
-                        <td class="kolom-uraian">Kemampuan untuk menjalin hubungan sosial dan mampu memahami kebutuhan orang lain</td>
-                        <td class="kolom-kategori" id="katInterpersonalR"></td><td class="kolom-kategori" id="katInterpersonalK"></td>
-                        <td class="kolom-kategori" id="katInterpersonalC"></td><td class="kolom-kategori" id="katInterpersonalB"></td>
-                        <td class="kolom-kategori" id="katInterpersonalT"></td>
-                    </tr>
-                    <tr>
-                        <td class="kolom-aspek">D</td>
-                        <td class="kolom-nama">Stabilitas Emosi</td>
-                        <td class="kolom-uraian">Kemampuan untuk memahami dan mengontrol emosi</td>
-                        <td class="kolom-kategori" id="katStabilitasR"></td><td class="kolom-kategori" id="katStabilitasK"></td>
-                        <td class="kolom-kategori" id="katStabilitasC"></td><td class="kolom-kategori" id="katStabilitasB"></td>
-                        <td class="kolom-kategori" id="katStabilitasT"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="8" class="keterangan">KETERANGAN: R: Rendah &nbsp; K: Kurang &nbsp; C: Cukup &nbsp; B: Baik &nbsp; T: Tinggi</td>
-                    </tr>
-                    <tr>
-                        <td colspan="8" class="kesimpulan-psikogram">KESIMPULAN:<br><span id="kesimpulanKepribadian">-</span></td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- DISCLAIMER -->
+        <div class="disclaimer">
+            <strong>DISCLAIMER — TERBATAS!</strong><br>
+            Hanya digunakan dalam lingkungan <strong>KLINIK UTAMA MEDILAB</strong>.
         </div>
 
-        <!-- ================= 4. KEMAMPUAN BELAJAR (HALAMAN 4) ================= -->
-        <div class="halaman-4">
-            <h2>4. Kemampuan Belajar</h2>
-            <table class="tabel-psikogram">
-                <thead>
-                    <tr>
-                        <th rowspan="2" class="kolom-aspek"></th>
-                        <th rowspan="2" class="kolom-nama">ASPEK YANG DINILAI</th>
-                        <th rowspan="2" class="kolom-uraian">URAIAN</th>
-                        <th colspan="5">KATEGORI</th>
-                    </tr>
-                    <tr>
-                        <th class="kolom-kategori">R</th><th class="kolom-kategori">K</th>
-                        <th class="kolom-kategori">C</th><th class="kolom-kategori">B</th>
-                        <th class="kolom-kategori">T</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="kolom-aspek">A</td>
-                        <td class="kolom-nama">Pengembangan Diri</td>
-                        <td class="kolom-uraian">Kemampuan untuk meningkatkan pengetahuan dan menyempurnakan keterampilan diri</td>
-                        <td class="kolom-kategori" id="katPengembanganR"></td><td class="kolom-kategori" id="katPengembanganK"></td>
-                        <td class="kolom-kategori" id="katPengembanganC"></td><td class="kolom-kategori" id="katPengembanganB"></td>
-                        <td class="kolom-kategori" id="katPengembanganT"></td>
-                    </tr>
-                    <tr>
-                        <td class="kolom-aspek">B</td>
-                        <td class="kolom-nama">Mengelola Perubahan</td>
-                        <td class="kolom-uraian">Kemampuan dalam menyesuaikan diri dengan situasi yang baru</td>
-                        <td class="kolom-kategori" id="katPerubahanR"></td><td class="kolom-kategori" id="katPerubahanK"></td>
-                        <td class="kolom-kategori" id="katPerubahanC"></td><td class="kolom-kategori" id="katPerubahanB"></td>
-                        <td class="kolom-kategori" id="katPerubahanT"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="8" class="keterangan">KETERANGAN: R: Rendah &nbsp; K: Kurang &nbsp; C: Cukup &nbsp; B: Baik &nbsp; T: Tinggi</td>
-                    </tr>
-                    <tr>
-                        <td colspan="8" class="kesimpulan-psikogram">KESIMPULAN:<br><span id="kesimpulanBelajar">-</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- ================= BAGIAN TANDA TANGAN PSIKOLOG ================= -->
-        <div class="tanda-tangan-section">
-            <table class="tanda-tangan-table">
-               <tr>
-					<td class="label">Tanda tangan<br><em>Signature</em></td>
-					<td class="isi">: 
-					<div class="signature-area">
-					<!-- Pastikan file ttd.png berada di folder yang sama dengan file HTML ini -->
-					<img src="ttd.png" alt="Tanda Tangan Psikolog" class="signature-image">
-					</div>
-					</td>
-				</tr>
-                <tr>
-                    <td class="label">Nama Psikolog<br><em>Psychologist Name</em></td>
-                    <td class="isi">: Aribowo Abdurrahman, S.Psi, MM, Psikolog</td>
-                </tr>
-                <tr>
-                    <td class="label">Nomor STR/SIK<br><em>Registration Number</em></td>
-                    <td class="isi">: HS00000214782376</td>
-                </tr>
-                <tr>
-                    <td class="label">Nomor SIPP/SIPPK<br><em>Licence Number</em></td>
-                    <td class="isi">: NR21712508004622</td>
-                </tr>
-            </table>
-        </div>
-
-        <!-- BAGIAN HASIL, SKOR TOTAL, DAN KESIMPULAN SINGKAT (DISEMBUNYIKAN SEMENTARA) -->
-        <div id="bagian-hasil" style="display: none;">
-            <h2>Hasil Sub Test</h2>
-            <table>
-                <tr><th>SUB TEST</th><th class="angka">RAW</th></tr>
-                <tr><td>1. SERIES</td><td class="angka" id="rawA">-</td></tr>
-                <tr><td>2. CLASSIFICATION</td><td class="angka" id="rawB">-</td></tr>
-                <tr><td>3. MATRICES</td><td class="angka" id="rawC">-</td></tr>
-                <tr><td>4. CONDITIONS/TOPOLOGY</td><td class="angka" id="rawD">-</td></tr>
-            </table>
-            <div class="peringatan" id="peringatanKurang">Ada sub tes yang belum tercatat. Hasil di bawah mungkin belum lengkap.</div>
-            <h2>Skor Total</h2>
-            <ul class="daftar-total">
-                <li>JUMLAH TOTAL: <span id="totalJumlah">-</span></li>
-                <li>DEVIASI IQ: <span id="totalIQ">-</span></li>
-                <li>Taraf Kecerdasan: <span id="totalTaraf">-</span></li>
+        <!-- INSTRUKSI -->
+        <div class="instruksi">
+            <h4>📋 Instruksi Mengerjakan</h4>
+            <ul>
+                <li>Anda akan mengerjakan <strong>BERBAGAI MACAM TES</strong> yang masing-masing instruksinya berbeda-beda.</li>
+                <li>Bacalah dengan sebaik-baiknya masing-masing instruksi tes tersebut.</li>
+                <li>Masing-masing tes ada <strong>WAKTU / TIMER</strong> yang telah ditentukan.</li>
             </ul>
-            <hr class="garis-pisah">
-            <h1>KESIMPULAN SINGKAT TES KEMAMPUAN INTELEGENSI</h1>
-            <div class="kesimpulan"><p id="simpulParagraf">-</p></div>
         </div>
 
-        <div class="tombol-wrap">
-            <button type="button" class="tombol tombol-pdf" id="btnPdf">Simpan PDF</button>
-            <button type="button" class="tombol tombol-utama" id="btnSelesai">Selesai</button>
+        <!-- FORM IDENTITAS -->
+        <div class="form-section">
+            <h3>Identitas Peserta</h3>
+            <form id="formPeserta" onsubmit="return false;">
+
+                <!-- Nomor Peserta (otomatis) -->
+                <div class="form-group">
+                    <label>Nomor Peserta</label>
+                    <input type="text" id="nomorPeserta" readonly>
+                </div>
+
+                <!-- Nama -->
+                <div class="form-group">
+                    <label>Nama</label>
+                    <input type="text" id="nama" placeholder="Masukkan nama lengkap" required>
+                </div>
+
+                <!-- Lokasi / Cabang Pemeriksaan -->
+                <div class="form-group">
+                    <label>Lokasi / Cabang Pemeriksaan</label>
+                    <select id="cabangKlinik" onchange="tampilkanAlamat()" required>
+                        <option value="">-- Pilih Lokasi Pemeriksaan --</option>
+                        <option value="1">Klinik Medilab Tanjung Karimun</option>
+                        <option value="2">Klinik Medilab Batam Centre</option>
+                        <option value="3">Klinik Medilab Batam Centre</option>
+                        <option value="4">Klinik Medilab Lubuk Baja</option>
+                        <option value="5">Klinik Medilab Bengkong</option>
+                    </select>
+
+                    <!-- BOX ALAMAT OTOMATIS -->
+                    <div id="alamatBox" class="alamat-box">
+                        <h5 id="namaCabang"></h5>
+                        <p id="alamatCabang"></p>
+                    </div>
+                </div>
+
+                <!-- Tanggal Lahir & Tanggal Tes -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tanggal Lahir</label>
+                        <input type="date" id="tglLahir" onchange="hitungUsia()" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tanggal Tes</label>
+                        <input type="date" id="tglTes" readonly>
+                    </div>
+                </div>
+
+                <!-- Usia -->
+                <div class="form-group">
+                    <label>Usia</label>
+                    <input type="text" id="usia" readonly placeholder="Otomatis dihitung">
+                </div>
+
+                <!-- Pendidikan -->
+                <div class="form-group">
+                    <label>Sekolah / Pendidikan</label>
+                    <select id="pendidikan" required>
+                        <option value="">-- Pilih Jenjang --</option>
+                        <option value="SD">SD</option>
+                        <option value="SMP">SMP</option>
+                        <option value="SMA">SMA</option>
+                        <option value="SMK">SMK</option>
+                        <option value="PT">Perguruan Tinggi</option>
+                        <option value="lain">Lainnya</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn-next" onclick="lanjutkan()">Selanjutnya →</button>
+            </form>
         </div>
     </div>
 
     <script>
-        const DAFTAR_SERI = [
-            { kunci: "cfit_seriA_skor", elemen: "rawA", nama: "Series" },
-            { kunci: "cfit_seriB_skor", elemen: "rawB", nama: "Classification" },
-            { kunci: "cfit_seriC_skor", elemen: "rawC", nama: "Matrices" },
-            { kunci: "cfit_seriD_skor", elemen: "rawD", nama: "Conditions/Topology" }
-        ];
-
-        const DESKRIPSI_ASPEK = {
-            "Series": "kemampuan cukup baik dalam menalar pola dan hubungan yang berurutan",
-            "Classification": "kemampuan cukup baik dalam melihat persamaan dan perbedaan",
-            "Matrices": "kemampuan cukup baik dalam menangkap pola visual-abstrak",
-            "Conditions/Topology": "kemampuan cukup baik dalam memahami hubungan dan kondisi antar bentuk"
+        // ===== DATA 5 CABANG KLINIK + ALAMAT =====
+        const dataKlinik = {
+            "1": {
+                nama: "Klinik Medilab Tanjung Karimun",
+                alamat: "• Jl. RH Fisabilillah RT/RW: 003/004 Desa Pangke, Kecamatan Meral, Tj Balai Karimun, Indonesia"
+            },
+            "2": {
+                nama: "Klinik Medilab Batam Centre ",
+                alamat: "Jl. Jend. Ahmad Yani Komplek Ruko Taman Niaga Sukajadi Blok J No. 1-6 Batam 29433"
+            },
+            "3": {
+                nama: "Anugerah Ibu Mataram",
+                alamat: "Jl. Sandubaya Komplek Ruko Bertais Blok U No 43, Sweta Kota Mataram Pulau Lombok"
+            },
+            "4": {
+                nama: "Klinik Anugerah Ibu Medan",
+                alamat: "Jalan Nibung Raya No. 28 – 24, Medan, Indonesia"
+            },
+            "5": {
+                nama: "Klinik Anugerah Ibu Yogyakarta",
+                alamat: "Jalan Raya Solo Km 11,5 Sukoharjo, Cupuwatu I Purwomartani RT 11 RW 4 Kalasan – Sleman"
+            }
         };
 
-        const NAMA_BULAN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+        // ===== TAMPILKAN ALAMAT OTOMATIS =====
+        function tampilkanAlamat() {
+            const pilihan = document.getElementById("cabangKlinik").value;
+            const box = document.getElementById("alamatBox");
+            const nama = document.getElementById("namaCabang");
+            const alamat = document.getElementById("alamatCabang");
 
-        function formatTanggal(nilaiIso) {
-            if (!nilaiIso) return "-";
-            const bagian = nilaiIso.split("-");
-            return parseInt(bagian[2], 10) + " " + NAMA_BULAN[parseInt(bagian[1], 10) - 1] + " " + bagian[0];
-        }
-
-        function getKategoriIQ(skor) {
-            if (skor < 70) return 'R';
-            if (skor < 80) return 'K';
-            if (skor < 100) return 'C';
-            if (skor < 120) return 'B';
-            return 'T';
-        }
-
-        function tampilkanKategori(prefix, kategori) {
-            const kategoriList = ['R', 'K', 'C', 'B', 'T'];
-            kategoriList.forEach(function(kat) {
-                const elemen = document.getElementById("kat" + prefix + kat);
-                if (elemen) elemen.classList.remove("kotak-terisi");
-            });
-            const elemenTarget = document.getElementById("kat" + prefix + kategori);
-            if (elemenTarget) elemenTarget.classList.add("kotak-terisi");
-        }
-
-        function getDeskripsiKategori(kategori) {
-            const deskripsi = { 'R': 'rendah', 'K': 'kurang', 'C': 'cukup', 'B': 'baik', 'T': 'tinggi' };
-            return deskripsi[kategori] || 'tidak diketahui';
-        }
-
-        function getInterpretasi(kategori, aspek) {
-            if (kategori === 'R' || kategori === 'K') {
-                return "kecenderungan kesulitan dalam " + aspek + ". Perlu adanya pendampingan lebih intensif";
-            } else if (kategori === 'C') {
-                return "kemampuan yang memadai dalam " + aspek + ", meskipun masih perlu peningkatan dalam hal kompleksitas";
+            if (pilihan === "") {
+                box.style.display = "none";
             } else {
-                return "kemampuan yang baik dalam " + aspek + ", serta mampu menangani masalah yang kompleks";
+                nama.textContent = "📍 " + dataKlinik[pilihan].nama;
+                alamat.textContent = dataKlinik[pilihan].alamat;
+                box.style.display = "block";
             }
         }
 
-        // ===== MUAT IDENTITAS PESERTA =====
-        let peserta = null;
-        try {
-            const isi = localStorage.getItem("cfit_peserta");
-            if (isi) peserta = JSON.parse(isi);
-        } catch (e) { peserta = null; }
-
-        if (peserta) {
-            document.getElementById("idNomor").textContent = peserta.nomor || "-";
-            document.getElementById("idNama").textContent = peserta.nama || "-";
-            document.getElementById("idFasyankes").textContent = peserta.fasyankes || "-";
-            document.getElementById("idAlamat").textContent = peserta.alamat || "-";
-            if (peserta.tglTes) {
-                document.getElementById("idTglTes").textContent = formatTanggal(peserta.tglTes);
-                // Set tanggal hasil yang sama dengan tanggal tes
-                document.getElementById("tanggalHasil").textContent = formatTanggal(peserta.tglTes);
-            }
+        // ===== NOMOR PESERTA OTOMATIS =====
+        function generateNomorPeserta() {
+            const tgl = new Date();
+            const tglStr = tgl.getFullYear().toString().slice(-2) +
+                           String(tgl.getMonth() + 1).padStart(2, '0') +
+                           String(tgl.getDate()).padStart(2, '0');
+            const random = Math.floor(1000 + Math.random() * 9000);
+            document.getElementById("nomorPeserta").value = "PS-" + tglStr + "-" + random;
         }
 
-        // ===== 1. KEMAMPUAN INTELEKTUAL =====
-        let total = 0, lengkap = true, nilaiSeri = [];
-        let skorA = 0, skorB = 0, skorC = 0, skorD = 0;
-
-        DAFTAR_SERI.forEach(function (seri, index) {
-            const isi = localStorage.getItem(seri.kunci);
-            const angka = parseInt(isi, 10);
-            if (isi === null || isNaN(angka)) {
-                lengkap = false;
-                nilaiSeri.push({ nama: seri.nama, nilai: 0 });
-                document.getElementById(seri.elemen).textContent = "0";
-            } else {
-                nilaiSeri.push({ nama: seri.nama, nilai: angka });
-                total += angka;
-                document.getElementById(seri.elemen).textContent = String(angka);
-                if (index === 0) skorA = angka;
-                if (index === 1) skorB = angka;
-                if (index === 2) skorC = angka;
-                if (index === 3) skorD = angka;
-            }
-        });
-
-        document.getElementById("totalJumlah").textContent = String(total);
-        if (!lengkap) document.getElementById("peringatanKurang").style.display = "block";
-
-        const skorLogika = (skorA + skorB) / 2;
-        const katLogika = getKategoriIQ(skorLogika);
-        tampilkanKategori("Logika", katLogika);
-
-        const skorAnalisa = (skorC + skorD) / 2;
-        const katAnalisa = getKategoriIQ(skorAnalisa);
-        tampilkanKategori("Analisa", katAnalisa);
-
-        const katNumerikal = localStorage.getItem('ra_numerikal_kategori') || '-';
-        const katVerbal = localStorage.getItem('verbal_test_kategori') || '-';
-        if (katNumerikal !== '-') tampilkanKategori("Numerikal", katNumerikal);
-        if (katVerbal !== '-') tampilkanKategori("Verbal", katVerbal);
-
-        let teksIntelektual = "Berdasarkan hasil tes, klien menunjukkan kemampuan Logika Berpikir pada kategori " + 
-            getDeskripsiKategori(katLogika).toUpperCase() + 
-            ", yang mengindikasikan " + getInterpretasi(katLogika, "berpikir secara logis dan sistematis") + ". ";
-        teksIntelektual += "Kemampuan Daya Analisa berada pada kategori " + 
-            getDeskripsiKategori(katAnalisa).toUpperCase() + 
-            ", yang mengindikasikan " + getInterpretasi(katAnalisa, "melihat permasalahan dan memahami hubungan sebab-akibat") + ". ";
-        if (katNumerikal !== '-') {
-            teksIntelektual += "Kemampuan Numerikal berada pada kategori " + 
-                getDeskripsiKategori(katNumerikal).toUpperCase() + 
-                ", yang mengindikasikan " + getInterpretasi(katNumerikal, "berpikir praktis dalam memahami konsep angka dan hitungan") + ". ";
-        }
-        if (katVerbal !== '-') {
-            teksIntelektual += "Kemampuan Verbal berada pada kategori " + 
-                getDeskripsiKategori(katVerbal).toUpperCase() + 
-                ", yang mengindikasikan " + getInterpretasi(katVerbal, "memahami konsep dan pola dalam bentuk kata-kata serta mengekspresikan gagasan secara verbal") + ".";
-        }
-        document.getElementById("kesimpulanIntelektual").innerHTML = teksIntelektual;
-
-        // Deviasi IQ
-        const IQ_MIN = 56, IQ_MAX = 146, SOAL_TOTAL = 47;
-        const deviasiIQ = Math.round(IQ_MIN + (total / SOAL_TOTAL) * (IQ_MAX - IQ_MIN));
-        let taraf;
-        if (deviasiIQ >= 130) taraf = "Sangat Superior";
-        else if (deviasiIQ >= 120) taraf = "Superior";
-        else if (deviasiIQ >= 110) taraf = "Di atas rata-rata";
-        else if (deviasiIQ >= 90) taraf = "Rata-rata";
-        else if (deviasiIQ >= 80) taraf = "Rata-rata bawah";
-        else if (deviasiIQ >= 70) taraf = "Di bawah rata-rata";
-        else taraf = "Jauh di bawah rata-rata";
-        let rentang;
-        if (taraf === "Rata-rata") rentang = "normal";
-        else if (taraf === "Di atas rata-rata") rentang = "di atas normal";
-        else if (taraf === "Superior") rentang = "superior";
-        else if (taraf === "Sangat Superior") rentang = "sangat superior";
-        else rentang = "di bawah normal";
-
-        document.getElementById("totalIQ").textContent = String(deviasiIQ);
-        document.getElementById("totalTaraf").textContent = taraf;
-
-        const tertinggi = nilaiSeri.reduce(function (a, b) { return (b.nilai > a.nilai) ? b : a; }, nilaiSeri[0]);
-        const namaPeserta = (peserta && peserta.nama) ? peserta.nama : "Peserta";
-        const fasyankesTxt = (peserta && peserta.fasyankes) ? peserta.fasyankes : "-";
-        const paragraf =
-            namaPeserta + " memiliki taraf kecerdasan " + taraf +
-            " dengan estimasi IQ " + deviasiIQ + ". " +
-            "Secara umum, kemampuan berpikir abstrak, penalaran logis, dan pemecahan masalah berada pada rentang " + rentang + ". " +
-            "Pemeriksaan ini dilakukan di " + fasyankesTxt + ". " +
-            "Pencapaian tertinggi terlihat pada aspek " + tertinggi.nama + 
-            ", yang menunjukkan " + (DESKRIPSI_ASPEK[tertinggi.nama] || "kemampuan yang relatif baik pada aspek tersebut") + ".";
-        document.getElementById("simpulParagraf").innerHTML = paragraf;
-
-        // ===== 2. SIKAP DAN CARA KERJA (DARI BFI - cpmi_psikogram_data) =====
-        let dataBFI = null;
-        try {
-            const isi = localStorage.getItem("cpmi_psikogram_data");
-            if (isi) dataBFI = JSON.parse(isi);
-        } catch (e) { dataBFI = null; }
-
-        if (dataBFI && dataBFI.psikogram && dataBFI.psikogram.sikapKerja) {
-            const sikapKerja = dataBFI.psikogram.sikapKerja;
-            
-            // Orientasi Hasil
-            if (sikapKerja.orientasiHasil && sikapKerja.orientasiHasil.kategori) {
-                tampilkanKategori("Orientasi", sikapKerja.orientasiHasil.kategori);
-            }
-            
-            // Fleksibilitas
-            if (sikapKerja.fleksibilitas && sikapKerja.fleksibilitas.kategori) {
-                tampilkanKategori("Fleksibilitas", sikapKerja.fleksibilitas.kategori);
-            }
-            
-            // Sistematika Kerja
-            if (sikapKerja.sistematikaKerja && sikapKerja.sistematikaKerja.kategori) {
-                tampilkanKategori("Sistematika", sikapKerja.sistematikaKerja.kategori);
-            }
-
-            // Generate kesimpulan Sikap dan Cara Kerja
-            const orientasi = sikapKerja.orientasiHasil || { kategori: 'C', skor: 3.0 };
-            const fleksibilitas = sikapKerja.fleksibilitas || { kategori: 'C', skor: 3.0 };
-            const sistematika = sikapKerja.sistematikaKerja || { kategori: 'C', skor: 3.0 };
-
-            const dOrientasi = getDeskripsiKategori(orientasi.kategori);
-            const dFleksibilitas = getDeskripsiKategori(fleksibilitas.kategori);
-            const dSistematika = getDeskripsiKategori(sistematika.kategori);
-
-            let teksSikap = "Klien menunjukkan profil sikap kerja yang " + dFleksibilitas + ", terutama pada aspek Fleksibilitas. Hal ini mengindikasikan bahwa klien memiliki kemampuan yang " + dFleksibilitas + " dalam menyesuaikan diri saat menghadapi perubahan situasi atau permasalahan di lapangan, sehingga tidak mudah merasa terhambat oleh kondisi yang tidak ideal. ";
-
-            if (orientasi.kategori === 'R' || orientasi.kategori === 'K') {
-                teksSikap += "Namun, pada aspek Orientasi Hasil, klien berada pada level " + dOrientasi + ". Ini menunjukkan bahwa dorongan untuk mencapai hasil yang melampaui standar atau memperhatikan keterhubungan antara perencanaan dan hasil akhir masih perlu ditingkatkan secara signifikan. ";
-            } else if (orientasi.kategori === 'C') {
-                teksSikap += "Namun, pada aspek Orientasi Hasil, klien berada pada level " + dOrientasi + ". Ini menunjukkan bahwa meskipun klien memiliki komitmen untuk menyelesaikan tugas secara bertanggung jawab, dorongan untuk mencapai hasil yang melampaui standar atau memperhatikan keterhubungan antara perencanaan dan hasil akhir masih perlu ditingkatkan. ";
-            } else {
-                teksSikap += "Pada aspek Orientasi Hasil, klien menunjukkan performa yang " + dOrientasi + ", dengan komitmen yang kuat untuk menyelesaikan tugas secara bertanggung jawab serta memperhatikan keterhubungan antara perencanaan dan hasil kerja. ";
-            }
-
-            if (sistematika.kategori === 'R' || sistematika.kategori === 'K') {
-                teksSikap += "Sementara itu, aspek Sistematika Kerja berada pada level " + dSistematika + ", yang mengindikasikan bahwa klien masih memerlukan banyak arahan dan pengawasan agar cara kerjanya tetap terstruktur dan konsisten hingga pekerjaan selesai sepenuhnya. ";
-            } else if (sistematika.kategori === 'C') {
-                teksSikap += "Sementara itu, aspek Sistematika Kerja berada pada level " + dSistematika + ". Dalam proses kerjanya, klien sudah mampu mengorganisasikan langkah-langkah penyelesaian tugas, namun terkadang masih memerlukan arahan atau pengawasan agar cara kerjanya tetap terstruktur dan konsisten hingga pekerjaan selesai sepenuhnya. ";
-            } else {
-                teksSikap += "Aspek Sistematika Kerja juga berada pada level " + dSistematika + ", di mana klien mampu merencanakan dan mengorganisasikan cara kerja secara mandiri dan terstruktur hingga pekerjaan selesai. ";
-            }
-
-            teksSikap += "Secara keseluruhan, klien adalah tipe pekerja yang " + dFleksibilitas + " dan kooperatif, namun " + 
-                (orientasi.kategori === 'B' || orientasi.kategori === 'T' ? "" : "membutuhkan pengembangan dalam hal ketelitian sistem kerja serta motivasi berprestasi ") +
-                "agar hasil kerja yang dicapai bisa lebih optimal dan terencana dengan matang.";
-
-            document.getElementById("kesimpulanSikap").innerHTML = teksSikap;
-        } else {
-            document.getElementById("kesimpulanSikap").innerHTML = "Data tes Sikap dan Cara Kerja belum tersedia.";
+        // ===== TANGGAL TES OTOMATIS =====
+        function setTanggalTes() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById("tglTes").value = today;
         }
 
-        // ===== 3. KEPRIBADIAN (DARI BFI - cpmi_psikogram_data) =====
-        if (dataBFI && dataBFI.psikogram && dataBFI.psikogram.kepribadian) {
-            const kepribadian = dataBFI.psikogram.kepribadian;
-            
-            // Motivasi Berprestasi
-            if (kepribadian.motivasiBerprestasi && kepribadian.motivasiBerprestasi.kategori) {
-                tampilkanKategori("Motivasi", kepribadian.motivasiBerprestasi.kategori);
-            }
-            
-            // Kerja Sama
-            if (kepribadian.kerjaSama && kepribadian.kerjaSama.kategori) {
-                tampilkanKategori("Kerjasama", kepribadian.kerjaSama.kategori);
-            }
-            
-            // Keterampilan Interpersonal
-            if (kepribadian.keterampilanInterpersonal && kepribadian.keterampilanInterpersonal.kategori) {
-                tampilkanKategori("Interpersonal", kepribadian.keterampilanInterpersonal.kategori);
-            }
-            
-            // Stabilitas Emosi
-            if (kepribadian.stabilitasEmosi && kepribadian.stabilitasEmosi.kategori) {
-                tampilkanKategori("Stabilitas", kepribadian.stabilitasEmosi.kategori);
-            }
-
-            // Generate kesimpulan Kepribadian
-            const motivasi = kepribadian.motivasiBerprestasi || { kategori: 'C', skor: 3.0 };
-            const kerjasama = kepribadian.kerjaSama || { kategori: 'C', skor: 3.0 };
-            const interpersonal = kepribadian.keterampilanInterpersonal || { kategori: 'C', skor: 3.0 };
-            const stabilitas = kepribadian.stabilitasEmosi || { kategori: 'C', skor: 3.0 };
-
-            const dMotivasi = getDeskripsiKategori(motivasi.kategori);
-            const dKerjasama = getDeskripsiKategori(kerjasama.kategori);
-            const dInterpersonal = getDeskripsiKategori(interpersonal.kategori);
-            const dStabilitas = getDeskripsiKategori(stabilitas.kategori);
-
-            let teksKepribadian = "Klien menunjukkan profil kepribadian yang " + dMotivasi + " di seluruh aspek yang dinilai. ";
-
-            teksKepribadian += "Klien memiliki Motivasi Berprestasi yang " + dMotivasi + ", yang mengindikasikan ";
-            if (motivasi.kategori === 'R' || motivasi.kategori === 'K') {
-                teksKepribadian += "dorongan internal untuk mencapai target dan memberikan performa terbaik masih perlu dikembangkan secara signifikan. ";
-            } else if (motivasi.kategori === 'C') {
-                teksKepribadian += "dorongan untuk mencapai target dan memberikan performa terbaik berada pada level standar, masih perlu dorongan lebih untuk melampaui ekspektasi. ";
-            } else if (motivasi.kategori === 'B') {
-                teksKepribadian += "adanya dorongan internal yang kuat untuk selalu memberikan performa terbaik dan melampaui target. ";
-            } else {
-                teksKepribadian += "adanya dorongan internal yang luar biasa kuat untuk selalu memberikan performa terbaik, melampaui target, dan menjaga komitmen terhadap kualitas hasil kerja. ";
-            }
-
-            teksKepribadian += "Kekuatan personal ini didukung oleh kapasitas sosial yang " + dKerjasama + ". ";
-            teksKepribadian += "Pada aspek Kerja Sama dan Keterampilan Interpersonal, klien menunjukkan ";
-            if (kerjasama.kategori === 'R' || kerjasama.kategori === 'K') {
-                teksKepribadian += "kemampuan dalam menjalin hubungan sosial dan memahami kebutuhan orang lain yang masih perlu banyak pengembangan. ";
-            } else if (kerjasama.kategori === 'C') {
-                teksKepribadian += "kemampuan yang memadai dalam menjalin hubungan sosial serta memahami kebutuhan orang lain dengan empati yang wajar. ";
-            } else if (kerjasama.kategori === 'B') {
-                teksKepribadian += "kemampuan yang sangat baik dalam menjalin hubungan sosial, memahami kebutuhan orang lain dengan empati, serta mampu membangun sinergi kelompok yang efektif. ";
-            } else {
-                teksKepribadian += "kemampuan luar biasa dalam menjalin hubungan sosial, memahami kebutuhan orang lain dengan empati, serta mampu membangun sinergi kelompok yang sangat efektif untuk mencapai tujuan bersama. ";
-            }
-            teksKepribadian += "Hal ini menjadikan klien sebagai sosok yang " + 
-                (kerjasama.kategori === 'B' || kerjasama.kategori === 'T' ? "sangat kolaboratif dan mampu menyesuaikan diri dengan berbagai tipe kepribadian di lingkungan kerja" : "cukup kooperatif dalam lingkungan kerja") + ". ";
-
-            teksKepribadian += "Lebih lanjut, aspek Stabilitas Emosi yang berada pada level " + dStabilitas + " menunjukkan ";
-            if (stabilitas.kategori === 'R' || stabilitas.kategori === 'K') {
-                teksKepribadian += "kontrol diri dan kemampuan mengelola emosi di bawah tekanan yang masih perlu dilatih secara intensif. ";
-            } else if (stabilitas.kategori === 'C') {
-                teksKepribadian += "kemampuan yang memadai dalam memahami dan mengontrol emosi, meskipun masih dapat meningkat dalam menghadapi tekanan tinggi. ";
-            } else if (stabilitas.kategori === 'B') {
-                teksKepribadian += "kontrol diri yang baik, tetap tenang di bawah tekanan, dan mampu menghadapi situasi sulit dengan kepala dingin. ";
-            } else {
-                teksKepribadian += "kematangan psikologis yang sangat baik. Klien memiliki kontrol diri yang kuat, tetap tenang di bawah tekanan, dan mampu menghadapi situasi sulit dengan kepala dingin. ";
-            }
-
-            teksKepribadian += "Secara keseluruhan, klien adalah individu yang " + 
-                (motivasi.kategori === 'B' || motivasi.kategori === 'T' ? "memiliki integritas pribadi yang kuat, andal dalam kerja tim, serta memiliki ketahanan mental yang tinggi untuk menghadapi tantangan profesional yang kompleks" : "memiliki potensi untuk berkembang lebih lanjut dalam hal motivasi berprestasi dan kematangan emosional agar dapat menghadapi tantangan profesional yang lebih kompleks") + ".";
-
-            document.getElementById("kesimpulanKepribadian").innerHTML = teksKepribadian;
-        } else {
-            document.getElementById("kesimpulanKepribadian").innerHTML = "Data tes Kepribadian belum tersedia.";
+        // ===== HITUNG USIA =====
+        function hitungUsia() {
+            const lahir = document.getElementById("tglLahir").value;
+            if (!lahir) return;
+            const tglLahir = new Date(lahir);
+            const tglTes = new Date(document.getElementById("tglTes").value);
+            let usia = tglTes.getFullYear() - tglLahir.getFullYear();
+            const m = tglTes.getMonth() - tglLahir.getMonth();
+            if (m < 0 || (m === 0 && tglTes.getDate() < tglLahir.getDate())) usia--;
+            document.getElementById("usia").value = usia + " tahun";
         }
 
-        // ===== 4. KEMAMPUAN BELAJAR (DARI BFI - cpmi_psikogram_data) =====
-        if (dataBFI && dataBFI.psikogram && dataBFI.psikogram.kemampuanBelajar) {
-            const kemampuanBelajar = dataBFI.psikogram.kemampuanBelajar;
-            
-            // Pengembangan Diri
-            if (kemampuanBelajar.pengembanganDiri && kemampuanBelajar.pengembanganDiri.kategori) {
-                tampilkanKategori("Pengembangan", kemampuanBelajar.pengembanganDiri.kategori);
+        // ===== TOMBOL SELANJUTNYA (DIPERBARUI) =====
+        function lanjutkan() {
+            const cabang = document.getElementById("cabangKlinik").value;
+            const nama = document.getElementById("nama").value.trim();
+            const tglLahir = document.getElementById("tglLahir").value;
+            const pendidikan = document.getElementById("pendidikan").value;
+
+            // Validasi input
+            if (!cabang) {
+                alert("Silakan pilih lokasi / cabang pemeriksaan terlebih dahulu.");
+                return;
             }
-            
-            // Mengelola Perubahan
-            if (kemampuanBelajar.mengelolaPerubahan && kemampuanBelajar.mengelolaPerubahan.kategori) {
-                tampilkanKategori("Perubahan", kemampuanBelajar.mengelolaPerubahan.kategori);
+            if (!nama) {
+                alert("Silakan masukkan nama lengkap peserta.");
+                return;
             }
-
-            // Generate kesimpulan Kemampuan Belajar
-            const pengembangan = kemampuanBelajar.pengembanganDiri || { kategori: 'C', skor: 3.0 };
-            const perubahan = kemampuanBelajar.mengelolaPerubahan || { kategori: 'C', skor: 3.0 };
-
-            const dPengembangan = getDeskripsiKategori(pengembangan.kategori);
-            const dPerubahan = getDeskripsiKategori(perubahan.kategori);
-
-            let teksBelajar = "Klien memiliki kapasitas yang " + dPengembangan + " untuk terus berkembang dan menyesuaikan diri dengan dinamika lingkungan kerja. ";
-
-            teksBelajar += "Dalam hal Pengembangan Diri, klien menunjukkan kemauan serta kemampuan yang " + dPengembangan + " untuk meningkatkan pengetahuan dan menyempurnakan keterampilan yang dimilikinya. ";
-            if (pengembangan.kategori === 'R' || pengembangan.kategori === 'K') {
-                teksBelajar += "Klien masih memerlukan dorongan dan arahan yang jelas agar dapat menyerap informasi baru dan mengikuti proses pembelajaran dengan lebih optimal. ";
-            } else if (pengembangan.kategori === 'C') {
-                teksBelajar += "Ia mampu menyerap informasi baru dan mengikuti proses pembelajaran dengan hasil yang " + dPengembangan + ", sepanjang mendapatkan arahan yang jelas. ";
-            } else {
-                teksBelajar += "Ia mampu menyerap informasi baru dengan cepat dan mengikuti proses pembelajaran secara mandiri dengan hasil yang memuaskan. ";
+            if (!tglLahir) {
+                alert("Silakan isi tanggal lahir peserta.");
+                return;
+            }
+            if (!pendidikan) {
+                alert("Silakan pilih jenjang pendidikan peserta.");
+                return;
             }
 
-            teksBelajar += "Demikian pula dalam aspek Mengelola Perubahan, klien berada pada tingkat yang " + dPerubahan + " dalam menyesuaikan diri dengan situasi-situasi baru atau transisi di lingkungan kerja. ";
-            if (perubahan.kategori === 'R' || perubahan.kategori === 'K') {
-                teksBelajar += "Klien masih menunjukkan resistensi yang cukup besar terhadap perubahan dan perlu dilatih secara bertahap agar lebih terbuka serta mampu menyelaraskan diri dengan prosedur atau kondisi baru yang ditemuinya dalam menjalankan tugas sehari-hari.";
-            } else if (perubahan.kategori === 'C') {
-                teksBelajar += "Klien tidak menunjukkan resistensi yang besar terhadap perubahan dan memiliki fleksibilitas yang wajar untuk menyelaraskan diri dengan prosedur atau kondisi baru yang ditemuinya dalam menjalankan tugas sehari-hari.";
-            } else {
-                teksBelajar += "Klien menunjukkan sikap yang sangat terbuka terhadap perubahan, dengan fleksibilitas yang tinggi untuk menyelaraskan diri dengan prosedur atau kondisi baru. Klien mampu beradaptasi dengan cepat dan bahkan dapat menjadi agen perubahan positif di lingkungannya.";
-            }
-
-            document.getElementById("kesimpulanBelajar").innerHTML = teksBelajar;
-        } else {
-            document.getElementById("kesimpulanBelajar").innerHTML = "Data tes Kemampuan Belajar belum tersedia.";
-        }
-
-        // ===== TOMBOL =====
-        document.getElementById("btnPdf").addEventListener("click", function () { window.print(); });
-        document.getElementById("btnSelesai").addEventListener("click", function () {
-            localStorage.removeItem("cfit_peserta");
-            DAFTAR_SERI.forEach(function (seri) { localStorage.removeItem(seri.kunci); });
-            localStorage.removeItem("cpmi_psikogram_data");
-            window.location.href = "index.html";
-			
-			
-			
-		<script>
-    // ... (Pertahankan semua kode konstanta dan fungsi helper Anda sebelumnya di sini: DAFTAR_SERI, DESKRIPSI_ASPEK, getKategoriIQ, dll) ...
-    // ... (Pertahankan juga kode pengisian data dari localStorage di sini) ...
-
-    // ===== KONFIGURASI URL GOOGLE APPS SCRIPT =====
-    // GANTI URL INI dengan URL Web App yang Anda dapatkan dari langkah Deploy di atas
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbyb9w8qnVwStztIxg2VMxGz5vniE3-FO145Ss66kdNH9Nc6j8BqFykYdojclsMhqNnl/exec"; 
-
-    // ===== TOMBOL AKSI =====
-    document.getElementById("btnPdf").addEventListener("click", async function () {
-        const btn = this;
-        const originalText = btn.textContent;
-        
-        // 1. Ubah state tombol agar user tidak klik 2x
-        btn.textContent = "Sedang membuat & mengirim PDF...";
-        btn.disabled = true;
-        btn.style.opacity = "0.7";
-
-        try {
-            // 2. Ambil data dari DOM
-            const nomor = document.getElementById("idNomor").textContent || "TanpaNomor";
-            const nama = document.getElementById("idNama").textContent || "TanpaNama";
-            const tanggal = document.getElementById("idTglTes").textContent || "TanpaTanggal";
-            
-            // Bersihkan nama file dari karakter ilegal
-            const safeNama = nama.replace(/[^a-zA-Z0-9]/g, "_");
-            const safeNomor = nomor.replace(/[^a-zA-Z0-9]/g, "_");
-            const fileName = `Laporan_${safeNomor}_${safeNama}.pdf`;
-
-            // 3. Generate PDF sebagai Base64 String
-            const element = document.querySelector('.wrap'); // Ambil seluruh konten laporan
-            const opt = {
-                margin: 5,
-                filename: fileName,
-                image: { type: 'jpeg', quality: 0.95 },
-                html2canvas: { scale: 2, useCORS: true, letterRendering: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            // 1. Buat objek data peserta sesuai format yang dibutuhkan hasil.html
+            const dataPeserta = {
+                nomor: document.getElementById("nomorPeserta").value,
+                nama: nama,
+                fasyankes: dataKlinik[cabang].nama,
+                alamat: dataKlinik[cabang].alamat,
+                tglLahir: tglLahir,
+                tglTes: document.getElementById("tglTes").value,
+                pendidikan: pendidikan
             };
 
-            // Proses generate (ini memakan waktu 2-4 detik)
-            const pdfBase64 = await html2pdf().set(opt).from(element).outputPdf('datauristring');
+            // 2. Simpan ke localStorage
+            localStorage.setItem("cfit_peserta", JSON.stringify(dataPeserta));
 
-            // 4. Kirim data ke Google Apps Script
-            const response = await fetch(GAS_URL, {
-                method: "POST",
-                // Mode 'no-cors' TIDAK boleh digunakan di sini karena kita butuh membaca response JSON
-                body: JSON.stringify({
-                    nomor: nomor,
-                    nama: nama,
-                    tanggal: tanggal,
-                    pdfBase64: pdfBase64,
-                    fileName: fileName
-                })
-            });
-
-            const result = await response.json();
-
-            if (result.status === 'success') {
-                alert("✅ BERHASIL!\n\nData dan file PDF telah berhasil dikirim ke Google Sheets.\n\nLink PDF: " + result.fileUrl);
-                
-                // Opsional: Tetap buka dialog print browser setelah berhasil upload
-                // window.print(); 
-            } else {
-                alert("❌ GAGAL MENGIRIM KE GOOGLE SHEETS:\n" + result.message);
-            }
-
-        } catch (error) {
-            console.error("Error:", error);
-            alert("❌ Terjadi kesalahan sistem saat memproses PDF.\nPastikan koneksi internet stabil.");
-        } finally {
-            // 5. Kembalikan tombol ke keadaan semula
-            btn.textContent = originalText;
-            btn.disabled = false;
-            btn.style.opacity = "1";
+            // 3. Lanjut ke halaman tes berikutnya
+            window.location.href = "cfit-1.html";
         }
-    });
 
-    document.getElementById("btnSelesai").addEventListener("click", function () {
-        if(confirm("Apakah Anda yakin ingin selesai? Data sementara akan dihapus.")) {
-            localStorage.removeItem("cfit_peserta");
-            DAFTAR_SERI.forEach(function (seri) { localStorage.removeItem(seri.kunci); });
-            localStorage.removeItem("cpmi_psikogram_data");
-            window.location.href = "index.html"; // Sesuaikan dengan halaman utama Anda
-        }
-	
- });
-</script>
+        // ===== INISIALISASI =====
+        window.onload = function() {
+            generateNomorPeserta();
+            setTanggalTes();
+        };
+    </script>
 </body>
 </html>
