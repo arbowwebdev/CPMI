@@ -1,396 +1,312 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tes Verbal & Logika</title>
-    <style>
-        :root {
-            --primary: #1a56db;
-            --primary-hover: #1e40af;
-            --bg-color: #f3f4f6;
-            --card-bg: #ffffff;
-            --text-main: #1f2937;
-            --border-color: #e5e7eb;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
-            background-color: var(--card-bg);
-            width: 100%;
-            max-width: 800px;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            position: relative;
-        }
-
-        h1, h2 {
-            color: var(--primary);
-            text-align: center;
-        }
-
-        /* === TIMER GARIS SAJA (TANPA TEKS MENIT) === */
-        .timer-container {
-            position: sticky;
-            top: 0;
-            background: white;
-            padding: 15px 0;
-            border-bottom: 2px solid var(--border-color);
-            z-index: 100;
-            margin-bottom: 25px;
-        }
-        .timer-info {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 8px;
-            color: var(--text-main);
-        }
-        .timer-track {
-            width: 100%;
-            height: 14px;
-            background-color: #e5e7eb;
-            border-radius: 99px;
-            overflow: hidden;
-            border: 1px solid #d1d5db;
-        }
-        .timer-bar {
-            height: 100%;
-            width: 100%;
-            background-color: var(--success);
-            border-radius: 99px;
-            transition: width 1s linear, background-color 0.5s ease;
-        }
-        .timer-bar.warning { background-color: var(--warning); }
-        .timer-bar.danger { background-color: var(--danger); }
-
-        .question-card {
-            border: 1px solid var(--border-color);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            background: #fafafa;
-            scroll-margin-top: 100px;
-        }
-
-        .question-title {
-            font-weight: bold;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        @media (max-width: 600px) {
-            .options-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .option-label {
-            display: flex;
-            align-items: center;
-            background: white;
-            border: 1px solid var(--border-color);
-            padding: 12px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .option-label:hover {
-            border-color: var(--primary);
-            background: #eff6ff;
-        }
-
-        .option-label input {
-            margin-right: 10px;
-            cursor: pointer;
-            transform: scale(1.2);
-        }
-
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            width: 100%;
-            font-weight: bold;
-            transition: background 0.2s;
-            margin-top: 10px;
-        }
-
-        .btn:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .btn-secondary {
-            background-color: white;
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-        }
-        .btn-secondary:hover {
-            background-color: #f9fafb;
-        }
-
-        #test-screen, #next-screen {
-            display: none;
-        }
-
-        .next-box {
-            background: #f0fdf4;
-            border: 2px solid #bbf7d0;
-            padding: 40px;
-            border-radius: 12px;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .next-box h2 {
-            color: var(--success);
-            margin-top: 0;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tes Verbal & Logika</title>
+<style>
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background:#f4f6f8; color:#2c3e50; }
+    .container { background:#fff; padding:25px; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,.08); }
+    h2 { border-bottom:2px solid #3498db; padding-bottom:10px; color:#2c3e50; }
+    .info-waktu { background:#fff3cd; border:1px solid #ffe08a; color:#856404; padding:12px; border-radius:6px; text-align:center; font-weight:bold; margin:15px 0; }
+    .info-waktu ul { text-align:left; margin:10px 0 0 20px; font-weight:normal; }
+    .progress-bar-wrap { background:#ecf0f1; height:14px; border-radius:7px; overflow:hidden; margin-bottom:15px; position:sticky; top:0; z-index:50; box-shadow:0 2px 6px rgba(0,0,0,.1); display:none; }
+    .progress-bar { height:100%; background:linear-gradient(90deg,#27ae60,#2ecc71); transition:width 1s linear; }
+    .progress-bar.warning { background:linear-gradient(90deg,#e74c3c,#c0392b); animation:pulse 1s infinite; }
+    @keyframes pulse { 50% { opacity:0.7; } }
+    .soal-box { border:1px solid #dfe4e8; background:#fafbfc; border-radius:8px; padding:20px; margin-bottom:15px; }
+    .soal-box.nomor { background:#eaf4fd; border-left:4px solid #3498db; }
+    .soal-teks { font-size:17px; font-weight:bold; margin:10px 0; }
+    .opsi { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+    .opsi label { background:#fff; border:2px solid #d0d7de; border-radius:6px; padding:12px; cursor:pointer; display:flex; align-items:center; gap:10px; font-size:15px; transition:all 0.2s; }
+    .opsi label:hover { background:#eaf4fd; border-color:#3498db; }
+    .opsi label:has(input:checked) { background:#e8f5e9; border-color:#27ae60; font-weight:bold; }
+    .opsi input[type="radio"] { width:16px; height:16px; cursor:pointer; }
+    .tombol { border:none; border-radius:6px; padding:13px 24px; font-size:16px; font-weight:bold; color:#fff; cursor:pointer; margin:5px; transition:all 0.2s; }
+    .tombol:disabled { background:#95a5a6 !important; cursor:not-allowed; opacity:0.6; }
+    .tombol-cek { background:#f39c12; }
+    .tombol-mulai { background:#95a5a6; cursor:not-allowed; }
+    .tombol-mulai.aktif { background:#27ae60; cursor:pointer; }
+    .tombol-mulai.aktif:hover { opacity:0.9; }
+    .tombol-selesai { background:#27ae60; font-size:18px; padding:16px 30px; display:none; }
+    .sukses { color:#27ae60; font-weight:bold; display:none; margin:10px 0; }
+    .salah { color:#c0392b; font-weight:bold; display:none; margin:10px 0; }
+    .hidden { display:none !important; }
+    .progress { background:#e8f5e9; border:1px solid #a5d6a7; color:#2e7d32; padding:10px; border-radius:6px; text-align:center; font-weight:bold; margin-bottom:15px; }
+    #area-selesai { text-align:center; padding:35px 10px; display:none; }
+    a.tombol { text-decoration:none; display:inline-block; }
+    .peringatan { color:#c0392b; text-align:center; font-weight:bold; font-size:13px; margin-bottom:15px; }
+    .kategori-label { display:inline-block; background:#3498db; color:#fff; padding:4px 10px; border-radius:4px; font-size:12px; font-weight:bold; margin-bottom:8px; }
+    .btn-kembali-atas { position:fixed; bottom:20px; right:20px; background:#3498db; color:#fff; border:none; padding:12px 18px; border-radius:30px; font-weight:bold; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.2); z-index:100; display:none; }
+    .btn-kembali-atas:hover { background:#2980b9; }
+</style>
 </head>
 <body>
+<div class="container">
 
-<!-- LAYAR MULAI -->
-<div class="container" id="start-screen">
-    <h1>Tes Verbal & Logika</h1>
-    <p style="text-align: center; font-size: 1.1rem;">Tes ini terdiri dari <strong>40 Soal Pilihan Ganda</strong>.</p>
-    <div style="background: #fffbeb; border: 1px solid #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
-        <h3 style="color: #b45309; margin-top: 0;">⚠️ Instruksi Penting</h3>
-        <ul style="color: #92400e; margin-bottom: 0; padding-left: 20px; line-height: 1.6;">
-            <li>Anda memiliki waktu <strong>tepat 9 menit</strong> untuk mengerjakan seluruh soal.</li>
-            <li>Perhatikan <strong>garis progress di bagian atas</strong> sebagai indikator sisa waktu.</li>
-            <li>Anda <strong>bebas memeriksa dan mengubah jawaban</strong> (scroll ke atas/bawah) selama garis belum habis.</li>
-            <li>Tes <strong>tidak dapat dihentikan manual</strong>. Sistem akan otomatis menyimpan dan mengakhiri tes saat waktu habis.</li>
-        </ul>
+    <!-- ================= BAGIAN CONTOH ================= -->
+    <div id="area-contoh">
+        <h2>Tes Verbal & Logika</h2>
+        <p>Tes ini terdiri dari <strong>40 soal pilihan ganda</strong> yang mencakup sinonim, antonim, analogi kata, dan deret huruf.</p>
+
+        <div class="info-waktu">
+            ⚠️ <strong>Instruksi Penting</strong>
+            <ul>
+                <li>Anda memiliki waktu dengan <strong>LIHAT BATANG WAKTU DIATAS BERJALAN</strong> untuk mengerjakan seluruh soal.</li>
+                <li>Perhatikan progress bar di bagian atas sebagai indikator sisa waktu.</li>
+                <li>Anda bebas memeriksa dan mengubah jawaban selama waktu belum habis.</li>
+                <li>Tes akan otomatis berakhir dan menyimpan jawaban saat waktu habis.</li>
+            </ul>
+        </div>
+
+        <div class="soal-box nomor">
+            <span class="kategori-label">CONTOH</span>
+            <div class="soal-teks">INSOMNIA = ...</div>
+            <p><em>Pilih sinonim (persamaan kata) yang paling tepat.</em></p>
+            <div class="opsi">
+                <label><input type="radio" name="contoh" value="a"> <b>A.</b> Tidur nyenyak</label>
+                <label><input type="radio" name="contoh" value="b"> <b>B.</b> Tak bisa tidur</label>
+                <label><input type="radio" name="contoh" value="c"> <b>C.</b> Mimpi buruk</label>
+                <label><input type="radio" name="contoh" value="d"> <b>D.</b> Bangun pagi</label>
+                <label><input type="radio" name="contoh" value="e"> <b>E.</b> Lelah</label>
+            </div>
+        </div>
+
+        <button class="tombol tombol-cek" onclick="cekContoh()">PERIKSA JAWABAN CONTOH</button>
+        <p id="msg-salah" class="salah">❌ Belum tepat. INSOMNIA artinya gangguan tidur / tak bisa tidur.</p>
+        <p id="msg-benar" class="sukses">✅ Benar! Tes Utama sudah terbuka.</p>
+
+        <div style="text-align:center;margin-top:15px;">
+            <button id="btn-mulai" class="tombol tombol-mulai" disabled onclick="mulaiTes()">
+                MULAI TES UTAMA 
+            </button>
+        </div>
     </div>
-    <button class="btn" onclick="startTest()">Mulai Tes Sekarang</button>
-</div>
 
-<!-- LAYAR TES -->
-<div class="container" id="test-screen">
-    <div class="timer-container">
-        <div class="timer-info">
-            <span>Progress Jawaban: <span id="answered-count">0</span> / 40</span>
+    <!-- ================= BAGIAN TES ================= -->
+    <div id="area-tes" class="hidden">
+        <div class="progress-bar-wrap" id="progress-bar-wrap">
+            <div class="progress-bar" id="progress-bar" style="width:100%"></div>
         </div>
-        <div class="timer-track">
-            <div id="timer-bar" class="timer-bar"></div>
+        <p class="peringatan">⚠️ Jangan reload / tekan tombol kembali. Progres akan hilang.</p>
+        <div class="progress">📝 Progres jawaban: <span id="count">0</span> / 40</div>
+
+        <div id="daftar-soal"></div>
+
+        <p id="msg-lengkap" class="sukses" style="text-align:center; font-size:16px; margin-top:15px;">
+            ✅ Semua 40 soal terisi. Anda boleh selesai sekarang tanpa menunggu waktu habis.
+        </p>
+        <div style="text-align:center; margin-top:15px;">
+            <button id="btn-selesai" class="tombol tombol-selesai" onclick="selesaikan()">
+                SELESAI & LANJUT KE TES KEPRIBADIAN (BFI) →
+            </button>
         </div>
+
+        <button class="btn-kembali-atas" id="btn-atas" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆️ Kembali ke Atas</button>
     </div>
 
-    <form id="quiz-form">
-        <div id="questions-container"></div>
-        
-        <!-- Tombol hanya untuk memudahkan scroll ke atas, TIDAK ADA tombol selesai -->
-        <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f9fafb; border-radius: 8px; border: 1px dashed var(--border-color);">
-            <p style="margin: 0 0 10px 0; color: #6b7280; font-size: 0.9rem;">Belum selesai? Periksa kembali jawaban Anda di atas.</p>
-            <button type="button" class="btn btn-secondary" style="max-width: 300px;" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">⬆️ Kembali ke Atas untuk Memeriksa</button>
-        </div>
-    </form>
-</div>
-
-<!-- LAYAR SELESAI (Muncul otomatis saat waktu habis) -->
-<div class="container" id="next-screen">
-    <div class="next-box">
-        <h2>✅ Waktu Habis - Jawaban Disimpan</h2>
-        <p style="font-size: 1.2rem; color: #1e40af;">Sistem telah otomatis merekam dan mengkategorikan hasil tes Anda.</p>
-        <p style="font-size: 0.9rem; color: #6b7280;">Silakan lanjutkan ke tahap berikutnya.</p>
-        <button class="btn" onclick="goToNextPage()" style="margin-top: 20px;">Lanjutkan ke Halaman Berikutnya →</button>
+    <!-- ================= BAGIAN SELESAI ================= -->
+    <div id="area-selesai">
+        <h2>✅ Tes Disimpan</h2>
+        <p>Skor dan kategori Tes Verbal & Logika Anda telah disimpan ke sistem.</p>
+        <a href="bfi.html" class="tombol tombol-mulai aktif">Lanjut ke Tes Kepribadian (BFI) →</a>
     </div>
 </div>
 
 <script>
-    const questions = [
-        { q: "Evokasi = ...", opts: ["Penggugah rasa", "Provokasi", "Evaluasi", "Penolakan"], ans: 0 },
-        { q: "Paradoks = ...", opts: ["Sejalan", "Pertentangan", "Perbandingan", "Persamaan"], ans: 1 },
-        { q: "Afirmasi = ...", opts: ["Penolakan", "Penegasan", "Pertanyaan", "Pernyataan"], ans: 1 },
-        { q: "Defleksi = ...", opts: ["Penyimpangan", "Penyatuan", "Pengurangan", "Penambahan"], ans: 0 },
-        { q: "Implisit = ...", opts: ["Tersurat", "Tersirat", "Jelas", "Terbuka"], ans: 1 },
-        { q: "Konvensi = ...", opts: ["Perdebatan", "Kesepakatan", "Permusuhan", "Persaingan"], ans: 1 },
-        { q: "Mitigasi = ...", opts: ["Pengurangan risiko", "Peningkatan", "Penyebaran", "Penyatuan"], ans: 0 },
-        { q: "Otoritas = ...", opts: ["Kelemahan", "Wewenang", "Kewajiban", "Hukuman"], ans: 1 },
-        { q: "Presisi = ...", opts: ["Ketepatan", "Kesalahan", "Kecepatan", "Kelambatan"], ans: 0 },
-        { q: "Residu = ...", opts: ["Awal", "Sisa", "Puncak", "Dasar"], ans: 1 },
-        { q: "Signifikan = ...", opts: ["Berarti", "Biasa", "Kecil", "Tersembunyi"], ans: 0 },
-        { q: "Tentatif = ...", opts: ["Pasti", "Sementara", "Tetap", "Berubah-ubah"], ans: 1 },
-        { q: "Urgensi = ...", opts: ["Keharusan mendesak", "Keterlambatan", "Kebebasan", "Pilihan"], ans: 0 },
-        { q: "Validitas = ...", opts: ["Kesahihan", "Kesalahan", "Kepalsuan", "Keraguan"], ans: 0 },
-        { q: "Akurat = ...", opts: ["Tepat", "Salah", "Cepat", "Lambat"], ans: 0 },
-        { q: "Kering : Gurun = ... : ...", opts: ["Basah : Rawa", "Dingin : Gunung", "Panas : Matahari", "Luas : Samudra"], ans: 0 },
-        { q: "Guru : Sekolah = ... : ...", opts: ["Dokter : Rumah Sakit", "Petani : Traktor", "Polisi : Jalan", "Hakim : Penjara"], ans: 0 },
-        { q: "Pena : Tinta = ... : ...", opts: ["Kuas : Cat", "Pensil : Kertas", "Buku : Tulisan", "Penghapus : Karet"], ans: 0 },
-        { q: "Mata : Melihat = ... : ...", opts: ["Telinga : Mendengar", "Hidung : Mencium", "Mulut : Mengunyah", "Kaki : Berjalan"], ans: 0 },
-        { q: "Api : Panas = ... : ...", opts: ["Es : Dingin", "Angin : Sejuk", "Air : Basah", "Batu : Keras"], ans: 0 },
-        { q: "Ban : Karet = ... : ...", opts: ["Jendela : Kaca", "Pintu : Kayu", "Dinding : Bata", "Atap : Genteng"], ans: 0 },
-        { q: "Lapar : Makan = ... : ...", opts: ["Haus : Minum", "Lelah : Tidur", "Sakit : Obat", "Sedih : Menangis"], ans: 0 },
-        { q: "Pesawat : Avtur = ... : ...", opts: ["Mobil : Bensin", "Kapal : Air", "Kereta : Rel", "Sepeda : Kayuh"], ans: 0 },
-        { q: "Sutradara : Film = ... : ...", opts: ["Penulis : Buku", "Pelukis : Kanvas", "Penyanyi : Lagu", "Penari : Panggung"], ans: 0 },
-        { q: "Marah : Cemberut = ... : ...", opts: ["Senang : Tertawa", "Sedih : Menangis", "Takut : Gemetar", "Kaget : Teriak"], ans: 0 },
-        { q: "Gitar : Dipetik = ... : ...", opts: ["Seruling : Ditiup", "Drum : Dipukul", "Piano : Ditekan", "Biola : Digesek"], ans: 0 },
-        { q: "Burung : Terbang = ... : ...", opts: ["Ikan : Berenang", "Katak : Melompat", "Ular : Merayap", "Kuda : Berlari"], ans: 0 },
-        { q: "Gunting : Memotong = ... : ...", opts: ["Sapu : Membersihkan", "Pisau : Mengiris", "Cangkul : Menggali", "Palu : Memukul"], ans: 0 },
-        { q: "Utara : Selatan = ... : ...", opts: ["Barat Daya : Timur Laut", "Timur : Barat", "Atas : Bawah", "Kanan : Kiri"], ans: 0 },
-        { q: "Beras : Nasi = ... : ...", opts: ["Gandum : Roti", "Jagung : Tepung", "Singkong : Tapioka", "Kedelai : Kecap"], ans: 0 },
-        { q: "Semua karyawan memakai seragam. Budi adalah karyawan. Kesimpulan:", opts: ["Budi memakai seragam", "Budi tidak memakai seragam", "Budi mungkin memakai seragam", "Budi bukan karyawan"], ans: 0 },
-        { q: "Jika hujan, maka jalanan basah. Jalanan tidak basah. Kesimpulan:", opts: ["Tidak hujan", "Hujan turun rintik-rintik", "Hujan deras", "Mungkin hujan"], ans: 0 },
-        { q: "Semua burung memiliki sayap. Tidak ada mamalia yang memiliki sayap. Kesimpulan:", opts: ["Tidak ada mamalia yang merupakan burung", "Semua mamalia adalah burung", "Beberapa mamalia adalah burung", "Burung adalah mamalia"], ans: 0 },
-        { q: "Semua siswa yang rajin akan lulus ujian. Sebagian siswa kelas A rajin. Kesimpulan:", opts: ["Sebagian siswa kelas A akan lulus ujian", "Semua siswa kelas A akan lulus ujian", "Tidak ada siswa kelas A yang lulus ujian", "Semua siswa yang lulus ujian adalah siswa kelas A"], ans: 0 },
-        { q: "Jika Andi belajar, ia akan mendapat nilai A. Jika Andi mendapat nilai A, ia akan mendapat hadiah. Kesimpulan:", opts: ["Jika Andi belajar, ia akan mendapat hadiah", "Jika Andi tidak belajar, ia mendapat hadiah", "Andi belajar untuk mendapat hadiah", "Andi tidak mendapat hadiah"], ans: 0 },
-        { q: "Semua pahlawan adalah orang pemberani. Tidak ada pengecut yang pemberani. Kesimpulan:", opts: ["Tidak ada pahlawan yang pengecut", "Semua pahlawan adalah pengecut", "Beberapa pahlawan adalah pengecut", "Pengecut adalah pahlawan"], ans: 0 },
-        { q: "Buku merah lebih tebal dari buku biru. Buku hijau lebih tipis dari buku biru. Kesimpulan:", opts: ["Buku merah lebih tebal dari buku hijau", "Buku hijau lebih tebal dari buku merah", "Buku merah dan hijau sama tebal", "Buku biru paling tebal"], ans: 0 },
-        { q: "Semua sayuran mengandung vitamin. Sebagian makanan di meja adalah sayuran. Kesimpulan:", opts: ["Sebagian makanan di meja mengandung vitamin", "Semua makanan di meja mengandung vitamin", "Tidak ada makanan di meja yang mengandung vitamin", "Semua sayuran ada di meja"], ans: 0 },
-        { q: "Tidak ada orang malas yang sukses. Beberapa pengusaha adalah orang sukses. Kesimpulan:", opts: ["Beberapa pengusaha bukan orang malas", "Semua pengusaha adalah orang malas", "Tidak ada pengusaha yang sukses", "Semua pengusaha sukses"], ans: 0 },
-        { q: "Semua pekerja tambang memakai helm pengaman. Amir tidak memakai helm pengaman. Kesimpulan:", opts: ["Amir bukan pekerja tambang", "Amir adalah pekerja tambang", "Amir mungkin pekerja tambang", "Amir lupa memakai helm"], ans: 0 }
-    ];
+/* =====================================================================
+   KUNCI JAWABAN 40 SOAL VERBAL
+   ---------------------------------------------------------------------
+   Kategori: SINONIM (1-10), ANTONIM (11-20), ANALOGI (21-30), DERET HURUF (31-40)
+   ===================================================================== */
 
-    // Acak opsi jawaban agar kunci tidak selalu di posisi yang sama
-    questions.forEach(q => {
-        const correctAnsText = q.opts[q.ans];
-        const shuffledOpts = q.opts.map((opt, i) => ({ text: opt, originalIndex: i }))
-                                   .sort(() => Math.random() - 0.5);
-        q.opts = shuffledOpts.map(o => o.text);
-        q.ans = shuffledOpts.findIndex(o => o.text === correctAnsText);
+const CONTOH_KUNCI = 'b'; // INSOMNIA = tak bisa tidur
+
+const SOAL = [
+    // ===== SINONIM (1-10) — Kunci: A:2, B:2, C:2, D:2, E:2 =====
+    { kat:"SINONIM", teks:"INSOMNIA = ...", opsi:["Tidur nyenyak","Tak bisa tidur","Mimpi buruk","Bangun pagi","Lelah"], kunci:1 },
+    { kat:"SINONIM", teks:"KREDO = ...", opsi:["Utang","Kredit","Keyakinan","Janji","Utang budi"], kunci:2 },
+    { kat:"SINONIM", teks:"RELATIF = ...", opsi:["Nisbi","Mutlak","Pasti","Tetap","Abadi"], kunci:0 },
+    { kat:"SINONIM", teks:"PROGRESIF = ...", opsi:["Mundur","Stagnan","Lambat","Maju","Cepat"], kunci:3 },
+    { kat:"SINONIM", teks:"AGITASI = ...", opsi:["Ketenangan","Diam","Gejolak","Lambat","Tenang"], kunci:2 },
+    { kat:"SINONIM", teks:"EKSPANSI = ...", opsi:["Penyusutan","Perluasan","Penciutan","Penghapusan","Pembatasan"], kunci:1 },
+    { kat:"SINONIM", teks:"KONVERGEN = ...", opsi:["Memencar","Menyebar","Melebar","Mengumpul","Menjauh"], kunci:3 },
+    { kat:"SINONIM", teks:"PARADOKS = ...", opsi:["Pertentangan","Kesamaan","Persamaan","Keseimbangan","Kesesuaian"], kunci:0 },
+    { kat:"SINONIM", teks:"EKLEKTIK = ...", opsi:["Memihak","Sempit","Kaku","Tertutup","Sintesis/Tidak memihak"], kunci:4 },
+    { kat:"SINONIM", teks:"NOMADEN = ...", opsi:["Menetap","Stabil","Berpindah-pindah","Permanen","Mapan"], kunci:2 },
+
+    // ===== ANTONIM (11-20) — Kunci: A:2, B:2, C:2, D:2, E:2 =====
+    { kat:"ANTONIM", teks:"PROMINEN >< ...", opsi:["Terkenal","Hebat","Populer","Biasa/Tonjol","Utama"], kunci:3 },
+    { kat:"ANTONIM", teks:"ABSURD >< ...", opsi:["Konyol","Masuk akal","Aneh","Gila","Lucu"], kunci:1 },
+    { kat:"ANTONIM", teks:"GANJIL >< ...", opsi:["Tunggal","Satu","Ganjil","Ganjil","Genap"], kunci:4 },
+    { kat:"ANTONIM", teks:"LATEN >< ...", opsi:["Nyata/Tampak","Tersembunyi","Samaran","Rahasia","Gelap"], kunci:0 },
+    { kat:"ANTONIM", teks:"KONKRET >< ...", opsi:["Nyata","Jelas","Abstrak","Padat","Berwujud"], kunci:2 },
+    { kat:"ANTONIM", teks:"ABSOLUT >< ...", opsi:["Tetap","Pasti","Mutlak","Relatif","Kuat"], kunci:3 },
+    { kat:"ANTONIM", teks:"UNIVERSAL >< ...", opsi:["Global","Parsial/Khusus","Umum","Luas","Menyeluruh"], kunci:1 },
+    { kat:"ANTONIM", teks:"EKSPANSI >< ...", opsi:["Perluasan","Pelebaran","Pembesaran","Pertumbuhan","Penyusutan"], kunci:4 },
+    { kat:"ANTONIM", teks:"KONVERGEN >< ...", opsi:["Memencar/Menyebar","Mengumpul","Berkumpul","Bersatu","Menyatu"], kunci:0 },
+    { kat:"ANTONIM", teks:"PROGRESIF >< ...", opsi:["Maju","Cepat","Regresif/Mundur","Aktif","Dinamis"], kunci:2 },
+
+    // ===== ANALOGI (21-30) — Kunci: A:2, B:2, C:2, D:2, E:2 =====
+    { kat:"ANALOGI", teks:"KAKI : SEPATU = ... : ...", opsi:["Tangan : Sarung tangan","Kepala : Topi","Mata : Kacamata","Telinga : Anting","Mulut : Masker"], kunci:0 },
+    { kat:"ANALOGI", teks:"MOBIL : GARASI = PESAWAT : ...", opsi:["Landasan","Bandara","Terminal","Hanggar","Pelabuhan"], kunci:3 },
+    { kat:"ANALOGI", teks:"KERTAS : PENA = PAPAN : ...", opsi:["Pensil","Kapur","Spidol","Kucat","Penghapus"], kunci:1 },
+    { kat:"ANALOGI", teks:"DOKTER : DIAGNOSA = GURU : ...", opsi:["Mengajar","Sekolah","Murid","Buku","Evaluasi"], kunci:4 },
+    { kat:"ANALOGI", teks:"AIR : HAUS = MAKANAN : ...", opsi:["Minum","Masak","Lapar","Kenya","Haus"], kunci:2 },
+    { kat:"ANALOGI", teks:"BURUNG : TERBANG = IKAN : ...", opsi:["Laut","Sirip","Air","Berenang","Jaring"], kunci:3 },
+    { kat:"ANALOGI", teks:"MATA : MELIHAT = TELINGA : ...", opsi:["Kepala","Suara","Mendengar","Dengar","Bunyi"], kunci:2 },
+    { kat:"ANALOGI", teks:"GURU : SEKOLAH = DOKTER : ...", opsi:["Obat","Pasien","Klinik","Rumah sakit","Resep"], kunci:3 },
+    { kat:"ANALOGI", teks:"KAYU : MEBEL = KAIN : ...", opsi:["Jahit","Benang","Baju","Toko","Gunting"], kunci:1 },
+    { kat:"ANALOGI", teks:"API : PANAS = ES : ...", opsi:["Air","Beku","Putih","Keras","Dingin"], kunci:4 },
+
+    // ===== DERET HURUF (31-40) — Kunci: A:2, B:2, C:2, D:2, E:2 =====
+    { kat:"DERET HURUF", teks:"A, C, E, G, ...", opsi:["H","I","J","K","L"], kunci:1 },
+    { kat:"DERET HURUF", teks:"B, D, F, H, ...", opsi:["I","J","K","L","M"], kunci:1 },
+    { kat:"DERET HURUF", teks:"A, B, D, G, ...", opsi:["K","J","L","M","N"], kunci:0 },
+    { kat:"DERET HURUF", teks:"Z, X, V, T, ...", opsi:["S","R","Q","P","O"], kunci:1 },
+    { kat:"DERET HURUF", teks:"C, F, I, L, ...", opsi:["M","N","O","P","Q"], kunci:2 },
+    { kat:"DERET HURUF", teks:"A, D, I, P, ...", opsi:["U","V","W","X","Y"], kunci:4 },
+    { kat:"DERET HURUF", teks:"B, E, H, K, ...", opsi:["L","M","N","O","P"], kunci:2 },
+    { kat:"DERET HURUF", teks:"M, N, P, S, ...", opsi:["T","U","V","W","X"], kunci:3 },
+    { kat:"DERET HURUF", teks:"A, C, F, J, ...", opsi:["K","L","M","N","O"], kunci:4 },
+    { kat:"DERET HURUF", teks:"D, G, K, P, ...", opsi:["Q","R","S","T","U"], kunci:4 }
+];
+
+const HURUF = ['a','b','c','d','e'];
+const TOTAL = SOAL.length;
+const DURASI = 9 * 60; // 9 MENIT
+
+let sisa = DURASI, interval = null, sudahSelesai = false;
+const jawabanUser = new Array(TOTAL).fill(null);
+
+/* ---------- RENDER SEMUA SOAL ---------- */
+function renderSemuaSoal() {
+    const container = document.getElementById('daftar-soal');
+    container.innerHTML = SOAL.map((s, i) => `
+        <div class="soal-box nomor">
+            <span class="kategori-label">${s.kat}</span>
+            <div style="font-weight:bold; margin-bottom:5px;">Soal ${i+1} / ${TOTAL}</div>
+            <div class="soal-teks">${s.teks}</div>
+            <div class="opsi">
+                ${s.opsi.map((o,j) => `
+                    <label>
+                        <input type="radio" name="soal${i}" value="${HURUF[j]}" onchange="pilihJawaban(${i}, '${HURUF[j]}')">
+                        <b>${HURUF[j].toUpperCase()}.</b> ${o}
+                    </label>`).join('')}
+            </div>
+        </div>
+    `).join('');
+}
+
+/* ---------- VALIDASI CONTOH ---------- */
+function cekContoh() {
+    const jwb = document.querySelector('input[name="contoh"]:checked');
+    const benar = jwb && jwb.value === CONTOH_KUNCI;
+    const btn = document.getElementById('btn-mulai');
+
+    document.getElementById('msg-salah').style.display = benar ? 'none' : 'block';
+    document.getElementById('msg-benar').style.display = benar ? 'block' : 'none';
+    
+    if (benar) {
+        btn.classList.add('aktif');
+        btn.disabled = false;
+    } else {
+        btn.classList.remove('aktif');
+        btn.disabled = true;
+    }
+}
+
+/* ---------- PILIH JAWABAN ---------- */
+function pilihJawaban(idx, nilai) {
+    jawabanUser[idx] = nilai;
+    cekKelengkapan();
+}
+
+/* ---------- MULAI TES ---------- */
+function mulaiTes() {
+    if (document.getElementById('btn-mulai').disabled) return;
+
+    document.getElementById('area-contoh').classList.add('hidden');
+    document.getElementById('area-tes').classList.remove('hidden');
+    document.getElementById('progress-bar-wrap').style.display = 'block';
+    document.getElementById('btn-atas').style.display = 'block';
+
+    renderSemuaSoal();
+    jalankanTimer();
+    window.scrollTo(0, 0);
+}
+
+/* ---------- TIMER + PROGRESS BAR ---------- */
+function jalankanTimer() {
+    interval = setInterval(() => {
+        sisa--;
+
+        // Update progress bar
+        const persen = (sisa / DURASI) * 100;
+        document.getElementById('progress-bar').style.width = persen + '%';
+
+        if (sisa <= 60) document.getElementById('progress-bar').classList.add('warning');
+
+        if (sisa <= 0) {
+            clearInterval(interval);
+            selesaikan(true);
+        }
+    }, 1000);
+}
+
+/* ---------- DETEKSI SEMUA SOAL TERISI ---------- */
+function cekKelengkapan() {
+    const terisi = jawabanUser.filter(j => j !== null).length;
+    document.getElementById('count').textContent = terisi;
+
+    const lengkap = terisi === TOTAL;
+    document.getElementById('btn-selesai').style.display = lengkap ? 'inline-block' : 'none';
+    document.getElementById('msg-lengkap').style.display = lengkap ? 'block' : 'none';
+}
+
+/* ---------- KATEGORI (NORMA SEMENTARA, WAJIB VALIDASI PSIKOLOG) ---------- */
+function kategoriDariSkor(skor) {
+    if (skor <= 7)  return 'R'; // Rendah      0-7   (~18%)
+    if (skor <= 15) return 'K'; // Kurang      8-15  (~20%)
+    if (skor <= 23) return 'C'; // Cukup      16-23  (~20%)
+    if (skor <= 31) return 'B'; // Baik       24-31  (~20%)
+    return 'T';                // Tinggi    32-40  (~22%)
+}
+
+/* ---------- HITUNG, SIMPAN, LANJUT ---------- */
+function selesaikan(otomatis = false) {
+    if (sudahSelesai) return;
+    sudahSelesai = true;
+    clearInterval(interval);
+
+    let skor = 0;
+    SOAL.forEach((s, i) => {
+        if (jawabanUser[i] === HURUF[s.kunci]) skor++;
     });
 
-    let timeLeft = 7 * 60; // 9 menit = 540 detik
-    const totalTime = 7 * 60;
-    let timerInterval;
+    const kategori = kategoriDariSkor(skor);
 
-    function renderQuestions() {
-        const container = document.getElementById('questions-container');
-        let html = '';
-        questions.forEach((q, index) => {
-            html += `<div class="question-card" id="question-card-${index}">
-                        <div class="question-title">${index + 1}. ${q.q}</div>
-                        <div class="options-grid">`;
-            q.opts.forEach((opt, optIdx) => {
-                html += `<label class="option-label">
-                            <input type="radio" name="q${index}" value="${optIdx}" onchange="updateProgress()">
-                            ${opt}
-                         </label>`;
-            });
-            html += `   </div>
-                      </div>`;
-        });
-        container.innerHTML = html;
+    // KUNCI YANG DIBACA hasil.html
+    localStorage.setItem('verbal_skor', String(skor));
+    localStorage.setItem('verbal_kategori', kategori);
+
+    document.getElementById('area-tes').classList.add('hidden');
+    document.getElementById('area-selesai').style.display = 'block';
+
+    if (otomatis) {
+        document.querySelector('#area-selesai p').textContent =
+            'Waktu 9 menit habis. Jawaban otomatis disimpan. Silakan lanjut ke tahap berikutnya.';
     }
+    window.scrollTo(0, 0);
+}
 
-    function updateProgress() {
-        const form = document.getElementById('quiz-form');
-        const formData = new FormData(form);
-        let answered = 0;
-        for(let key of formData.keys()) {
-            answered++;
-        }
-        document.getElementById('answered-count').innerText = answered;
+/* ---------- Anti reload saat tes berjalan ---------- */
+window.onbeforeunload = function() {
+    if (!document.getElementById('area-tes').classList.contains('hidden') && !sudahSelesai) {
+        return 'Sesi tes sedang berjalan. Keluar akan menghapus progres.';
     }
-
-    function startTest() {
-        document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('test-screen').style.display = 'block';
-        renderQuestions();
-        
-        timerInterval = setInterval(() => {
-            timeLeft--;
-            updateTimerDisplay();
-            
-            // SAAT WAKTU HABIS, OTOMATIS SELESAI
-            if(timeLeft <= 0) {
-                clearInterval(timerInterval);
-                finishTest();
-            }
-        }, 1000);
-    }
-
-    function updateTimerDisplay() {
-        const percentage = (timeLeft / totalTime) * 100;
-        const bar = document.getElementById('timer-bar');
-        bar.style.width = percentage + '%';
-        
-        bar.classList.remove('warning', 'danger');
-        if (timeLeft <= 60) { // 1 menit terakhir
-            bar.classList.add('danger');
-        } else if (timeLeft <= 180) { // 3 menit terakhir
-            bar.classList.add('warning');
-        }
-    }
-
-    // Fungsi ini HANYA dipanggil otomatis saat waktu habis
-    function finishTest() {
-        const form = document.getElementById('quiz-form');
-        const formData = new FormData(form);
-        
-        let totalScore = 0;
-        let totalAnswered = 0;
-
-        questions.forEach((q, index) => {
-            const userAnswer = formData.get(`q${index}`);
-            if(userAnswer !== null) {
-                totalAnswered++;
-                if(parseInt(userAnswer) === q.ans) {
-                    totalScore++;
-                }
-            }
-        });
-
-        // === LOGIKA 5 KATEGORI (Dari 40 Soal) ===
-        let kategori = 'R';
-        let teksKat = 'Rendah';
-        let warna = '#ef4444';
-
-        if (totalScore >= 32) { kategori = 'T'; teksKat = 'Tinggi'; warna = '#10b981'; }
-        else if (totalScore >= 24) { kategori = 'B'; teksKat = 'Baik'; warna = '#3b82f6'; }
-        else if (totalScore >= 16) { kategori = 'C'; teksKat = 'Cukup'; warna = '#f59e0b'; }
-        else if (totalScore >= 8) { kategori = 'K'; teksKat = 'Kurang'; warna = '#f97316'; }
-
-        // Simpan ke LocalStorage
-        const hasilVerbal = {
-            skor: totalScore,
-            dijawab: totalAnswered,
-            kategori: kategori,
-            teks_kategori: teksKat,
-            warna: warna,
-            waktu_selesai: new Date().toISOString()
-        };
-
-        localStorage.setItem('verbal_test_hasil', JSON.stringify(hasilVerbal));
-        localStorage.setItem('verbal_test_skor', totalScore);
-        localStorage.setItem('verbal_test_kategori', kategori);
-
-        // Pindah ke layar selesai
-        document.getElementById('test-screen').style.display = 'none';
-        document.getElementById('next-screen').style.display = 'block';
-        window.scrollTo(0, 0);
-    }
-
-    function goToNextPage() {
-        // Ganti 'index.html' dengan URL halaman tujuan Anda
-        window.location.href = 'bfi.html'; 
-    }
+};
 </script>
 </body>
 </html>

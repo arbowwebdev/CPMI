@@ -44,7 +44,6 @@
             line-height: 1.5;
         }
 
-        /* Kartu per gambar: kiri gambar soal, kanan kotak jawaban */
         .sesi {
             display: flex;
             flex-direction: row;
@@ -56,7 +55,6 @@
             margin-bottom: 20px;
         }
 
-        /* Kolom Kiri untuk 1 Gambar berisi soal */
         .kolom-kiri {
             flex: 1;
             display: flex;
@@ -69,16 +67,14 @@
             border-radius: 5px;
         }
 
-        /* Kolom Kanan untuk Kotak Jawaban */
         .kolom-kanan {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 25px; /* Jarak antar nomor */
+            gap: 25px;
             justify-content: center;
         }
 
-        /* Bagian contoh: keterangan + radio button jawaban contoh */
         .info-contoh {
             background-color: #fff8e1;
             border: 1px solid #ffe082;
@@ -108,7 +104,6 @@
             border: 2px solid transparent;
         }
 
-        /* Penanda hasil koreksi langsung */
         .grup-jawaban.benar  { border-color: #2ecc71; background-color: #eafaf1; }
         .grup-jawaban.salah  { border-color: #e74c3c; background-color: #fdedec; }
         .grup-jawaban.kosong { border-color: #bdc3c7; background-color: #f4f6f7; }
@@ -122,15 +117,13 @@
             border-radius: 4px;
         }
 
-        /* Gaya untuk wadah radio button */
         .pilihan-ganda {
             display: flex;
             flex-direction: row;
-            gap: 15px; /* Jarak antar pilihan a, b, c, dll */
+            gap: 15px;
             padding-left: 10px;
         }
 
-        /* Gaya untuk label masing-masing radio button */
         .pilihan-ganda label {
             display: flex;
             align-items: center;
@@ -140,13 +133,12 @@
         }
 
         .pilihan-ganda input[type="radio"] {
-            margin-right: 5px; /* Jarak antara bulatan radio dan huruf */
+            margin-right: 5px;
             cursor: pointer;
             width: 16px;
             height: 16px;
         }
 
-        /* ============ GARIS TIMER (ANIMASI SISA WAKTU) ============ */
         .timer-bar {
             position: fixed;
             top: 12px;
@@ -187,13 +179,11 @@
             transition: width 0.15s linear;
         }
 
-        /* Garis berubah merah saat waktu hampir habis */
         .timer-fill.merah {
             background-color: #ff3131;
             box-shadow: 0 0 8px rgba(255,49,49,0.8);
         }
 
-        /* ============ TULISAN PERINGATAN DI BAGIAN BAWAH ============ */
         .peringatan-bawah {
             position: fixed;
             left: 0;
@@ -215,7 +205,6 @@
             color: #e74c3c;
         }
 
-        /* ============ POP UP (OVERLAY) ============ */
         .overlay {
             position: fixed;
             inset: 0;
@@ -250,13 +239,6 @@
             line-height: 1.5;
         }
 
-        .popup .skor-besar {
-            font-size: 34px;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-
         .tombol {
             display: inline-block;
             padding: 11px 30px;
@@ -267,17 +249,30 @@
             cursor: pointer;
             color: #fff;
             text-decoration: none;
+            margin: 5px;
         }
 
         .tombol-utama { background-color: #3498db; }
         .tombol-utama:hover { background-color: #2980b9; }
+        
+        .tombol-selesai-awal { background-color: #e67e22; margin-top: 15px; }
+        .tombol-selesai-awal:hover { background-color: #d35400; }
+
+        /* Gaya khusus untuk tombol lanjut yang muncul setelah 10 detik */
+        .tombol-lanjut { 
+            background-color: #27ae60; 
+            display: none; /* Tersembunyi secara default */
+            width: 100%;
+            margin-top: 10px;
+        }
+        .tombol-lanjut:hover { background-color: #219150; }
 
         @media (max-width: 768px) {
             .sesi {
                 flex-direction: column;
             }
             .pilihan-ganda {
-                flex-wrap: wrap; /* Agar pilihan turun ke bawah jika layar sempit */
+                flex-wrap: wrap;
             }
             .timer-bar {
                 width: 150px;
@@ -287,7 +282,6 @@
 </head>
 <body>
 
-    <!-- ============ GARIS TIMER (muncul setelah contoh benar) ============ -->
     <div class="timer-bar" id="timerBar">
         <span class="label">SISA WAKTU</span>
         <div class="timer-track">
@@ -295,33 +289,26 @@
         </div>
     </div>
 
-    <!-- ============ TULISAN PERINGATAN MENJELANG WAKTU HABIS ============ -->
     <div class="peringatan-bawah" id="peringatanBawah">
-        SIAP-SIAP MENUJU BAGIAN 2 : JANGAN COBA-COBA KEMBALI ATAU MENEKAN
-        TOMBOL APAPUN - TES AKAN TERTUTUP.
+        SIAP-SIAP MENUJU BAGIAN 2 : JANGAN COBA-COBA KEMBALI ATAU MENEKAN TOMBOL APAPUN - TES AKAN TERTUTUP.
     </div>
 
     <div class="wrap">
 
-        <!-- ============ INSTRUKSI (DI ATAS) ============ -->
         <div class="header">
             <h1>Subtes Seri A</h1>
             <p>
                 <strong>Instruksi:</strong> Anda diminta <strong>mengisi kotak yang kosong</strong>
-                dengan melihat sifat kotak-kotak sebelumnya. Pilih satu jawaban (a - f). Kerjakan Contoh sampai seluruh jawaban benar (Berwarna Hijau)
+                dengan melihat sifat kotak-kotak sebelumnya. Pilih satu jawaban (a - f).
             </p>
-            
-            
         </div>
 
-        <!-- ================= CONTOH 1.png (DINILAI LANGSUNG) ================= -->
+        <!-- ================= CONTOH ================= -->
         <div class="sesi">
             <div class="kolom-kiri">
                 <img src="1.png" alt="Contoh soal 1 sampai 3">
             </div>
             <div class="kolom-kanan">
-
-                
                 <div class="grup-jawaban" id="contohGrup1">
                     <div class="judul-soal">Contoh Nomor 1:</div>
                     <div class="pilihan-ganda">
@@ -333,7 +320,6 @@
                         <label><input type="radio" name="contoh1" value="f"> f</label>
                     </div>
                 </div>
-
                 <div class="grup-jawaban" id="contohGrup2">
                     <div class="judul-soal">Contoh Nomor 2:</div>
                     <div class="pilihan-ganda">
@@ -345,7 +331,6 @@
                         <label><input type="radio" name="contoh2" value="f"> f</label>
                     </div>
                 </div>
-
                 <div class="grup-jawaban" id="contohGrup3">
                     <div class="judul-soal">Contoh Nomor 3:</div>
                     <div class="pilihan-ganda">
@@ -357,20 +342,15 @@
                         <label><input type="radio" name="contoh3" value="f"> f</label>
                     </div>
                 </div>
-
             </div>
         </div>
 
-        <!-- ================= BAGIAN SOAL (SEMBUNYI SAMPAI CONTOH BENAR) ================= -->
+        <!-- ================= BAGIAN SOAL ================= -->
         <div id="bagianSoal" style="display: none;">
-
             <!-- 2.png: SOAL 1-3 -->
             <div class="sesi">
-                <div class="kolom-kiri">
-                    <img src="2.png" alt="Soal 1 sampai 3">
-                </div>
+                <div class="kolom-kiri"><img src="2.png" alt="Soal 1 sampai 3"></div>
                 <div class="kolom-kanan">
-
                     <div class="grup-jawaban" id="grup1">
                         <div class="judul-soal">Jawaban Nomor 1:</div>
                         <div class="pilihan-ganda">
@@ -382,7 +362,6 @@
                             <label><input type="radio" name="jawaban1" value="f"> f</label>
                         </div>
                     </div>
-
                     <div class="grup-jawaban" id="grup2">
                         <div class="judul-soal">Jawaban Nomor 2:</div>
                         <div class="pilihan-ganda">
@@ -394,7 +373,6 @@
                             <label><input type="radio" name="jawaban2" value="f"> f</label>
                         </div>
                     </div>
-
                     <div class="grup-jawaban" id="grup3">
                         <div class="judul-soal">Jawaban Nomor 3:</div>
                         <div class="pilihan-ganda">
@@ -406,17 +384,13 @@
                             <label><input type="radio" name="jawaban3" value="f"> f</label>
                         </div>
                     </div>
-
                 </div>
             </div>
 
             <!-- 3.png: SOAL 4-6 -->
             <div class="sesi">
-                <div class="kolom-kiri">
-                    <img src="3.png" alt="Soal 4 sampai 6">
-                </div>
+                <div class="kolom-kiri"><img src="3.png" alt="Soal 4 sampai 6"></div>
                 <div class="kolom-kanan">
-
                     <div class="grup-jawaban" id="grup4">
                         <div class="judul-soal">Jawaban Nomor 4:</div>
                         <div class="pilihan-ganda">
@@ -428,7 +402,6 @@
                             <label><input type="radio" name="jawaban4" value="f"> f</label>
                         </div>
                     </div>
-
                     <div class="grup-jawaban" id="grup5">
                         <div class="judul-soal">Jawaban Nomor 5:</div>
                         <div class="pilihan-ganda">
@@ -440,7 +413,6 @@
                             <label><input type="radio" name="jawaban5" value="f"> f</label>
                         </div>
                     </div>
-
                     <div class="grup-jawaban" id="grup6">
                         <div class="judul-soal">Jawaban Nomor 6:</div>
                         <div class="pilihan-ganda">
@@ -452,17 +424,13 @@
                             <label><input type="radio" name="jawaban6" value="f"> f</label>
                         </div>
                     </div>
-
                 </div>
             </div>
 
             <!-- 4.png: SOAL 7-9 -->
             <div class="sesi">
-                <div class="kolom-kiri">
-                    <img src="4.png" alt="Soal 7 sampai 9">
-                </div>
+                <div class="kolom-kiri"><img src="4.png" alt="Soal 7 sampai 9"></div>
                 <div class="kolom-kanan">
-
                     <div class="grup-jawaban" id="grup7">
                         <div class="judul-soal">Jawaban Nomor 7:</div>
                         <div class="pilihan-ganda">
@@ -474,7 +442,6 @@
                             <label><input type="radio" name="jawaban7" value="f"> f</label>
                         </div>
                     </div>
-
                     <div class="grup-jawaban" id="grup8">
                         <div class="judul-soal">Jawaban Nomor 8:</div>
                         <div class="pilihan-ganda">
@@ -486,7 +453,6 @@
                             <label><input type="radio" name="jawaban8" value="f"> f</label>
                         </div>
                     </div>
-
                     <div class="grup-jawaban" id="grup9">
                         <div class="judul-soal">Jawaban Nomor 9:</div>
                         <div class="pilihan-ganda">
@@ -498,17 +464,13 @@
                             <label><input type="radio" name="jawaban9" value="f"> f</label>
                         </div>
                     </div>
-
                 </div>
             </div>
 
             <!-- 5.png: SOAL 10-12 -->
             <div class="sesi">
-                <div class="kolom-kiri">
-                    <img src="5.png" alt="Soal 10 sampai 12">
-                </div>
+                <div class="kolom-kiri"><img src="5.png" alt="Soal 10 sampai 12"></div>
                 <div class="kolom-kanan">
-
                     <div class="grup-jawaban" id="grup10">
                         <div class="judul-soal">Jawaban Nomor 10:</div>
                         <div class="pilihan-ganda">
@@ -520,7 +482,6 @@
                             <label><input type="radio" name="jawaban10" value="f"> f</label>
                         </div>
                     </div>
-
                     <div class="grup-jawaban" id="grup11">
                         <div class="judul-soal">Jawaban Nomor 11:</div>
                         <div class="pilihan-ganda">
@@ -532,7 +493,6 @@
                             <label><input type="radio" name="jawaban11" value="f"> f</label>
                         </div>
                     </div>
-
                     <div class="grup-jawaban" id="grup12">
                         <div class="judul-soal">Jawaban Nomor 12:</div>
                         <div class="pilihan-ganda">
@@ -544,17 +504,13 @@
                             <label><input type="radio" name="jawaban12" value="f"> f</label>
                         </div>
                     </div>
-
                 </div>
             </div>
 
             <!-- 6.png: SOAL 13 -->
             <div class="sesi">
-                <div class="kolom-kiri">
-                    <img src="6.png" alt="Soal 13">
-                </div>
+                <div class="kolom-kiri"><img src="6.png" alt="Soal 13"></div>
                 <div class="kolom-kanan">
-
                     <div class="grup-jawaban" id="grup13">
                         <div class="judul-soal">Jawaban Nomor 13:</div>
                         <div class="pilihan-ganda">
@@ -566,56 +522,48 @@
                             <label><input type="radio" name="jawaban13" value="f"> f</label>
                         </div>
                     </div>
-
                 </div>
+            </div>
+            
+            <!-- TOMBOL SELESAI LEBIH AWAL -->
+            <div style="text-align: center; margin: 30px 0;">
+                <button type="button" class="tombol tombol-selesai-awal" id="btnSelesaiAwal">SELESAI & LANJUT KE ANALISA</button>
             </div>
 
         </div>
-        <!-- /bagianSoal -->
-
     </div>
 
-    <!-- ============ POP UP: MULAI BAGIAN PERTAMA ============ -->
+    <!-- POP UP: MULAI -->
     <div class="overlay" id="overlayMulai">
         <div class="popup">
             <h2>KERJAKAN BAGIAN PERTAMA<br>MULAI</h2>
-            <p><strong>Kerjakan Sekarang</strong>. Timer akan berjalan
-            setelah Anda menekan tombol di bawah.</p>
+            <p><strong>Kerjakan Sekarang</strong>. Timer akan berjalan setelah Anda menekan tombol di bawah.</p>
             <button type="button" class="tombol tombol-utama" id="btnMulai">MULAI</button>
         </div>
     </div>
 
-    <!-- ============ POP UP: PERIKSA LAGI (SEMUA NOMOR SUDAH TERISI) ============ -->
+    <!-- POP UP: PERIKSA LAGI (DENGAN TOMBOL LANJUT YANG MUNCUL SETELAH 10 DETIK) -->
     <div class="overlay" id="overlayPeriksa">
         <div class="popup">
             <h2 class="merah">PERIKSA LAGI !<br>WAKTU MASIH TERSEDIA.</h2>
-            <p>Gunakan sisa waktu sebaik mungkin untuk memeriksa kembali
-            jawaban Anda.</p>
+            <p>Gunakan sisa waktu sebaik mungkin untuk memeriksa kembali jawaban Anda.</p>
+            
             <button type="button" class="tombol tombol-utama" id="btnPeriksa">PERIKSA JAWABAN</button>
+            
+            <!-- Tombol baru yang akan muncul setelah 10 detik -->
+            <button type="button" class="tombol tombol-lanjut" id="btnLanjutSelanjutnya">YA, SAYA SUDAH SELESAI (LANJUT KE BAGIAN 2)</button>
         </div>
     </div>
 
     <script>
-        // ============================================================
-        // KUNCI JAWABAN CONTOH (1.png) : nomor 1 = e, 2 = e, 3 = e
-        // ============================================================
-        const KUNCI_CONTOH = {
-            1: "c", 2: "e", 3: "e"
-        };
-
-        // ============================================================
-        // KUNCI JAWABAN SOAL 1-13 (MASIH PLACEHOLDER - GANTI SESUAI KUNCI ASLI!)
-        // ============================================================
+        const KUNCI_CONTOH = { 1: "c", 2: "e", 3: "e" };
         const KUNCI_JAWABAN = {
-           1: "b",  2: "c",  3: "b",
-           4: "d",  5: "e",  6: "b",
-           7: "d",  8: "b",  9: "f",
-           10: "c", 11: "b", 12: "b",
-           13: "e"
+           1: "e",  2: "e",  3: "a", 4: "f",  5: "f",  6: "d",
+           7: "d",  8: "b",  9: "f", 10: "f", 11: "e", 12: "a", 13: "f"
         };
 
         const TOTAL_SOAL = 13;
-        const DURASI_MS = 2.5 * 60 * 1000; // 3 menit
+        const DURASI_MS = 3 * 60 * 1000; // 3 menit
 
         const bagianSoal       = document.getElementById("bagianSoal");
         const timerBar         = document.getElementById("timerBar");
@@ -623,26 +571,23 @@
         const overlayMulai     = document.getElementById("overlayMulai");
         const overlayPeriksa   = document.getElementById("overlayPeriksa");
         const peringatanBawah  = document.getElementById("peringatanBawah");
+        const btnLanjut        = document.getElementById("btnLanjutSelanjutnya");
+        const btnSelesaiAwal   = document.getElementById("btnSelesaiAwal");
 
         let sisaWaktu = DURASI_MS;
         let timerId = null;
         let tesDimulai = false;
         let popPeriksaSudah = false;
+        let timeoutLanjut = null; // Variabel untuk menyimpan timer 10 detik
 
-        // ------------------------------------------------------------
-        // Koreksi langsung jawaban contoh setiap kali dipilih.
-        // Selama masih ada yang salah / belum dijawab,
-        // bagian soal (2.png - 6.png) tetap disembunyikan.
-        // ------------------------------------------------------------
+        // --- Logika Contoh ---
         function cekContoh() {
             if (tesDimulai) return;
-
             let semuaBenar = true;
 
             for (let n = 1; n <= 3; n++) {
                 const grup = document.getElementById("contohGrup" + n);
                 const pilih = document.querySelector('input[name="contoh' + n + '"]:checked');
-
                 grup.classList.remove("benar", "salah", "kosong");
 
                 if (!pilih) {
@@ -657,13 +602,9 @@
             }
 
             if (semuaBenar) {
-                // Kunci jawaban contoh agar tidak diubah lagi
                 for (let n = 1; n <= 3; n++) {
-                    document.querySelectorAll('input[name="contoh' + n + '"]').forEach(function (r) {
-                        r.disabled = true;
-                    });
+                    document.querySelectorAll('input[name="contoh' + n + '"]').forEach(function (r) { r.disabled = true; });
                 }
-                // Tampilkan soal 1-13, lalu pop up mulai
                 bagianSoal.style.display = "block";
                 overlayMulai.style.display = "flex";
             } else {
@@ -675,10 +616,7 @@
             r.addEventListener("change", cekContoh);
         });
 
-        // ------------------------------------------------------------
-        // Bila waktu belum habis tetapi SEMUA nomor (1-13) sudah terisi,
-        // keluarkan pop up "PERIKSA LAGI ! WAKTU MASIH TERSEDIA."
-        // ------------------------------------------------------------
+        // --- Logika Cek Semua Terisi & Timer 10 Detik ---
         function cekSemuaTerisi() {
             if (!tesDimulai || popPeriksaSudah) return;
 
@@ -692,6 +630,14 @@
             if (terisi === TOTAL_SOAL) {
                 popPeriksaSudah = true;
                 overlayPeriksa.style.display = "flex";
+                
+                // Pastikan tombol lanjut tersembunyi saat pertama kali muncul
+                btnLanjut.style.display = "none";
+
+                // Mulai hitungan mundur 10 detik untuk memunculkan tombol lanjut
+                timeoutLanjut = setTimeout(function() {
+                    btnLanjut.style.display = "inline-block";
+                }, 10000); // 10000 ms = 10 detik
             }
         }
 
@@ -699,14 +645,30 @@
             r.addEventListener("change", cekSemuaTerisi);
         });
 
-        // Tutup pop up periksa agar peserta bisa memeriksa lagi
+        // Jika user memilih untuk memeriksa, tutup popup dan BATALKAN timer 10 detik
         document.getElementById("btnPeriksa").addEventListener("click", function () {
             overlayPeriksa.style.display = "none";
+            if (timeoutLanjut) {
+                clearTimeout(timeoutLanjut);
+                timeoutLanjut = null;
+            }
         });
 
-        // ------------------------------------------------------------
-        // Pop up ditutup -> garis timer mulai menyusut (3 menit)
-        // ------------------------------------------------------------
+        // Jika user menekan tombol lanjut setelah 10 detik, langsung selesaikan tes
+        btnLanjut.addEventListener("click", function () {
+            if (timeoutLanjut) clearTimeout(timeoutLanjut);
+            selesaikanTes();
+        });
+
+        // --- Logika Selesai Lebih Awal ---
+        btnSelesaiAwal.addEventListener("click", function () {
+            if (confirm("Apakah Anda yakin ingin menyelesaikan tes ini sekarang dan lanjut ke halaman analisa?")) {
+                if (timeoutLanjut) clearTimeout(timeoutLanjut);
+                selesaikanTes();
+            }
+        });
+
+        // --- Logika Timer Utama ---
         document.getElementById("btnMulai").addEventListener("click", function () {
             overlayMulai.style.display = "none";
             tesDimulai = true;
@@ -726,34 +688,32 @@
             renderTimer();
         }
 
-        // Animasi garis: panjang garis menyusut sesuai sisa waktu
-        // (tanpa menampilkan angka menit/detik)
         function renderTimer() {
             const persen = (sisaWaktu / DURASI_MS) * 100;
             timerFill.style.width = persen + "%";
 
-            // Menjelang habis: garis merah + tulisan peringatan di bawah
             if (sisaWaktu <= 30 * 1000) {
                 timerFill.classList.add("merah");
                 peringatanBawah.style.display = "block";
             }
         }
 
-        // ------------------------------------------------------------
-        // Waktu habis: koreksi jawaban, simpan sementara skor
-        // (akan dijumlahkan pada akhir tes), lalu LANGSUNG pindah
-        // ke cfit-2.html.
-        // ------------------------------------------------------------
+        // --- Logika Selesai & Simpan Data ---
         function selesaikanTes() {
             clearInterval(timerId);
-
             let benar = 0;
+            let detailJawaban = {}; // Objek untuk menyimpan detail pilihan peserta
 
             for (let n = 1; n <= TOTAL_SOAL; n++) {
                 const pilih = document.querySelector('input[name="jawaban' + n + '"]:checked');
-
-                if (pilih && pilih.value === KUNCI_JAWABAN[n]) {
-                    benar++;
+                
+                if (pilih) {
+                    detailJawaban[n] = pilih.value; // Simpan nilai a, b, c, dll
+                    if (pilih.value === KUNCI_JAWABAN[n]) {
+                        benar++;
+                    }
+                } else {
+                    detailJawaban[n] = null; // Tandai kosong jika tidak dijawab
                 }
 
                 document.querySelectorAll('input[name="jawaban' + n + '"]').forEach(function (r) {
@@ -761,13 +721,23 @@
                 });
             }
 
-            // Simpan sementara untuk dijumlahkan pada akhir tes
-            localStorage.setItem("cfit_seriA_skor", String(benar));
+          // SIMPAN KE LOCAL STORAGE
+localStorage.setItem("cfit1_skor", String(benar)); // Diperbaiki dari cfit_seriA_skor
 
-            // Langsung menuju bagian 2
-            window.location.href = "cfit-2.html";
+// Tambahkan logika kategori (R, K, C, B, T) sesuai dengan norma skoring Anda
+// Ini adalah contoh pembagian kategori, silakan disesuaikan
+let kategori = 'C'; 
+if (benar >= 11) kategori = 'T';
+else if (benar >= 9) kategori = 'B';
+else if (benar >= 6) kategori = 'C';
+else if (benar >= 4) kategori = 'K';
+else kategori = 'R';
+
+localStorage.setItem("cfit1_kategori", kategori); // Wajib ditambahkan agar kotak hitam terisi
+localStorage.setItem("cfit_seriA_detail", JSON.stringify(detailJawaban));
+
+window.location.href = "analisa.html";
         }
     </script>
-
 </body>
 </html>

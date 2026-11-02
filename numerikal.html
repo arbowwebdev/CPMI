@@ -1,313 +1,360 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Subtes RA - Numerikal (Berhitung)</title>
-  <style>
-    :root {
-      --primary: #4f46e5;
-      --bg: #f3f4f6;
-      --card: #ffffff;
-      --text: #1f2937;
-      --border: #e5e7eb;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tes Kemampuan Numerikal (Berhitung)</title>
+<style>
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; max-width: 850px; margin: 0 auto; padding: 20px; background:#f4f6f8; color:#2c3e50; }
+    .container { background:#fff; padding:25px; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,.08); }
+    h2 { border-bottom:2px solid #3498db; padding-bottom:10px; color:#2c3e50; }
+    .info-waktu { background:#fff3cd; border:1px solid #ffe08a; color:#856404; padding:12px; border-radius:6px; text-align:center; font-weight:bold; margin:15px 0; }
+    .timer-container {
+        width: 100%;
+        height: 14px;
+        background-color: #ddd;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        overflow: hidden;
+        position: sticky;
+        top: 8px;
+        z-index: 50;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        display: none;
     }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      width: 100%;
-      max-width: 100%;
-      margin: 0;
-      padding: 20px;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      box-sizing: border-box;
+    .timer-fill {
+        height: 100%;
+        background-color: #27ae60;
+        width: 100%;
+        transition: width 1s linear, background-color 0.3s;
     }
-
-    .section { display: none; }
-    .active { display: block; animation: fadeIn 0.4s ease; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .timer-fill.warning {
+        background-color: #e74c3c;
+        box-shadow: 0 0 8px rgba(231, 76, 60, 0.8);
     }
-
-    .card {
-      background: var(--card);
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-    }
-
-    h2 { margin-top: 0; color: var(--primary); border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
-    
-    /* === TIMER GARIS === */
-    .timer-wrapper { margin-bottom: 20px; }
-    .timer-info {
-      display: flex; justify-content: space-between;
-      font-size: 16px; font-weight: 600; margin-bottom: 8px; color: white;
-    }
-    .timer-track {
-      width: 100%; height: 16px; background-color: #e5e7eb;
-      border-radius: 99px; overflow: hidden; border: 1px solid #d1d5db;
-    }
-    .timer-bar {
-      height: 100%; width: 100%; background-color: var(--success);
-      border-radius: 99px; transition: width 1s linear, background-color 0.5s ease;
-    }
-    .timer-bar.warning { background-color: var(--warning); }
-    .timer-bar.danger { background-color: var(--danger); }
-
-    /* === SOAL & OPSI === */
-    .question-text { font-size: 20px; font-weight: 600; margin-bottom: 25px; }
-    .options label {
-      display: block; margin: 12px 0; padding: 16px 20px;
-      background: #f9fafb; border: 2px solid var(--border);
-      border-radius: 8px; cursor: pointer; transition: all 0.2s;
-      font-size: 16px;
-    }
-    .options label:hover { background: #e0e7ff; border-color: var(--primary); }
-    .options input[type="radio"] { margin-right: 12px; transform: scale(1.3); }
-    .options input[type="radio"]:checked + span { font-weight: 600; color: var(--primary); }
-
-    /* === TOMBOL === */
-    .btn {
-      padding: 14px 28px; font-size: 16px; font-weight: 600;
-      border-radius: 8px; border: none; cursor: pointer;
-      transition: all 0.2s; margin-top: 10px;
-    }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-primary:hover { background: #4338ca; }
-    .btn-secondary { background: white; color: var(--text); border: 1px solid var(--border); }
-    .btn-secondary:hover { background: #f3f4f6; }
-    
-    .btn-group { display: flex; gap: 15px; margin-top: 30px; }
-    .btn-group .btn { flex: 1; margin-top: 0; }
-
-    @media print {
-      body { background: white; padding: 0; }
-      .no-print { display: none !important; }
-    }
-  </style>
+    .soal-box { border:1px solid #dfe4e8; background:#fafbfc; border-radius:8px; padding:25px; margin-bottom:18px; min-height:280px; }
+    .soal-teks { font-size:20px; font-weight:bold; margin:15px 0; padding:15px; background:#fff; border-radius:6px; border-left:4px solid #3498db; }
+    .opsi { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px; }
+    .opsi label { background:#fff; border:2px solid #d0d7de; border-radius:6px; padding:14px; cursor:pointer; display:flex; align-items:center; gap:10px; font-size:17px; transition:all 0.2s; }
+    .opsi label:hover { background:#eaf4fd; border-color:#3498db; }
+    .opsi label:has(input:checked) { background:#e8f5e9; border-color:#27ae60; font-weight:bold; }
+    .opsi input[type="radio"] { width:18px; height:18px; cursor:pointer; }
+    .nav-soal { display:flex; justify-content:space-between; align-items:center; margin-top:20px; padding:15px; background:#f8f9fa; border-radius:6px; }
+    .nav-info { font-weight:bold; color:#2c3e50; }
+    .tombol { border:none; border-radius:6px; padding:12px 22px; font-size:15px; font-weight:bold; color:#fff; cursor:pointer; margin:3px; transition:all 0.2s; }
+    .tombol:disabled { background:#95a5a6 !important; cursor:not-allowed; opacity:0.6; }
+    .tombol-nav { background:#3498db; }
+    .tombol-nav:hover:not(:disabled) { background:#2980b9; }
+    .tombol-cek { background:#f39c12; }
+    .tombol-mulai { background:#95a5a6; cursor:not-allowed; }
+    .tombol-mulai.aktif { background:#27ae60; cursor:pointer; }
+    .tombol-mulai.aktif:hover { opacity:0.9; }
+    .tombol-selesai { background:#27ae60; font-size:17px; padding:15px 28px; display:none; }
+    .sukses { color:#27ae60; font-weight:bold; display:none; margin:10px 0; }
+    .salah { color:#c0392b; font-weight:bold; display:none; margin:10px 0; }
+    .hidden { display:none !important; }
+    .progress { background:#e8f5e9; border:1px solid #a5d6a7; color:#2e7d32; padding:10px; border-radius:6px; text-align:center; font-weight:bold; margin-bottom:15px; }
+    #area-selesai { text-align:center; padding:35px 10px; display:none; }
+    a.tombol { text-decoration:none; display:inline-block; }
+    .peringatan { color:#c0392b; text-align:center; font-weight:bold; font-size:13px; margin-bottom:15px; }
+    .dot-nav { display:flex; justify-content:center; gap:6px; margin:15px 0; flex-wrap:wrap; }
+    .dot { width:28px; height:28px; border-radius:50%; background:#ecf0f1; border:2px solid #bdc3c7; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:bold; cursor:pointer; transition:all 0.2s; }
+    .dot.terjawab { background:#27ae60; color:#fff; border-color:#27ae60; }
+    .dot.aktif { background:#3498db; color:#fff; border-color:#2980b9; transform:scale(1.15); }
+</style>
 </head>
 <body>
+<div class="container">
 
-  <!-- BAGIAN 1: INSTRUKSI -->
-  <div id="section-instruksi" class="section active">
-    <div class="card">
-      <h2>TES BERHITUNG </h2>
-      
-      <p><strong>Instruksi Pengerjaan:</strong></p>
-      <ul style="margin-bottom: 30px; padding-left: 20px; font-size: 16px; line-height: 1.8;">
-        <li>Kerjakan soal-soal berhitung berikut ini dengan teliti.</li>
-        <li>Anda memiliki waktu <strong>TERBATAS</strong> untuk menyelesaikan 20 soal.</li>
-        <li>Waktu akan berjalan otomatis setelah Anda menekan tombol "Mulai Mengerjakan".</li>
-        <li>Anda <strong>dapat memeriksa dan mengubah jawaban</strong> kapan saja selama waktu masih tersedia.</li>
-        <li>Tes akan <strong>berakhir secara otomatis</strong> saat waktu habis, dan hasil akan langsung disimpan.</li>
-      </ul>
-      <button class="btn btn-primary" style="max-width: 300px;" onclick="mulaiTes()">Mulai Mengerjakan</button>
-    </div>
-  </div>
+    <!-- ================= BAGIAN CONTOH ================= -->
+    <div id="area-contoh">
+        <h2>Tes Kemampuan — Numerikal (Berhitung)</h2>
+        <p>Kerjakan soal-soal berhitung berikut dengan teliti. Pilih satu jawaban yang paling tepat.</p>
 
-  <!-- BAGIAN 2: AREA TES -->
-  <div id="section-tes" class="section">
-    <div class="card">
-      <!-- Timer Garis -->
-      <div class="timer-wrapper">
-        <div class="timer-info">
-          <span>Sisa Waktu</span>
-        <span id="timer-text"></span> 
+        <div class="info-waktu">⏱️ Tes Utama: 20 soal &nbsp;|&nbsp; Waktu: LIHAT BATANG WAKTU DIATAS BERJALAN</div>
+
+        <div class="soal-box">
+            <p><strong>CONTOH SOAL:</strong></p>
+            <div class="soal-teks">Berapakah hasil dari 12 + 15 × 2 ?</div>
+            <p><em>Ingat: perkalian dikerjakan lebih dahulu daripada penjumlahan.</em></p>
+            <div class="opsi">
+                <label><input type="radio" name="contoh" value="a"> <b>A.</b> 54</label>
+                <label><input type="radio" name="contoh" value="b"> <b>B.</b> 42</label>
+                <label><input type="radio" name="contoh" value="c"> <b>C.</b> 34</label>
+                <label><input type="radio" name="contoh" value="d"> <b>D.</b> 27</label>
+            </div>
         </div>
-        <div class="timer-track">
-          <div id="timer-bar" class="timer-bar"></div>
+
+        <button class="tombol tombol-cek" onclick="cekContoh()">PERIKSA JAWABAN CONTOH</button>
+        <p id="msg-salah" class="salah">❌ Belum tepat. Ingat: 15 × 2 = 30, lalu 12 + 30 = 42.</p>
+        <p id="msg-benar" class="sukses">✅ Benar! Tes Utama sudah terbuka.</p>
+
+        <div style="text-align:center;margin-top:15px;">
+            <button id="btn-mulai" class="tombol tombol-mulai" disabled onclick="mulaiTes()">
+                MULAI TES UTAMA 
+            </button>
         </div>
-      </div>
-
-      <div style="display: flex; justify-content: space-between; margin-bottom: 20px; color: #6b7280; font-size: 16px; font-weight: 600;">
-        <span>Soal Nomor</span>
-        <span id="nomor-soal">1 / 20</span>
-      </div>
-
-      <div id="question-container">
-        <div class="question-text" id="question-text"></div>
-        <div class="options" id="options-container"></div>
-      </div>
-
-      <div class="btn-group no-print">
-        <button id="btn-prev" class="btn btn-secondary" onclick="soalSebelumnya()" style="display: none;">⬅ Sebelumnya</button>
-        <button id="btn-next" class="btn btn-primary" onclick="soalBerikutnya()">Soal Berikutnya ➡</button>
-      </div>
     </div>
-  </div>
 
-  <script>
-    // === DATA SOAL RA (Numerikal) ===
-    const bankSoalRA = [
-      { q: "Jika seorang anak memiliki Rp 50.000 dan memberikan Rp 15.000 kepada orang lain, berapa rupiahkah yang masih tinggal padanya?", o: ["Rp 30.000", "Rp 35.000", "Rp 40.000", "Rp 45.000", "Rp 50.000"], a: 1 },
-      { q: "Berapa km-kah yang dapat ditempuh oleh kereta api dalam waktu 7 jam, jika kecepatannya 40 km/jam?", o: ["240 km", "280 km", "320 km", "360 km", "400 km"], a: 1 },
-      { q: "15 peti buah-buahan beratnya 250 kg dan setiap peti kosong beratnya 3 kg, berapakah berat buah-buahan itu?", o: ["205 kg", "210 kg", "215 kg", "220 kg", "225 kg"], a: 2 },
-      { q: "Seseorang mempunyai persediaan rumput yang cukup untuk 7 ekor kuda selama 78 hari. Berapa harikah persediaan itu cukup untuk 21 ekor kuda?", o: ["26 hari", "30 hari", "35 hari", "40 hari", "45 hari"], a: 0 },
-      { q: "3 batang coklat harganya Rp 15.000. Berapa batangkah yang dapat kita beli dengan Rp 50.000?", o: ["8 batang", "9 batang", "10 batang", "11 batang", "12 batang"], a: 2 },
-      { q: "Seseorang dapat berjalan 1,75 m dalam waktu 1/4 detik. Berapa meterkah yang dapat ia tempuh dalam waktu 10 detik?", o: ["60 m", "70 m", "80 m", "90 m", "100 m"], a: 1 },
-      { q: "Jika sebuah batu terletak 15 m di sebelah selatan dari sebatang pohon dan pohon itu berada 30 m di sebelah selatan dari sebuah rumah, berapa meterkah jarak antara batu dan rumah itu?", o: ["15 m", "30 m", "45 m", "60 m", "75 m"], a: 2 },
-      { q: "Jika 4/5 m bahan sandang harganya Rp 90.000, berapakah rupiahkah harganya 2 1/2 m?", o: ["Rp 225.000", "Rp 250.000", "Rp 275.000", "Rp 300.000", "Rp 325.000"], a: 0 },
-      { q: "7 orang dapat menyelesaikan sesuatu pekerjaan dalam 6 hari. Berapa orangkah yang diperlukan untuk menyelesaikan pekerjaan itu dalam setengah hari?", o: ["72 orang", "84 orang", "90 orang", "96 orang", "100 orang"], a: 1 },
-      { q: "Karena dipanaskan, kawat yang panjangnya 48 cm akan mengembang menjadi 52 cm. Setelah pemanasan, berapakah panjangnya kawat yang berukuran 72 cm?", o: ["75 cm", "78 cm", "80 cm", "82 cm", "85 cm"], a: 1 },
-      { q: "Suatu pabrik dapat menghasilkan 304 batang pensil dalam waktu 8 jam. Berapa batangkah dihasilkan dalam waktu setengah jam?", o: ["18 batang", "19 batang", "20 batang", "21 batang", "22 batang"], a: 1 },
-      { q: "Untuk suatu campuran diperlukan 2 bagian perak dan 3 bagian timah. Berapa gramkah perak yang diperlukan untuk mendapatkan campuran itu yang beratnya 15 gram?", o: ["5 gram", "6 gram", "7 gram", "8 gram", "9 gram"], a: 1 },
-      { q: "Untuk setiap Rp 3.000 yang dimiliki Sidin, Hamid memiliki Rp 5.000. Jika mereka bersama mempunyai Rp 120.000, berapa rupiahkah yang dimiliki Hamid?", o: ["Rp 60.000", "Rp 70.000", "Rp 75.000", "Rp 80.000", "Rp 85.000"], a: 2 },
-      { q: "Mesin A menenun 60 m kain, sedangkan mesin B menenun 40 m. Berapa meterkah yang ditenun mesin A, jika mesin B menenun 60 m?", o: ["80 m", "90 m", "100 m", "110 m", "120 m"], a: 1 },
-      { q: "Seseorang membelikan 1/10 dari uangnya untuk perangko dan 4 kali jumlah itu untuk alat tulis. Sisa uangnya masih Rp 60.000. Berapa rupiahkah uang semula?", o: ["Rp 100.000", "Rp 110.000", "Rp 120.000", "Rp 130.000", "Rp 140.000"], a: 2 },
-      { q: "Di dalam dua peti terdapat 43 piring. Di dalam peti yang satu terdapat 9 piring lebih banyak dari pada di dalam peti yang lain. Berapa buah piring terdapat di dalam peti yang lebih kecil?", o: ["17 piring", "18 piring", "19 piring", "20 piring", "21 piring"], a: 0 },
-      { q: "Suatu lembaran kain yang panjangnya 60 cm harus dibagikan sedemikian rupa sehingga panjangnya satu bagian ialah 2/3 dari bagian yang lain. Berapa panjangnya bagian yang terpendek?", o: ["20 cm", "24 cm", "28 cm", "30 cm", "32 cm"], a: 1 },
-      { q: "Suatu perusahaan mengekspor 1/4 dari hasil produksinya dan menjual 4/5 dari sisa itu dalam negeri. Berapa % kah hasil produksi yang masih tinggal?", o: ["10%", "15%", "20%", "25%", "30%"], a: 0 },
-      { q: "Jika suatu botol berisi anggur hanya 7/8 bagian dan harganya ialah Rp 84.000, berapakah harga anggur itu jika botol itu hanya terisi 1/2 penuh?", o: ["Rp 48.000", "Rp 50.000", "Rp 52.000", "Rp 54.000", "Rp 56.000"], a: 4 },
-      { q: "Di dalam suatu keluarga setiap anak perempuan mempunyai jumlah saudara laki-laki yang sama dengan jumlah saudara perempuan dan setiap anak laki-laki mempunyai dua kali lebih banyak saudara perempuan dari pada saudara laki-laki. Berapa anak laki-lakikah yang terdapat di dalam keluarga tersebut?", o: ["2 anak", "3 anak", "4 anak", "5 anak", "6 anak"], a: 0 }
-    ];
-
-    // === STATE ===
-    let currentIdx = 0;
-    let jawabanUser = new Array(bankSoalRA.length).fill(null); // Menyimpan jawaban per nomor soal
-    let timerInterval;
-    const WAKTU_TOTAL_DETIK = 8 * 60 ; // 10 menit
-    let sisaWaktu = WAKTU_TOTAL_DETIK;
-
-    function mulaiTes() {
-      document.getElementById('section-instruksi').classList.remove('active');
-      document.getElementById('section-tes').classList.add('active');
-      tampilkanSoal();
-      jalankanTimer();
-    }
-
-    function jalankanTimer() {
-      updateTampilanTimer();
-      timerInterval = setInterval(() => {
-        sisaWaktu--;
-        updateTampilanTimer();
+    <!-- ================= BAGIAN TES ================= -->
+    <div id="area-tes" class="hidden">
+        <div class="timer-container" id="timer-container">
+            <div class="timer-fill" id="timer-fill"></div>
+        </div>
+        <p class="peringatan">⚠️ Jangan reload / tekan tombol kembali. Progres akan hilang.</p>
+        <div class="progress">📝 Progres jawaban: <span id="count">0</span> / 20</div>
         
-        if (sisaWaktu <= 0) {
-          clearInterval(timerInterval);
-          selesaikanTesOtomatis();
+        <div class="dot-nav" id="dot-nav"></div>
+
+        <div class="soal-box">
+            <div class="nav-info">Soal Nomor <span id="no-soal">1</span> / 20</div>
+            <div id="soal-utama"></div>
+        </div>
+
+        <div class="nav-soal">
+            <button class="tombol tombol-nav" id="btn-prev" onclick="navigasi(-1)" disabled>⬅ Sebelumnya</button>
+            <button class="tombol tombol-nav" id="btn-next" onclick="navigasi(1)">Berikutnya ➡</button>
+        </div>
+
+        <p id="msg-lengkap" class="sukses" style="text-align:center; margin-top:15px;">
+            ✅ Semua soal terisi. Anda boleh selesai sekarang tanpa menunggu waktu habis.
+        </p>
+        <div style="text-align:center; margin-top:15px;">
+            <button id="btn-selesai" class="tombol tombol-selesai" onclick="selesaikan()">
+                SELESAI & LANJUT KE TES VERBAL →
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= BAGIAN SELESAI ================= -->
+    <div id="area-selesai">
+        <h2>✅ Tes Disimpan</h2>
+        <p>Skor dan kategori Numerikal (Berhitung) Anda telah disimpan ke sistem.</p>
+        <a href="verbal.html" class="tombol tombol-mulai aktif">Lanjut ke Tes Verbal →</a>
+    </div>
+</div>
+
+<script>
+/* =====================================================================
+   KUNCI JAWABAN SOAL NUMERIKAL (20 SOAL)
+   ---------------------------------------------------------------------
+    No | Soal                                                     | Kunci | Jawaban
+   ----+----------------------------------------------------------+-------+--------
+    1  | 15 + 27                                                  |  B    |  42
+    2  | 84 - 39                                                  |  A    |  45
+    3  | 12 × 8                                                   |  C    |  96
+    4  | 144 ÷ 12                                                 |  B    |  12
+    5  | 25 + 38 - 17                                             |  D    |  46
+    6  | Deret: 2, 4, 8, 16, ...                                  |  C    |  32
+    7  | Deret: 3, 6, 9, 12, ...                                  |  A    |  15
+    8  | Deret: 1, 4, 9, 16, ...                                  |  B    |  25
+    9  | Deret: 100, 95, 90, 85, ...                              |  D    |  80
+   10  | Deret: 1, 1, 2, 3, 5, ...                                |  A    |  8
+   11  | 25% dari 200                                             |  C    |  50
+   12  | Rata-rata 10, 20, 30, 40                                 |  B    |  25
+   13  | Jika x + 5 = 12, maka x = ...                            |  A    |  7
+   14  | 3² + 4²                                                  |  D    |  25
+   15  | 15% dari 400                                             |  C    |  60
+   16  | Harga 50.000 diskon 20% = ...                            |  B    |  40.000
+   17  | Kecepatan 60 km/jam, waktu 2,5 jam = ...                 |  A    |  150 km
+   18  | 2/5 dari 150                                             |  C    |  60
+   19  | Umur A = 2× umur B. Jika B=15, 5 tahun lagi A = ...      |  B    |  35
+   20  | (8 + 12) × 3 - 10                                        |  D    |  50
+   ===================================================================== */
+
+const CONTOH_KUNCI = 'b'; // 12 + (15×2) = 42
+
+const SOAL = [
+    { teks: "15 + 27 = ...", opsi: ["40", "42", "44", "46"], kunci: 1 },
+    { teks: "84 - 39 = ...", opsi: ["45", "55", "35", "44"], kunci: 0 },
+    { teks: "12 × 8 = ...", opsi: ["86", "88", "96", "108"], kunci: 2 },
+    { teks: "144 ÷ 12 = ...", opsi: ["10", "12", "14", "16"], kunci: 1 },
+    { teks: "25 + 38 - 17 = ...", opsi: ["40", "44", "50", "46"], kunci: 3 },
+    { teks: "Lengkapi deret: 2, 4, 8, 16, ...", opsi: ["24", "28", "32", "36"], kunci: 2 },
+    { teks: "Lengkapi deret: 3, 6, 9, 12, ...", opsi: ["15", "18", "14", "16"], kunci: 0 },
+    { teks: "Lengkapi deret: 1, 4, 9, 16, ...", opsi: ["20", "25", "24", "36"], kunci: 1 },
+    { teks: "Lengkapi deret: 100, 95, 90, 85, ...", opsi: ["75", "70", "78", "80"], kunci: 3 },
+    { teks: "Lengkapi deret: 1, 1, 2, 3, 5, ...", opsi: ["8", "7", "6", "10"], kunci: 0 },
+    { teks: "25% dari 200 = ...", opsi: ["25", "40", "50", "75"], kunci: 2 },
+    { teks: "Rata-rata dari 10, 20, 30, 40 adalah ...", opsi: ["20", "30", "35", "25"], kunci: 3 },
+    { teks: "Jika x + 5 = 12, maka x = ...", opsi: ["7", "6", "8", "17"], kunci: 0 },
+    { teks: "3² + 4² = ...", opsi: ["7", "12", "14", "25"], kunci: 3 },
+    { teks: "15% dari 400 = ...", opsi: ["45", "50", "60", "75"], kunci: 2 },
+    { teks: "Harga barang Rp50.000 didiskon 20%. Harga setelah diskon = ...", opsi: ["Rp30.000", "Rp45.000", "Rp48.000", "Rp40.000"], kunci: 3 },
+    { teks: "Sebuah kendaraan melaju 60 km/jam selama 2,5 jam. Jarak tempuh = ...", opsi: ["150 km", "120 km", "180 km", "140 km"], kunci: 0 },
+    { teks: "2/5 dari 150 = ...", opsi: ["30", "45", "60", "75"], kunci: 2 },
+    { teks: "Umur A adalah 2 kali umur B. Jika umur B sekarang 15 tahun, berapakah umur A 5 tahun lagi?", opsi: ["30", "35", "40", "25"], kunci: 1 },
+    { teks: "(8 + 12) × 3 - 10 = ...", opsi: ["40", "46", "56", "50"], kunci: 3 }
+];
+
+const HURUF = ['a','b','c','d'];
+const TOTAL = SOAL.length;
+const DURASI = 5 * 60; // 5 MENIT
+
+let sisa = DURASI, interval = null, sudahSelesai = false;
+let soalAktif = 0;
+const jawabanUser = new Array(TOTAL).fill(null);
+
+/* ---------- RENDER ---------- */
+function renderSoal(idx) {
+    const s = SOAL[idx];
+    document.getElementById('no-soal').textContent = idx + 1;
+    document.getElementById('soal-utama').innerHTML = `
+        <div class="soal-teks">${s.teks}</div>
+        <div class="opsi">
+            ${s.opsi.map((o,i) => `
+                <label>
+                    <input type="radio" name="soal${idx}" value="${HURUF[i]}" 
+                           ${jawabanUser[idx] === HURUF[i] ? 'checked' : ''}
+                           onchange="pilihJawaban(${idx}, '${HURUF[i]}')">
+                    <b>${HURUF[i].toUpperCase()}.</b> ${o}
+                </label>`).join('')}
+        </div>
+    `;
+
+    document.getElementById('btn-prev').disabled = (idx === 0);
+    document.getElementById('btn-next').disabled = (idx === TOTAL - 1);
+    renderDotNav();
+}
+
+function renderDotNav() {
+    const container = document.getElementById('dot-nav');
+    container.innerHTML = SOAL.map((s, i) => {
+        let cls = 'dot';
+        if (jawabanUser[i] !== null) cls += ' terjawab';
+        if (i === soalAktif) cls += ' aktif';
+        return `<div class="${cls}" onclick="lompatKe(${i})">${i+1}</div>`;
+    }).join('');
+}
+
+function lompatKe(idx) {
+    soalAktif = idx;
+    renderSoal(idx);
+}
+
+/* ---------- VALIDASI CONTOH ---------- */
+function cekContoh() {
+    const jwb = document.querySelector('input[name="contoh"]:checked');
+    const benar = jwb && jwb.value === CONTOH_KUNCI;
+    const btn = document.getElementById('btn-mulai');
+
+    document.getElementById('msg-salah').style.display = benar ? 'none' : 'block';
+    document.getElementById('msg-benar').style.display = benar ? 'block' : 'none';
+    
+    if (benar) {
+        btn.classList.add('aktif');
+        btn.disabled = false;
+    } else {
+        btn.classList.remove('aktif');
+        btn.disabled = true;
+    }
+}
+
+/* ---------- PILIH JAWABAN ---------- */
+function pilihJawaban(idx, nilai) {
+    jawabanUser[idx] = nilai;
+    cekKelengkapan();
+    renderDotNav();
+}
+
+/* ---------- NAVIGASI ---------- */
+function navigasi(arah) {
+    soalAktif += arah;
+    if (soalAktif < 0) soalAktif = 0;
+    if (soalAktif >= TOTAL) soalAktif = TOTAL - 1;
+    renderSoal(soalAktif);
+    window.scrollTo(0, 0);
+}
+
+/* ---------- MULAI TES ---------- */
+function mulaiTes() {
+    if (document.getElementById('btn-mulai').disabled) return;
+
+    document.getElementById('area-contoh').classList.add('hidden');
+    document.getElementById('area-tes').classList.remove('hidden');
+    document.getElementById('timer-container').style.display = 'block';
+
+    soalAktif = 0;
+    renderSoal(0);
+    jalankanTimer();
+    window.scrollTo(0, 0);
+}
+
+/* ---------- TIMER GARIS ---------- */
+function jalankanTimer() {
+    interval = setInterval(() => {
+        sisa--;
+
+        const persentase = (sisa / DURASI) * 100;
+        const timerFill = document.getElementById('timer-fill');
+
+        timerFill.style.width = persentase + '%';
+
+        if (sisa <= 30) {
+            timerFill.classList.add('warning');
         }
-      }, 1000);
-    }
 
-    function updateTampilanTimer() {
-      const menit = Math.floor(sisaWaktu / 60);
-      const detik = sisaWaktu % 60;
-      document.getElementById('timer-text').textContent = 
-        `${menit}:${detik < 10 ? '0' + detik : detik}`;
-
-      const persentase = (sisaWaktu / WAKTU_TOTAL_DETIK) * 100;
-      const bar = document.getElementById('timer-bar');
-      bar.style.width = persentase + '%';
-
-      bar.classList.remove('warning', 'danger');
-      if (sisaWaktu <= 60) {
-        bar.classList.add('danger');
-      } else if (sisaWaktu <= 180) {
-        bar.classList.add('warning');
-      }
-    }
-
-    function tampilkanSoal() {
-      const soal = bankSoalRA[currentIdx];
-      document.getElementById('nomor-soal').textContent = `${currentIdx + 1} / ${bankSoalRA.length}`;
-      document.getElementById('question-text').textContent = soal.q;
-
-      let htmlOpsi = '';
-      soal.o.forEach((opsi, index) => {
-        // Cek apakah soal ini sudah pernah dijawab sebelumnya
-        const isChecked = jawabanUser[currentIdx] === index ? 'checked' : '';
-        htmlOpsi += `
-          <label>
-            <input type="radio" name="jawaban" value="${index}" ${isChecked} onchange="simpanJawaban(${index})">
-            <span>${opsi}</span>
-          </label>
-        `;
-      });
-      document.getElementById('options-container').innerHTML = htmlOpsi;
-
-      // Atur tampilan tombol navigasi
-      const btnPrev = document.getElementById('btn-prev');
-      const btnNext = document.getElementById('btn-next');
-      
-      // Sembunyikan tombol "Sebelumnya" jika di soal pertama
-      btnPrev.style.display = currentIdx === 0 ? 'none' : 'block';
-      
-      // Jika di soal terakhir, ubah fungsi tombol menjadi "Tinjau Kembali"
-      if (currentIdx === bankSoalRA.length - 1) {
-        btnNext.textContent = "Tinjau Kembali (Ke Soal 1) 🔄";
-        btnNext.onclick = () => { 
-          currentIdx = 0; 
-          tampilkanSoal(); 
-        };
-      } else {
-        btnNext.textContent = "Soal Berikutnya ➡";
-        btnNext.onclick = () => { 
-          currentIdx++; 
-          tampilkanSoal(); 
-        };
-      }
-    }
-
-    function simpanJawaban(index) {
-      // Simpan jawaban user ke array tanpa langsung menilai
-      jawabanUser[currentIdx] = index;
-    }
-
-    function soalSebelumnya() {
-      if (currentIdx > 0) {
-        currentIdx--;
-        tampilkanSoal();
-      }
-    }
-
-    function selesaikanTesOtomatis() {
-      // 1. Hitung Skor berdasarkan array jawaban
-      let skor = 0;
-      jawabanUser.forEach((jawaban, idx) => {
-        if (jawaban === bankSoalRA[idx].a) {
-          skor++;
+        if (sisa <= 0) {
+            clearInterval(interval);
+            timerFill.style.width = '0%';
+            selesaikan(true);
         }
-      });
+    }, 1000);
+}
 
-      // 2. Tentukan 5 Kategori
-      let kategori = 'R';
-      let teksKat = 'Rendah';
-      let warna = '#ef4444';
+/* ---------- DETEKSI SEMUA SOAL TERISI ---------- */
+function cekKelengkapan() {
+    const terisi = jawabanUser.filter(j => j !== null).length;
+    document.getElementById('count').textContent = terisi;
 
-      if (skor >= 15) { kategori = 'T'; teksKat = 'Tinggi'; warna = '#10b981'; }
-      else if (skor >= 12) { kategori = 'B'; teksKat = 'Baik'; warna = '#3b82f6'; }
-      else if (skor >= 9) { kategori = 'C'; teksKat = 'Cukup'; warna = '#f59e0b'; }
-      else if (skor >= 6) { kategori = 'K'; teksKat = 'Kurang'; warna = '#f97316'; }
+    const lengkap = terisi === TOTAL;
+    document.getElementById('btn-selesai').style.display = lengkap ? 'inline-block' : 'none';
+    document.getElementById('msg-lengkap').style.display = lengkap ? 'block' : 'none';
+}
 
-      // 3. SIMPAN KE LOCALSTORAGE (Tanpa menampilkan UI hasil)
-      const dataHasilRA = {
-        skor: skor,
-        kategori: kategori,
-        teks_kategori: teksKat,
-        warna_kategori: warna,
-        waktu_selesai: new Date().toISOString()
-      };
-      
-      localStorage.setItem('ra_numerikal_hasil', JSON.stringify(dataHasilRA));
-      localStorage.setItem('ra_numerikal_skor', skor); 
-      localStorage.setItem('ra_numerikal_kategori', kategori);
+/* ---------- KATEGORI (NORMA SEMENTARA, WAJIB VALIDASI PSIKOLOG) ---------- */
+function kategoriDariSkor(skor) {
+    if (skor <= 3)  return 'R'; // Rendah      0-3   (~20%)
+    if (skor <= 7)  return 'K'; // Kurang      4-7   (~20%)
+    if (skor <= 11) return 'C'; // Cukup       8-11  (~20%)
+    if (skor <= 15) return 'B'; // Baik       12-15  (~20%)
+    return 'T';                // Tinggi    16-20  (~25%)
+}
 
-      // 4. Tampilkan notifikasi dan arahkan kembali ke halaman utama/psikogram
-      alert(`⏰ WAKTU HABIS!\n\nTes telah selesai secara otomatis. Hasil telah disimpan ke sistem. Anda akan diarahkan kembali.`);
-      
-      // Ganti 'index.html' dengan 'hasil.html' jika Anda ingin langsung ke halaman psikogram utama
-      window.location.href = 'verbal.html'; 
+/* ---------- HITUNG, SIMPAN, LANJUT ---------- */
+function selesaikan(otomatis = false) {
+    if (sudahSelesai) return;
+    sudahSelesai = true;
+    clearInterval(interval);
+
+    let skor = 0;
+    SOAL.forEach((s, i) => {
+        if (jawabanUser[i] === HURUF[s.kunci]) skor++;
+    });
+
+    const kategori = kategoriDariSkor(skor);
+
+    // KUNCI YANG DIBACA hasil.html
+    localStorage.setItem('numerikal_skor', String(skor));
+    localStorage.setItem('numerikal_kategori', kategori);
+
+    document.getElementById('area-tes').classList.add('hidden');
+    document.getElementById('area-selesai').style.display = 'block';
+
+    if (otomatis) {
+        document.querySelector('#area-selesai p').textContent =
+            'Waktu 5 menit habis. Jawaban otomatis disimpan. Silakan lanjut ke tahap berikutnya.';
     }
-  </script>
+    window.scrollTo(0, 0);
+}
+
+/* ---------- Anti reload saat tes berjalan ---------- */
+window.onbeforeunload = function() {
+    if (!document.getElementById('area-tes').classList.contains('hidden') && !sudahSelesai) {
+        return 'Sesi tes sedang berjalan. Keluar akan menghapus progres.';
+    }
+};
+</script>
 </body>
 </html>

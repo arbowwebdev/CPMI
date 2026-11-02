@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KEMAMPUAN MELAKUKAN ANALISA SPASIAL</title>
+<style>
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; max-width: 850px; margin: 0 auto; padding: 20px; background:#f4f6f8; color:#2c3e50; }
+    .container { background:#fff; padding:25px; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,.08); }
+    h2 { border-bottom:2px solid #3498db; padding-bottom:10px; }
+    .info-waktu { background:#fff3cd; border:1px solid #ffe08a; color:#856404; padding:12px; border-radius:6px; text-align:center; font-weight:bold; margin:15px 0; }
+    
+    .timer-container {
+        width: 100%;
+        height: 14px;
+        background-color: #ddd;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        overflow: hidden;
+        position: sticky;
+        top: 8px;
+        z-index: 50;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        display: none;
+    }
+    .timer-fill {
+        height: 100%;
+        background-color: #27ae60;
+        width: 100%;
+        transition: width 1s linear, background-color 0.3s;
+    }
+    .timer-fill.warning {
+        background-color: #e74c3c;
+        box-shadow: 0 0 8px rgba(231, 76, 60, 0.8);
+    }
+
+    .soal-box { border:1px solid #dfe4e8; background:#fafbfc; border-radius:8px; padding:18px; margin-bottom:18px; text-align: center; }
+    
+    .matriks-container {
+        display: inline-block;
+        margin: 15px auto;
+    }
+    .matriks-svg {
+        border: 2px solid #34495e;
+        border-radius: 4px;
+        background: #fff;
+    }
+    
+    .opsi { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:12px; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .opsi label { 
+        background:#fff; border:1px solid #d0d7de; border-radius:5px; padding:10px; 
+        cursor:pointer; display:flex; flex-direction: column; align-items:center; font-size:14px; 
+    }
+    .opsi label:hover { background:#eaf4fd; }
+    .opsi label:has(input:checked) { background:#e8f5e9; border-color:#27ae60; border-width: 2px; }
+    .opsi input[type="radio"] { margin-bottom: 5px; }
+    .opsi svg {
+        border: 1px solid #bdc3c7;
+        border-radius: 3px;
+        background: #fff;
+    }
+
+    .tombol { border:none; border-radius:6px; padding:13px 24px; font-size:16px; font-weight:bold; color:#fff; cursor:pointer; margin:5px; }
+    .tombol:disabled { background:#95a5a6 !important; cursor:not-allowed; }
+    .tombol-cek { background:#f39c12; }
+    .tombol-mulai { background:#27ae60; }
+    .tombol-selesai { background:#27ae60; font-size:18px; padding:16px 28px; display:none; margin-top: 20px;}
+    .sukses { color:#27ae60; font-weight:bold; display:none; }
+    .salah { color:#c0392b; font-weight:bold; display:none; }
+    .hidden { display:none !important; }
+    .progress { background:#e8f5e9; border:1px solid #a5d6a7; color:#2e7d32; padding:10px; border-radius:6px; text-align:center; font-weight:bold; margin-bottom:15px; }
+    #area-selesai { text-align:center; padding:35px 10px; display:none; }
+    a.tombol { text-decoration:none; display:inline-block; }
+    .peringatan { color:#c0392b; text-align:center; font-weight:bold; font-size:13px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+    <div id="area-contoh">
+        <h2>Analisa Spasial — Progressive Matrices</h2>
+        <p>Setiap soal memiliki pola gambar tertentu. Temukan pola tersebut, lalu pilih salah satu potongan gambar yang paling tepat untuk mengisi bagian yang kosong.</p>
+
+        <div class="info-waktu">⏱️ Tes Utama: 14 soal &nbsp;|&nbsp; Perhatikan garis waktu hijau di atas layar saat tes dimulai</div>
+
+        <div class="soal-box">
+            <p><strong>CONTOH — amati pola gambar di bawah ini:</strong></p>
+            <div id="matriks-contoh"></div>
+            <div class="opsi" id="opsi-contoh"></div>
+        </div>
+
+        <button class="tombol tombol-cek" onclick="cekContoh()">PERIKSA JAWABAN CONTOH</button>
+        <p id="msg-salah" class="salah">❌ Belum tepat. Silakan amati kembali pola perubahannya.</p>
+        <p id="msg-benar" class="sukses">✅ Benar! Tes Utama sudah terbuka.</p>
+
+        <div style="text-align:center;margin-top:15px;">
+            <button id="btn-mulai" class="tombol tombol-mulai" disabled onclick="mulaiTes()">
+                MULAI TES UTAMA 
+            </button>
+        </div>
+    </div>
+
+    <div id="area-tes" class="hidden">
+        
+        <div class="timer-container" id="timer-container">
+            <div class="timer-fill" id="timer-fill"></div>
+        </div>
+
+        <p class="peringatan">⚠️ Jangan reload / tekan tombol kembali. Progres akan hilang.</p>
+        <div class="progress">📝 Progres jawaban: <span id="count">0</span> / 14</div>
+        
+        <div id="daftar-soal"></div>
+
+        <p id="msg-lengkap" class="sukses" style="text-align:center;">
+            ✅ Semua soal terisi. Anda boleh selesai sekarang tanpa menunggu waktu habis.
+        </p>
+        <div style="text-align:center;">
+            <button id="btn-selesai" class="tombol tombol-selesai" onclick="selesaikan()">
+                SELESAI &amp; LANJUT KE NUMERIKAL →
+            </button>
+        </div>
+    </div>
+
+    <div id="area-selesai">
+        <h2>✅ Tes Disimpan</h2>
+        <p>Skor dan kategori Analisa Spasial Anda telah disimpan ke sistem.</p>
+        <a href="numerikal.html" class="tombol tombol-mulai">Lanjut ke Tes Numerikal →</a>
+    </div>
+</div>
+
+<script>
+/* =====================================================================
+   GENERATOR SOAL PROGRESSIVE MATRICES - VERSI PERBAIKAN
+   Membuat gambar SVG secara programatis dengan pola yang lebih kompleks
+   ===================================================================== */
+
+const WARNA = ['#3498db', '#e74c3c', '#27ae60', '#f39c12', '#9b59b6', '#1abc9c'];
+const WARNA_GRADIEN = [
+    ['#7fb3d5', '#3498db', '#1a5490'],
+    ['#f5b7b1', '#e74c3c', '#922b21'],
+    ['#a9dfbf', '#27ae60', '#145a32'],
+    ['#f9e79f', '#f39c12', '#7d6608']
+];
+
+function bentukLingkaran(cx, cy, r, fill) {
+    return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="'+fill+'" />';
+}
+
+function bentukKotak(x, y, size, fill) {
+    return '<rect x="'+x+'" y="'+y+'" width="'+size+'" height="'+size+'" fill="'+fill+'" />';
+}
+
+function bentukSegitiga(cx, cy, size, fill, rotation) {
+    rotation = rotation || 0;
+    var h = size * 0.866;
+    var points = [
+        [cx, cy - h/2],
+        [cx - size/2, cy + h/2],
+        [cx + size/2, cy + h/2]
+    ];
+    var rotated = points.map(function(p) {
+        var rad = rotation * Math.PI / 180;
+        var nx = (p[0] - cx) * Math.cos(rad) - (p[1] - cy) * Math.sin(rad) + cx;
+        var ny = (p[0] - cx) * Math.sin(rad) + (p[1] - cy) * Math.cos(rad) + cy;
+        return [nx, ny];
+    });
+    return '<polygon points="'+rotated.map(function(p){return p.join(',')}).join(' ')+'" fill="'+fill+'" />';
+}
+
+function bentukBintang(cx, cy, r, fill) {
+    var points = [];
+    for (var i = 0; i < 10; i++) {
+        var angle = (i * 36 - 90) * Math.PI / 180;
+        var radius = i % 2 === 0 ? r : r * 0.5;
+        points.push([cx + radius * Math.cos(angle), cy + radius * Math.sin(angle)]);
+    }
+    return '<polygon points="'+points.map(function(p){return p.join(',')}).join(' ')+'" fill="'+fill+'" />';
+}
+
+function bentukBelahKetupat(cx, cy, size, fill) {
+    var points = [
+        [cx, cy - size/2],
+        [cx + size/2, cy],
+        [cx, cy + size/2],
+        [cx - size/2, cy]
+    ];
+    return '<polygon points="'+points.map(function(p){return p.join(',')}).join(' ')+'" fill="'+fill+'" />';
+}
+
+function bentukPlus(cx, cy, size, fill) {
+    var t = size / 5;
+    var h = size / 2;
+    return '<rect x="'+(cx - t/2)+'" y="'+(cy - h)+'" width="'+t+'" height="'+size+'" fill="'+fill+'" />' +
+           '<rect x="'+(cx - h)+'" y="'+(cy - t/2)+'" width="'+size+'" height="'+t+'" fill="'+fill+'" />';
+}
+
+function bentukLingkaranKecil(cx, cy, r, fill, jumlah) {
+    var content = '';
+    var radius = 15;
+    for (var i = 0; i < jumlah; i++) {
+        var angle = (i * 360 / jumlah - 90) * Math.PI / 180;
+        var x = cx + radius * Math.cos(angle);
+        var y = cy + radius * Math.sin(angle);
+        content += '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+fill+'" />';
+    }
+    return content;
+}
+
+/* =====================================================================
+   GENERATOR SOAL - 14 SOAL DENGAN POLA BERAGAM
+   Distribusi kunci: A:2, B:2, C:3, D:2, E:3, F:2
+   ===================================================================== */
+
+const GENERATOR_SOAL = [
+    // SOAL 1: Rotasi segitiga (0°, 40°, 80°, 120°, 160°, 200°, 240°, 280°, 320°)
+    // Kunci: A (0)
+    function() {
+        var cells = [];
+        for (var i = 0; i < 9; i++) {
+            cells.push(bentukSegitiga(40, 40, 50, WARNA[0], i * 40));
+        }
+        return { cells: cells, jawaban: 0 };
+    },
+    
+    // SOAL 2: Pola diagonal warna (biru-merah-hijau berulang)
+    // Kunci: B (1)
+    function() {
+        var cells = [];
+        for (var row = 0; row < 3; row++) {
+            for (var col = 0; col < 3; col++) {
+                var warnaIdx = (row + col) % 3;
+                cells.push(bentukLingkaran(40, 40, 25, WARNA[warnaIdx]));
+            }
+        }
+        return { cells: cells, jawaban: 1 };
+    },
+    
+    // SOAL 3: Jumlah bentuk bertambah per kolom (1, 2, 3)
+    // Kunci: C (2)
+    function() {
+        var cells = [];
+        for (var row = 0; row < 3; row++) {
+            for (var col = 0; col < 3; col++) {
+                var jumlah = col + 1;
+                var content = '';
+                for (var i = 0; i < jumlah; i++) {
+                    content += bentukKotak(20 + i * 20, 30, 15, WARNA[3]);
+                }
+                cells.push(content);
+            }
+        }
+        return { cells: cells, jawaban: 2 };
+    },
+    
+    // SOAL 4: Ukuran berubah + rotasi (kombinasi 2 aspek)
+    // Kunci: D (3)
+    function() {
+        var cells = [];
+        var ukuran = [15, 25, 35];
+        for (var row = 0; row < 3; row++) {
+            for (var col = 0; col < 3; col++) {
+                var r = ukuran[col];
+                var rotation = row * 30;
+                cells.push('<g transform="rotate('+rotation+', 40, 40)">'+bentukSegitiga(40, 40, r*2, WARNA[4])+'</g>');
+            }
+        }
+        return { cells: cells, jawaban: 3 };
+    },
+    
+    // SOAL 5: Bentuk berubah per baris + warna berubah per kolom
+    // Kunci: E (4)
+    function() {
+        var cells = [];
+        for (var row = 0; row < 3; row++) {
+            for (var col = 0; col < 3; col++) {
+                var warna = WARNA[col];
+                var content = '';
+                if (row === 0) content = bentukLingkaran(40, 40, 25, warna);
+                else if (row === 1) content = bentukKotak(15, 15, 50, warna);
+                else content = bentukSegitiga(40, 40, 50, warna);
+                cells.push(content);
+            }
+        }
+        return { cells: cells, jawaban: 4 };
+    },
+    
+    // SOAL 6: Pola XOR (bentuk + warna + orientasi)
+    // Kunci: F (5)
+    function() {
+        var cells = [];
+        for (var row = 0; row < 3; row++) {
+            for (var col = 0; col < 3; col++) {
+                var bentukIdx = (row + col) % 3;
+                var warnaIdx = (row * 2 + col) % 3;
+                var content = '';
+                if (bentukIdx === 0) content = bentukLingkaran(40, 40, 25, WARNA[warnaIdx]);
+                else if (bentukIdx === 1) content = bentukKotak(15, 15, 50, WARNA[warnaIdx]);
+                else content = bentukSegitiga(40, 40, 50, WARNA[warnaIdx]);
+                cells.push(content);
+            }
+        }
+        return { cells: cells, jawaban: 5 };
+    },
+    
+    // SOAL 7: Rotasi dengan warna berbeda per baris + jumlah bertambah
+    // Kunci: A (0)
+    function() {
+        var cells = [];
+        for (var row = 0; row < 3; row++) {
+            for (var col = 0; col < 3; col++) {
+                var jumlah = col + 1;
+                var rotation = row * 45;
+                var content = '';
+                for (var i = 0; i < jumlah; i++) {
+                    var cx = 25 + i * 15;
+                    content += bentukSegitiga(cx, 40, 18, WARNA[row], rotation);
+                }
+                cells.push(content);
+            }
+        }
+        return { cells: cells, jawaban: 0 };
+    },
+    
+    // SOAL 8: Pola checkerboard dengan gradien ukuran
+    // Kunci: B (1)
+    function() {
+        var cells = [];
+        var ukuran = [20, 30, 40];
+        for (var row = 0; row < 3; row++) {
+            for (var col = 0; col < 3; col++) {
+                var isHitam = (row + col) % 2 === 0;
+                var fill = isHitam ? '#2c3e50' : '#ecf0f1';
+                var r = ukuran[col];
+                cells.push(bentukLingkaran(40, 40, r, fill));
+            }
+        }
+        return { cells: cells, jawaban: 1 };
+    },
+    
+    // SOAL 9: Bintang dengan rotasi + warna diagonal
+    // Kunci: C (2)
+    function() {
+        var cells = [];
+        for (var row = 0; row < 3; row++) {
+            for (var col = 0; col < 3; col++) {
+                var rotation = (row * 3 + col) * 25;
+                var warnaIdx = (row + col) % 3;
+                cells.push('<g transform="rotate('+rotation+', 40, 40)">'+bentukBintang(40, 40, 30, WARNA[warnaIdx])+'</g>');
+            }
+        }
+        return { cells: cells, jawaban: 2 };
+    },
+    
+    // SOAL 10: Dua bentuk dalam satu sel (baris = bentuk kiri, kolom = bentuk kanan) + warna
+    // Kunci: D (3)
+    function() {
+        var cells = [];
+        for (var row = 0; row < 3; row++) {
+            for (var col = 0; col < 3; col++) {
+                var warna1 = WARNA[row];
+                var warna2 = WARNA[(row + 1) % 3];
+                var b1 = row === 0 ? bentukLingkaran(25, 40, 15, warna1) : 
+                         row === 1 ? bentukKotak(10, 25, 30, warna1) : 
+                                     bentukSegitiga(25, 40, 30, warna1);
+                var b2 = col === 0 ? bentukLingkaran(55, 40, 15, warna2) : 
+                         col === 1 ? bentukKotak(40, 25, 30, warna2) : 
+                                     bentukSegitiga(55, 40, 30, warna2);
+                cells.push(b1 + b2);
+            }
+        }
+        return { cells: cells, jawaban: 3 };
+    },
+    
+    // SOAL 11: Pola kompleks (bentuk + ukuran + rotasi + warna)
+    // Kunci: E (4)
+    function() {
+        var cells = [];
+        var ukuran = [20, 30, 40];
+        for (var row = 0; row < 3; row++) {
+            for (var col = 0; col < 3; col++) {
+                var size = ukuran[col];
+                var rotation = row * 40;
+                var warna = WARNA[(row + col) % 6];
+                var content = '';
+                if (row === 0) content = '<g transform="rotate('+rotation+', 40, 40)">'+bentukLingkaran(40, 40, size, warna)+'</g>';
+                else if (row === 1) content = '<g transform="rotate('+rotation+', 40, 40)">'+bentukKotak(40 - size, 40 - size, size * 2, warna)+'</g>';
+                else content = '<g transform="rotate('+rotation+', 40, 40)">'+bentukSegitiga(40, 40, size * 2, warna)+'</g>';
+                cells.push(content);
+            }
+        }
+        return { cells: cells, jawaban: 4 };
+    },
+    
+    // SOAL 12: Pola Fibonacci (jumlah bentuk: 1, 1, 2, 3, 5, 8, 13, 21, 34)
+    // Kunci: F (5)
+    function() {
+        var cells = [];
+        var fib = [1, 1, 2, 3, 5, 8, 13, 21, 34];
+        for (var i = 0; i < 9; i++) {
+            var jumlah = Math.min(fib[i], 5); // Batasi max 5 untuk visual
+            var content = '';
+            for (var j = 0; j < jumlah; j++) {
+                var angle = (j * 360 / jumlah - 90) * Math.PI / 180;
+                var x = 40 + 20 * Math.cos(angle);
+                var y = 40 + 20 * Math.sin(angle);
+                content += bentukLingkaran(x, y, 8, WARNA[i % 6]);
+            }
+            cells.push(content);
+        }
+        return { cells: cells, jawaban: 5 };
+    },
+    
+    // SOAL 13: Pola spiral (rotasi + ukuran berubah)
+    // Kunci: C (2)
+    function() {
+        var cells = [];
+        for (var i = 0; i < 9; i++) {
+            var rotation = i * 45;
+            var size = 15 + (i % 3) * 10;
+            cells.push('<g transform="rotate('+rotation+', 40, 40)">'+bentukBelahKetupat(40, 40, size, WARNA[i % 6])+'</g>');
+        }
+        return { cells: cells, jawaban: 2 };
+    },
+    
+    // SOAL 14: Pola kompleks (3 bentuk + 3 warna + 3 ukuran + rotasi)
+    // Kunci: E (4)
+    function() {
+        var cells = [];
+        var ukuran = [15, 25, 35];
+        for (var row = 0; row < 3; row++) {
+            for (var col = 0; col < 3; col++) {
+                var bentukIdx = (row + col) % 3;
+                var warnaIdx = (row * 2 + col) % 6;
+                var size = ukuran[col];
+                var rotation = row * 30;
+                var content = '';
+                if (bentukIdx === 0) content = '<g transform="rotate('+rotation+', 40, 40)">'+bentukLingkaran(40, 40, size, WARNA[warnaIdx])+'</g>';
+                else if (bentukIdx === 1) content = '<g transform="rotate('+rotation+', 40, 40)">'+bentukKotak(40 - size, 40 - size, size * 2, WARNA[warnaIdx])+'</g>';
+                else content = '<g transform="rotate('+rotation+', 40, 40)">'+bentukSegitiga(40, 40, size * 2, WARNA[warnaIdx])+'</g>';
+                cells.push(content);
+            }
+        }
+        return { cells: cells, jawaban: 4 };
+    }
+];
+
+/* =====================================================================
+   GENERATE OPSI - VERSI PERBAIKAN
+   Membuat pengecoh yang lebih mirip dengan jawaban benar
+   ===================================================================== */
+
+function generateOpsi(soalIdx, jawabanBenar, jawabanCell) {
+    var opsi = new Array(6);
+    opsi[jawabanBenar] = jawabanCell;
+    
+    // Buat variasi yang lebih subtil
+    for (var i = 0; i < 6; i++) {
+        if (i === jawabanBenar) continue;
+        
+        var variasi = '';
+        var warnaAlt = WARNA[(soalIdx + i + 1) % 6];
+        
+        // Variasi berdasarkan tipe soal
+        if (soalIdx < 3) {
+            // Soal sederhana: variasi bentuk/warna dasar
+            if (i % 3 === 0) variasi = bentukLingkaran(40, 40, 20 + i * 3, warnaAlt);
+            else if (i % 3 === 1) variasi = bentukKotak(20 - i, 20 - i, 40 + i * 2, warnaAlt);
+            else variasi = bentukSegitiga(40, 40, 45, warnaAlt, i * 30);
+        } else if (soalIdx < 7) {
+            // Soal menengah: variasi dengan rotasi
+            var rotation = i * 25;
+            if (i % 2 === 0) variasi = '<g transform="rotate('+rotation+', 40, 40)">'+bentukSegitiga(40, 40, 50, warnaAlt)+'</g>';
+            else variasi = '<g transform="rotate('+rotation+', 40, 40)">'+bentukBelahKetupat(40, 40, 45, warnaAlt)+'</g>';
+        } else {
+            // Soal kompleks: variasi kombinasi
+            var rotation = i * 20;
+            var size = 20 + (i % 3) * 10;
+            if (i % 3 === 0) variasi = '<g transform="rotate('+rotation+', 40, 40)">'+bentukBintang(40, 40, size, warnaAlt)+'</g>';
+            else if (i % 3 === 1) variasi = '<g transform="rotate('+rotation+', 40, 40)">'+bentukLingkaran(40, 40, size, warnaAlt)+'</g>';
+            else variasi = '<g transform="rotate('+rotation+', 40, 40)">'+bentukKotak(40 - size, 40 - size, size * 2, warnaAlt)+'</g>';
+        }
+        
+        opsi[i] = variasi;
+    }
+    
+    return opsi;
+}
+
+function renderMatriks(cells, denganQuestionMark) {
+    var svg = '<div class="matriks-container"><svg class="matriks-svg" width="240" height="240" viewBox="0 0 240 240">';
+    
+    svg += '<line x1="80" y1="0" x2="80" y2="240" stroke="#34495e" stroke-width="2"/>';
+    svg += '<line x1="160" y1="0" x2="160" y2="240" stroke="#34495e" stroke-width="2"/>';
+    svg += '<line x1="0" y1="80" x2="240" y2="80" stroke="#34495e" stroke-width="2"/>';
+    svg += '<line x1="0" y1="160" x2="240" y2="160" stroke="#34495e" stroke-width="2"/>';
+    
+    for (var row = 0; row < 3; row++) {
+        for (var col = 0; col < 3; col++) {
+            var idx = row * 3 + col;
+            var x = col * 80;
+            var y = row * 80;
+            
+            if (denganQuestionMark && idx === 8) {
+                svg += '<g transform="translate('+x+', '+y+')">';
+                svg += '<text x="40" y="55" font-size="48" font-weight="bold" fill="#7f8c8d" text-anchor="middle" dominant-baseline="middle">?</text>';
+                svg += '</g>';
+            } else {
+                svg += '<g transform="translate('+x+', '+y+')">'+cells[idx]+'</g>';
+            }
+        }
+    }
+    
+    svg += '</svg></div>';
+    return svg;
+}
+
+function renderOpsi(opsiImages, nama) {
+    var HURUF = ['a','b','c','d','e','f'];
+    return opsiImages.map(function(content, i) {
+        return '<label>' +
+            '<input type="radio" name="'+nama+'" value="'+HURUF[i]+'" '+(nama !== 'contoh' ? 'onchange="cekKelengkapan()"' : '')+'>' +
+            '<b>'+HURUF[i].toUpperCase()+'</b>' +
+            '<svg width="80" height="80" viewBox="0 0 80 80">'+content+'</svg>' +
+            '</label>';
+    }).join('');
+}
+
+var DATA_SOAL = [];
+var CONTOH = null;
+
+function inisialisasiSoal() {
+    var contohHasil = GENERATOR_SOAL[0]();
+    var contohOpsi = generateOpsi(0, contohHasil.jawaban, contohHasil.cells[8]);
+    
+    CONTOH = {
+        cells: contohHasil.cells,
+        opsi: contohOpsi,
+        kunci: contohHasil.jawaban
+    };
+    
+    DATA_SOAL = [];
+    for (var i = 0; i < 14; i++) {
+        var hasil = GENERATOR_SOAL[i]();
+        var opsi = generateOpsi(i, hasil.jawaban, hasil.cells[8]);
+        
+        DATA_SOAL.push({
+            cells: hasil.cells,
+            opsi: opsi,
+            kunci: hasil.jawaban
+        });
+    }
+}
+
+function renderContoh() {
+    document.getElementById('matriks-contoh').innerHTML = renderMatriks(CONTOH.cells, true);
+    document.getElementById('opsi-contoh').innerHTML = renderOpsi(CONTOH.opsi, 'contoh');
+}
+
+function cekContoh() {
+    var jwb = document.querySelector('input[name="contoh"]:checked');
+    var HURUF = ['a','b','c','d','e','f'];
+    var benar = jwb && HURUF[CONTOH.kunci] === jwb.value;
+
+    document.getElementById('msg-salah').style.display = benar ? 'none' : 'block';
+    document.getElementById('msg-benar').style.display = benar ? 'block' : 'none';
+    document.getElementById('btn-mulai').disabled = !benar;
+}
+
+function mulaiTes() {
+    if (document.getElementById('btn-mulai').disabled) return;
+
+    document.getElementById('area-contoh').classList.add('hidden');
+    document.getElementById('area-tes').classList.remove('hidden');
+    document.getElementById('timer-container').style.display = 'block';
+
+    var TOTAL = DATA_SOAL.length;
+
+    document.getElementById('daftar-soal').innerHTML = DATA_SOAL.map(function(s,i) {
+        return '<div class="soal-box">' +
+            '<p><strong>Soal '+(i+1)+' / '+TOTAL+'</strong></p>' +
+            renderMatriks(s.cells, true) +
+            '<div class="opsi" id="o-'+i+'">'+renderOpsi(s.opsi, 'soal'+i)+'</div>' +
+            '</div>';
+    }).join('');
+
+    jalankanTimer();
+    window.scrollTo(0,0);
+}
+
+var DURASI = 3 * 60;
+var sisa = DURASI, interval = null, sudahSelesai = false;
+
+function jalankanTimer() {
+    var totalWaktu = DURASI;
+    interval = setInterval(function() {
+        sisa--;
+        
+        var persentase = (sisa / totalWaktu) * 100;
+        var timerFill = document.getElementById('timer-fill');
+        
+        timerFill.style.width = persentase + '%';
+
+        if (sisa <= 30) {
+            timerFill.classList.add('warning');
+        }
+
+        if (sisa <= 0) {
+            clearInterval(interval);
+            timerFill.style.width = '0%';
+            selesaikan(true);
+        }
+    }, 1000);
+}
+
+function cekKelengkapan() {
+    var terisi = 0;
+    var TOTAL = DATA_SOAL.length;
+    for (var i=0; i<TOTAL; i++) {
+        if (document.querySelector('input[name="soal'+i+'"]:checked')) terisi++;
+    }
+    document.getElementById('count').textContent = terisi;
+
+    var lengkap = terisi === TOTAL;
+    document.getElementById('btn-selesai').style.display = lengkap ? 'inline-block' : 'none';
+    document.getElementById('msg-lengkap').style.display = lengkap ? 'block' : 'none';
+}
+
+function kategoriDariSkor(skor) {
+    if (skor <= 2)  return 'R';  // 0-2   (~21%)
+    if (skor <= 5)  return 'K';  // 3-5   (~21%)
+    if (skor <= 8)  return 'C';  // 6-8   (~21%)
+    if (skor <= 11) return 'B';  // 9-11  (~21%)
+    return 'T';                  // 12-14 (~21%)
+}
+
+function selesaikan(otomatis) {
+    if (sudahSelesai) return;
+    sudahSelesai = true;
+    clearInterval(interval);
+
+    var skor = 0;
+    var HURUF = ['a','b','c','d','e','f'];
+    DATA_SOAL.forEach(function(s,i) {
+        var jwb = document.querySelector('input[name="soal'+i+'"]:checked');
+        if (jwb && jwb.value === HURUF[s.kunci]) skor++;
+    });
+
+    var kategori = kategoriDariSkor(skor);
+
+    localStorage.setItem('analisa_skor', String(skor));
+    localStorage.setItem('analisa_kategori', kategori);
+
+    document.getElementById('area-tes').classList.add('hidden');
+    document.getElementById('area-selesai').style.display = 'block';
+
+    if (otomatis) {
+        document.querySelector('#area-selesai p').textContent =
+            'Waktu habis! Jawaban otomatis disimpan. Silakan lanjut ke tahap berikutnya.';
+    }
+    window.scrollTo(0,0);
+}
+
+window.onbeforeunload = function() {
+    if (!document.getElementById('area-tes').classList.contains('hidden') && !sudahSelesai) {
+        return 'Sesi tes sedang berjalan. Keluar akan menghapus progres.';
+    }
+};
+
+inisialisasiSoal();
+renderContoh();
+</script>
+</body>
+</html>

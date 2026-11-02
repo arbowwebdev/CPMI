@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Tes Kemampuan Inteligensi</title>
+    <title>Profil Tes Kemampuan Inteligensi & Kepribadian</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -158,6 +158,9 @@
                 max-width: 220px;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
+            }
+            .sembunyikan-saat-print {
+                display: none !important;
             }
         }
     </style>
@@ -420,20 +423,19 @@
         </div>
 
         <!-- BAGIAN HASIL, SKOR TOTAL, DAN KESIMPULAN SINGKAT -->
-        <div id="bagian-hasil" style="display: none;">
-            <h2>Hasil Sub Test</h2>
+        <div id="bagian-hasil" class="sembunyikan-saat-print">
+           <h2>Hasil Sub Test</h2>
             <table>
-                <tr><th>SUB TEST</th><th class="angka">RAW</th></tr>
-                <tr><td>1. SERIES</td><td class="angka" id="rawA">-</td></tr>
-                <tr><td>2. CLASSIFICATION</td><td class="angka" id="rawB">-</td></tr>
-                <tr><td>3. MATRICES</td><td class="angka" id="rawC">-</td></tr>
-                <tr><td>4. CONDITIONS/TOPOLOGY</td><td class="angka" id="rawD">-</td></tr>
+                 <tr><th>SUB TEST</th><th class="angka">SKOR / KATEGORI</th></tr>
+                <tr><td>1. CFIT (Logika Berpikir)</td><td class="angka" id="rawCFIT">-</td></tr>
+                <tr><td>2. Numerikal</td><td class="angka" id="rawNumerikal">-</td></tr>
+                <tr><td>3. Verbal</td><td class="angka" id="rawVerbal">-</td></tr>
             </table>
             <div class="peringatan" id="peringatanKurang">Ada sub tes yang belum tercatat. Hasil di bawah mungkin belum lengkap.</div>
-            <h2>Skor Total</h2>
+            <h2>Skor Total & Estimasi</h2>
             <ul class="daftar-total">
-                <li>JUMLAH TOTAL: <span id="totalJumlah">-</span></li>
-                <li>DEVIASI IQ: <span id="totalIQ">-</span></li>
+                <li>SKOR REFERENSI (CFIT): <span id="totalJumlah">-</span></li>
+                <li>DEVIASI IQ (Estimasi): <span id="totalIQ">-</span></li>
                 <li>Taraf Kecerdasan: <span id="totalTaraf">-</span></li>
             </ul>
             <hr class="garis-pisah">
@@ -449,32 +451,25 @@
 
     <script>
         // ============================================================
+        // PANDUAN INTEGRASI LOCALSTORAGE
+        // Pastikan file tes lain menyimpan data ke localStorage dengan kunci berikut:
+        // 1. cfit-1.html      -> 'cfit1_kategori' (contoh: 'B') dan 'cfit1_skor' (contoh: '10')
+        // 2. analisa.html     -> 'analisa_kategori' (contoh: 'C') dan 'analisa_skor' (contoh: '8')
+        // 3. numerikal.html   -> 'numerikal_kategori' (contoh: 'B') dan 'numerikal_skor' (contoh: '15')
+        // 4. verbal.html      -> 'verbal_kategori' (contoh: 'K') dan 'verbal_skor' (contoh: '20')
+        // 5. bfi.html         -> 'bfi_psikogram_data' (JSON string dengan struktur psikogram di bawah)
+        // ============================================================
+
+        // ============================================================
         // KONFIGURASI - GANTI DENGAN URL GOOGLE APPS SCRIPT ANDA
         // ============================================================
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbyHuLMW9T67MJX7oP7T2K3xZ2IMiAnpgBkIV6CFUuKnyVJBq0foY7RjRx6zPdw_hfQZ/exec";
-
-        // ============================================================
-        // KONSTANTA & DATA
-        // ============================================================
-        const DAFTAR_SERI = [
-            { kunci: "cfit_seriA_skor", elemen: "rawA", nama: "Series" },
-            { kunci: "cfit_seriB_skor", elemen: "rawB", nama: "Classification" },
-            { kunci: "cfit_seriC_skor", elemen: "rawC", nama: "Matrices" },
-            { kunci: "cfit_seriD_skor", elemen: "rawD", nama: "Conditions/Topology" }
-        ];
-
-        const DESKRIPSI_ASPEK = {
-            "Series": "kemampuan cukup baik dalam menalar pola dan hubungan yang berurutan",
-            "Classification": "kemampuan cukup baik dalam melihat persamaan dan perbedaan",
-            "Matrices": "kemampuan cukup baik dalam menangkap pola visual-abstrak",
-            "Conditions/Topology": "kemampuan cukup baik dalam memahami hubungan dan kondisi antar bentuk"
-        };
-
-        const NAMA_BULAN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzS05y5mzgTSa7FgEEpU4YCxjr2IqyfYibWWXOHtUQtScD48JCCfVTI8c2IG466nD1P/exec";
 
         // ============================================================
         // FUNGSI HELPER
         // ============================================================
+        const NAMA_BULAN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+
         function formatTanggal(nilaiIso) {
             if (!nilaiIso) return "-";
             const bagian = nilaiIso.split("-");
@@ -537,97 +532,92 @@
         // ============================================================
         // PROSES SKOR & KESIMPULAN
         // ============================================================
-        let total = 0, lengkap = true, nilaiSeri = [];
-        let skorA = 0, skorB = 0, skorC = 0, skorD = 0;
+        
+        // 1. Ambil Kategori dari masing-masing file tes
+        const katLogika = localStorage.getItem('cfit1_kategori') || '-';
+        const katAnalisa = localStorage.getItem('analisa_kategori') || '-';
+        const katNumerikal = localStorage.getItem('numerikal_kategori') || '-';
+        const katVerbal = localStorage.getItem('verbal_kategori') || '-';
 
-        DAFTAR_SERI.forEach(function (seri, index) {
-            const isi = localStorage.getItem(seri.kunci);
-            const angka = parseInt(isi, 10);
-            if (isi === null || isNaN(angka)) {
-                lengkap = false;
-                nilaiSeri.push({ nama: seri.nama, nilai: 0 });
-                document.getElementById(seri.elemen).textContent = "0";
-            } else {
-                nilaiSeri.push({ nama: seri.nama, nilai: angka });
-                total += angka;
-                document.getElementById(seri.elemen).textContent = String(angka);
-                if (index === 0) skorA = angka;
-                if (index === 1) skorB = angka;
-                if (index === 2) skorC = angka;
-                if (index === 3) skorD = angka;
-            }
-        });
-
-        document.getElementById("totalJumlah").textContent = String(total);
-        if (!lengkap) document.getElementById("peringatanKurang").style.display = "block";
-
-        const skorLogika = (skorA + skorB) / 2;
-        const katLogika = getKategoriIQ(skorLogika);
-        tampilkanKategori("Logika", katLogika);
-
-        const skorAnalisa = (skorC + skorD) / 2;
-        const katAnalisa = getKategoriIQ(skorAnalisa);
-        tampilkanKategori("Analisa", katAnalisa);
-
-        const katNumerikal = localStorage.getItem('ra_numerikal_kategori') || '-';
-        const katVerbal = localStorage.getItem('verbal_test_kategori') || '-';
+        // Tampilkan di tabel psikogram
+        if (katLogika !== '-') tampilkanKategori("Logika", katLogika);
+        if (katAnalisa !== '-') tampilkanKategori("Analisa", katAnalisa);
         if (katNumerikal !== '-') tampilkanKategori("Numerikal", katNumerikal);
         if (katVerbal !== '-') tampilkanKategori("Verbal", katVerbal);
 
-        let teksIntelektual = "Berdasarkan hasil tes, klien menunjukkan kemampuan Logika Berpikir pada kategori " + 
-            getDeskripsiKategori(katLogika).toUpperCase() + 
-            ", yang mengindikasikan " + getInterpretasi(katLogika, "berpikir secara logis dan sistematis") + ". ";
-        teksIntelektual += "Kemampuan Daya Analisa berada pada kategori " + 
-            getDeskripsiKategori(katAnalisa).toUpperCase() + 
-            ", yang mengindikasikan " + getInterpretasi(katAnalisa, "melihat permasalahan dan memahami hubungan sebab-akibat") + ". ";
+        // Ambil Skor Mentah (Raw) jika tersedia
+        const rawCFIT = localStorage.getItem('cfit1_skor') || '-';
+        const rawNumerikal = localStorage.getItem('numerikal_skor') || '-';
+        const rawVerbal = localStorage.getItem('verbal_skor') || '-';
+
+        document.getElementById("rawCFIT").textContent = rawCFIT;
+        document.getElementById("rawNumerikal").textContent = rawNumerikal;
+        document.getElementById("rawVerbal").textContent = rawVerbal;
+
+        // Cek kelengkapan data
+        let lengkap = (katLogika !== '-' && katNumerikal !== '-' && katVerbal !== '-');
+        if (!lengkap) {
+            document.getElementById("peringatanKurang").style.display = "block";
+        }
+
+        // Generate Kesimpulan Intelektual
+        let bagianIntelektual = [];
+        if (katLogika !== '-') {
+            bagianIntelektual.push("Logika Berpikir pada kategori " + getDeskripsiKategori(katLogika).toUpperCase() + ", yang mengindikasikan " + getInterpretasi(katLogika, "berpikir secara logis dan sistematis"));
+        }
+        if (katAnalisa !== '-') {
+            bagianIntelektual.push("Daya Analisa pada kategori " + getDeskripsiKategori(katAnalisa).toUpperCase() + ", yang mengindikasikan " + getInterpretasi(katAnalisa, "melihat permasalahan dan memahami hubungan sebab-akibat"));
+        }
         if (katNumerikal !== '-') {
-            teksIntelektual += "Kemampuan Numerikal berada pada kategori " + 
-                getDeskripsiKategori(katNumerikal).toUpperCase() + 
-                ", yang mengindikasikan " + getInterpretasi(katNumerikal, "berpikir praktis dalam memahami konsep angka dan hitungan") + ". ";
+            bagianIntelektual.push("Kemampuan Numerikal pada kategori " + getDeskripsiKategori(katNumerikal).toUpperCase() + ", yang mengindikasikan " + getInterpretasi(katNumerikal, "berpikir praktis dalam memahami konsep angka dan hitungan"));
         }
         if (katVerbal !== '-') {
-            teksIntelektual += "Kemampuan Verbal berada pada kategori " + 
-                getDeskripsiKategori(katVerbal).toUpperCase() + 
-                ", yang mengindikasikan " + getInterpretasi(katVerbal, "memahami konsep dan pola dalam bentuk kata-kata serta mengekspresikan gagasan secara verbal") + ".";
+            bagianIntelektual.push("Kemampuan Verbal pada kategori " + getDeskripsiKategori(katVerbal).toUpperCase() + ", yang mengindikasikan " + getInterpretasi(katVerbal, "memahami konsep dan pola dalam bentuk kata-kata serta mengekspresikan gagasan secara verbal"));
         }
-        document.getElementById("kesimpulanIntelektual").innerHTML = teksIntelektual;
-
-        const IQ_MIN = 56, IQ_MAX = 146, SOAL_TOTAL = 47;
-        const deviasiIQ = Math.round(IQ_MIN + (total / SOAL_TOTAL) * (IQ_MAX - IQ_MIN));
-        let taraf;
-        if (deviasiIQ >= 130) taraf = "Sangat Superior";
-        else if (deviasiIQ >= 120) taraf = "Superior";
-        else if (deviasiIQ >= 110) taraf = "Di atas rata-rata";
-        else if (deviasiIQ >= 90) taraf = "Rata-rata";
-        else if (deviasiIQ >= 80) taraf = "Rata-rata bawah";
-        else if (deviasiIQ >= 70) taraf = "Di bawah rata-rata";
-        else taraf = "Jauh di bawah rata-rata";
         
-        let rentang = "di bawah normal";
-        if (taraf === "Rata-rata") rentang = "normal";
-        else if (taraf === "Di atas rata-rata") rentang = "di atas normal";
-        else if (taraf === "Superior") rentang = "superior";
-        else if (taraf === "Sangat Superior") rentang = "sangat superior";
+        if (bagianIntelektual.length > 0) {
+            document.getElementById("kesimpulanIntelektual").innerHTML = "Berdasarkan hasil tes, klien menunjukkan: " + bagianIntelektual.join("; ") + ".";
+        } else {
+            document.getElementById("kesimpulanIntelektual").innerHTML = "Data tes Kemampuan Intelektual belum tersedia.";
+        }
 
+        // Estimasi IQ (Berbasis skor CFIT sebagai referensi utama, sesuaikan norma jika perlu)
+        let deviasiIQ = "-";
+        let taraf = "-";
+        if (rawCFIT !== '-' && !isNaN(parseInt(rawCFIT))) {
+            const skorCFIT = parseInt(rawCFIT);
+            const IQ_MIN = 56, IQ_MAX = 146, SOAL_TOTAL = 13; // Sesuaikan SOAL_TOTAL dengan jumlah soal di cfit-1.html
+            deviasiIQ = Math.round(IQ_MIN + (skorCFIT / SOAL_TOTAL) * (IQ_MAX - IQ_MIN));
+            
+            if (deviasiIQ >= 130) taraf = "Sangat Superior";
+            else if (deviasiIQ >= 120) taraf = "Superior";
+            else if (deviasiIQ >= 110) taraf = "Di atas rata-rata";
+            else if (deviasiIQ >= 90) taraf = "Rata-rata";
+            else if (deviasiIQ >= 80) taraf = "Rata-rata bawah";
+            else if (deviasiIQ >= 70) taraf = "Di bawah rata-rata";
+            else taraf = "Jauh di bawah rata-rata";
+        }
+
+        document.getElementById("totalJumlah").textContent = (rawCFIT !== '-' ? rawCFIT : "-");
         document.getElementById("totalIQ").textContent = String(deviasiIQ);
         document.getElementById("totalTaraf").textContent = taraf;
 
-        const tertinggi = nilaiSeri.reduce(function (a, b) { return (b.nilai > a.nilai) ? b : a; }, nilaiSeri[0]);
+        // Kesimpulan Singkat
         const namaPeserta = (peserta && peserta.nama) ? peserta.nama : "Peserta";
         const fasyankesTxt = (peserta && peserta.fasyankes) ? peserta.fasyankes : "-";
-        const paragraf =
-            namaPeserta + " memiliki taraf kecerdasan " + taraf +
-            " dengan estimasi IQ " + deviasiIQ + ". " +
-            "Secara umum, kemampuan berpikir abstrak, penalaran logis, dan pemecahan masalah berada pada rentang " + rentang + ". " +
-            "Pemeriksaan ini dilakukan di " + fasyankesTxt + ". " +
-            "Pencapaian tertinggi terlihat pada aspek " + tertinggi.nama + 
-            ", yang menunjukkan " + (DESKRIPSI_ASPEK[tertinggi.nama] || "kemampuan yang relatif baik pada aspek tersebut") + ".";
+        
+        let paragraf = namaPeserta + " mengikuti serangkaian tes psikologi di " + fasyankesTxt + ". ";
+        if (taraf !== "-") {
+            paragraf += "Berdasarkan hasil tes, klien memiliki estimasi taraf kecerdasan " + taraf + " (IQ: " + deviasiIQ + "). ";
+        }
+        paragraf += "Profil kemampuan kognitif menunjukkan kombinasi dari hasil tes Logika, Analisa, Numerikal, dan Verbal yang telah diuraikan di atas.";
         document.getElementById("simpulParagraf").innerHTML = paragraf;
 
-        // ===== 2. SIKAP DAN CARA KERJA =====
+
+        // ===== 2. SIKAP DAN CARA KERJA (dari bfi.html) =====
         let dataBFI = null;
         try {
-            const isi = localStorage.getItem("cpmi_psikogram_data");
+            const isi = localStorage.getItem("bfi_psikogram_data");
             if (isi) dataBFI = JSON.parse(isi);
         } catch (e) { dataBFI = null; }
 
@@ -640,26 +630,17 @@
             const orientasi = sikapKerja.orientasiHasil || { kategori: 'C' };
             const fleksibilitas = sikapKerja.fleksibilitas || { kategori: 'C' };
             const sistematika = sikapKerja.sistematikaKerja || { kategori: 'C' };
-            const dOrientasi = getDeskripsiKategori(orientasi.kategori);
-            const dFleksibilitas = getDeskripsiKategori(fleksibilitas.kategori);
-            const dSistematika = getDeskripsiKategori(sistematika.kategori);
-
-            let teksSikap = "Klien menunjukkan profil sikap kerja yang " + dFleksibilitas + ", terutama pada aspek Fleksibilitas. ";
-            if (orientasi.kategori === 'R' || orientasi.kategori === 'K') {
-                teksSikap += "Namun, pada aspek Orientasi Hasil, klien berada pada level " + dOrientasi + ". ";
-            } else if (orientasi.kategori === 'C') {
-                teksSikap += "Pada aspek Orientasi Hasil, klien berada pada level " + dOrientasi + ". ";
-            } else {
-                teksSikap += "Pada aspek Orientasi Hasil, klien menunjukkan performa yang " + dOrientasi + ". ";
-            }
-            teksSikap += "Aspek Sistematika Kerja berada pada level " + dSistematika + ". ";
-            teksSikap += "Secara keseluruhan, klien adalah tipe pekerja yang " + dFleksibilitas + " dan kooperatif.";
+            
+            let teksSikap = "Klien menunjukkan profil sikap kerja dengan Fleksibilitas pada kategori " + getDeskripsiKategori(fleksibilitas.kategori).toUpperCase() + ". ";
+            teksSikap += "Orientasi Hasil berada pada kategori " + getDeskripsiKategori(orientasi.kategori).toUpperCase() + ", ";
+            teksSikap += "dan Sistematika Kerja pada kategori " + getDeskripsiKategori(sistematika.kategori).toUpperCase() + ". ";
+            teksSikap += "Secara keseluruhan, klien memiliki kecenderungan cara kerja yang " + getDeskripsiKategori(fleksibilitas.kategori) + " dalam menghadapi dinamika tugas.";
             document.getElementById("kesimpulanSikap").innerHTML = teksSikap;
         } else {
-            document.getElementById("kesimpulanSikap").innerHTML = "Data tes Sikap dan Cara Kerja belum tersedia.";
+            document.getElementById("kesimpulanSikap").innerHTML = "Data tes Sikap dan Cara Kerja (BFI) belum tersedia.";
         }
 
-        // ===== 3. KEPRIBADIAN =====
+        // ===== 3. KEPRIBADIAN (dari bfi.html) =====
         if (dataBFI && dataBFI.psikogram && dataBFI.psikogram.kepribadian) {
             const kepribadian = dataBFI.psikogram.kepribadian;
             if (kepribadian.motivasiBerprestasi && kepribadian.motivasiBerprestasi.kategori) tampilkanKategori("Motivasi", kepribadian.motivasiBerprestasi.kategori);
@@ -669,21 +650,18 @@
 
             const motivasi = kepribadian.motivasiBerprestasi || { kategori: 'C' };
             const kerjasama = kepribadian.kerjaSama || { kategori: 'C' };
+            const interpersonal = kepribadian.keterampilanInterpersonal || { kategori: 'C' };
             const stabilitas = kepribadian.stabilitasEmosi || { kategori: 'C' };
-            const dMotivasi = getDeskripsiKategori(motivasi.kategori);
-            const dKerjasama = getDeskripsiKategori(kerjasama.kategori);
-            const dStabilitas = getDeskripsiKategori(stabilitas.kategori);
 
-            let teksKepribadian = "Klien menunjukkan profil kepribadian yang " + dMotivasi + " di seluruh aspek yang dinilai. ";
-            teksKepribadian += "Motivasi Berprestasi " + dMotivasi + ". ";
-            teksKepribadian += "Kapasitas sosial " + dKerjasama + ". ";
-            teksKepribadian += "Stabilitas Emosi " + dStabilitas + ".";
+            let teksKepribadian = "Profil kepribadian klien menunjukkan Motivasi Berprestasi pada kategori " + getDeskripsiKategori(motivasi.kategori).toUpperCase() + ". ";
+            teksKepribadian += "Kemampuan Kerja Sama dan Keterampilan Interpersonal masing-masing berada pada kategori " + getDeskripsiKategori(kerjasama.kategori).toUpperCase() + " dan " + getDeskripsiKategori(interpersonal.kategori).toUpperCase() + ". ";
+            teksKepribadian += "Sementara itu, Stabilitas Emosi klien berada pada kategori " + getDeskripsiKategori(stabilitas.kategori).toUpperCase() + ".";
             document.getElementById("kesimpulanKepribadian").innerHTML = teksKepribadian;
         } else {
-            document.getElementById("kesimpulanKepribadian").innerHTML = "Data tes Kepribadian belum tersedia.";
+            document.getElementById("kesimpulanKepribadian").innerHTML = "Data tes Kepribadian (BFI) belum tersedia.";
         }
 
-        // ===== 4. KEMAMPUAN BELAJAR =====
+        // ===== 4. KEMAMPUAN BELAJAR (dari bfi.html) =====
         if (dataBFI && dataBFI.psikogram && dataBFI.psikogram.kemampuanBelajar) {
             const kemampuanBelajar = dataBFI.psikogram.kemampuanBelajar;
             if (kemampuanBelajar.pengembanganDiri && kemampuanBelajar.pengembanganDiri.kategori) tampilkanKategori("Pengembangan", kemampuanBelajar.pengembanganDiri.kategori);
@@ -691,15 +669,12 @@
 
             const pengembangan = kemampuanBelajar.pengembanganDiri || { kategori: 'C' };
             const perubahan = kemampuanBelajar.mengelolaPerubahan || { kategori: 'C' };
-            const dPengembangan = getDeskripsiKategori(pengembangan.kategori);
-            const dPerubahan = getDeskripsiKategori(perubahan.kategori);
 
-            let teksBelajar = "Klien memiliki kapasitas yang " + dPengembangan + " untuk terus berkembang. ";
-            teksBelajar += "Pengembangan Diri " + dPengembangan + ". ";
-            teksBelajar += "Mengelola Perubahan " + dPerubahan + ".";
+            let teksBelajar = "Klien memiliki kapasitas Pengembangan Diri pada kategori " + getDeskripsiKategori(pengembangan.kategori).toUpperCase() + ", ";
+            teksBelajar += "serta kemampuan Mengelola Perubahan pada kategori " + getDeskripsiKategori(perubahan.kategori).toUpperCase() + ".";
             document.getElementById("kesimpulanBelajar").innerHTML = teksBelajar;
         } else {
-            document.getElementById("kesimpulanBelajar").innerHTML = "Data tes Kemampuan Belajar belum tersedia.";
+            document.getElementById("kesimpulanBelajar").innerHTML = "Data tes Kemampuan Belajar (BFI) belum tersedia.";
         }
 
         // ============================================================
@@ -712,13 +687,11 @@
             btn.disabled = true;
 
             try {
-                // 1. Ambil data
                 const nomor = document.getElementById("idNomor").textContent || "-";
                 const nama = document.getElementById("idNama").textContent || "-";
                 const fasyankes = document.getElementById("idFasyankes").textContent || "-";
                 const tanggal = document.getElementById("idTglTes").textContent || "-";
 
-                // 2. Kirim ke Google Sheets (Fire-and-forget agar tidak memblokir)
                 fetch(GAS_URL, {
                     method: "POST",
                     mode: "no-cors",
@@ -726,23 +699,17 @@
                     body: JSON.stringify({ nomor, nama, fasyankes, tanggal })
                 }).catch(err => console.warn("Gagal kirim ke sheets:", err));
 
-                // 3. FORMAT NAMA FILE: cpmi-nama peserta-tanggal tes
-                // Ganti spasi dengan strip (-) agar valid sebagai nama file
                 const namaClean = nama.trim().replace(/\s+/g, '-');
                 const tanggalClean = tanggal.trim().replace(/\s+/g, '-');
                 const filename = `cpmi-${namaClean}-${tanggalClean}`;
 
-                // 4. TRIK AJAIB: Ubah judul halaman sementara
-                // Browser akan menggunakan judul ini sebagai nama file PDF default
                 const originalTitle = document.title;
                 document.title = filename;
 
-                // 5. Buka dialog cetak
                 alert("✅ Data sedang dikirim ke Google Sheets.\n\nSilakan pilih 'Save as PDF' (Simpan sebagai PDF) pada dialog cetak.\nNama file default sudah diatur menjadi:\n" + filename + ".pdf");
                 
                 setTimeout(function() { 
                     window.print(); 
-                    // Kembalikan judul asli setelah dialog cetak ditutup
                     setTimeout(() => { document.title = originalTitle; }, 1000);
                 }, 500);
 
@@ -763,10 +730,20 @@
         document.getElementById("btnSelesai").addEventListener("click", function () {
             if (confirm("Apakah Anda yakin ingin selesai? Data sementara akan dihapus.")) {
                 localStorage.removeItem("cfit_peserta");
-                DAFTAR_SERI.forEach(function (seri) { localStorage.removeItem(seri.kunci); });
-                localStorage.removeItem("cpmi_psikogram_data");
-                localStorage.removeItem("ra_numerikal_kategori");
-                localStorage.removeItem("verbal_test_kategori");
+                
+                // Hapus data tes intelektual
+                localStorage.removeItem("cfit1_kategori");
+                localStorage.removeItem("cfit1_skor");
+                localStorage.removeItem("analisa_kategori");
+                localStorage.removeItem("analisa_skor");
+                localStorage.removeItem("numerikal_kategori");
+                localStorage.removeItem("numerikal_skor");
+                localStorage.removeItem("verbal_kategori");
+                localStorage.removeItem("verbal_skor");
+                
+                // Hapus data BFI
+                localStorage.removeItem("bfi_psikogram_data");
+                
                 window.location.href = "index.html";
             }
         });
